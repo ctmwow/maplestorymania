@@ -144,7 +144,7 @@ public class CashShopHandler extends AbstractMaplePacketHandler
             
             if(gifted == null)
             {
-            	
+            	//TODO
             } 
             else if(gifted != null && gifted.getAccountID() == c.getAccID())
             {
