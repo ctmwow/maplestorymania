@@ -294,28 +294,30 @@ public class CashShop
         		cash.add(item);
         }
         
-        PreparedStatement ps = con.prepareStatement("DELETE FROM `cashinventory_eqp` WHERE `CharacterId` = ?");
-        ps.setInt(1, characterId);
+        int jobType = (MapleCharacter.getJobIdById(characterId, 0x00) / 1000);
+        
+        PreparedStatement ps = con.prepareStatement("DELETE FROM `cashinventory_eqp` WHERE `CharacterId` in (" + (jobType == 0x00 ? "select id from characters where ((job/1000) < 1) and accountID = ?" : "?") + ")");
+        ps.setInt(0x01, jobType == 0x00 ? accountId : characterId);
         ps.executeUpdate();
         ps.close();
         
-        ps = con.prepareStatement("DELETE FROM `cashinventory_setup` WHERE `CharacterId` = ?");
-        ps.setInt(1, characterId);
+        ps = con.prepareStatement("DELETE FROM `cashinventory_setup` WHERE `CharacterId` in (" + (jobType == 0x00 ? "select id from characters where ((job/1000) < 1) and accountID = ?" : "?") + ")");
+        ps.setInt(0x01, jobType == 0x00 ? accountId : characterId);
         ps.executeUpdate();
         ps.close();
         
-        ps = con.prepareStatement("DELETE FROM `cashinventory_etc` WHERE `CharacterId` = ?");
-        ps.setInt(1, characterId);
+        ps = con.prepareStatement("DELETE FROM `cashinventory_etc` WHERE `CharacterId` in (" + (jobType == 0x00 ? "select id from characters where ((job/1000) < 1) and accountID = ?" : "?") + ")");
+        ps.setInt(0x01, jobType == 0x00 ? accountId : characterId);
         ps.executeUpdate();
         ps.close();
         
-        ps = con.prepareStatement("DELETE FROM `cashinventory_use` WHERE `CharacterId` = ?");
-        ps.setInt(1, characterId);
+        ps = con.prepareStatement("DELETE FROM `cashinventory_use` WHERE `CharacterId` in (" + (jobType == 0x00 ? "select id from characters where ((job/1000) < 1) and accountID = ?" : "?") + ")");
+        ps.setInt(0x01, jobType == 0x00 ? accountId : characterId);
         ps.executeUpdate();
         ps.close();
         
-        ps = con.prepareStatement("DELETE FROM `cashinventory_cash` WHERE `CharacterId` = ?");
-        ps.setInt(1, characterId);
+        ps = con.prepareStatement("DELETE FROM `cashinventory_cash` WHERE `CharacterId` in (" + (jobType == 0x00 ? "select id from characters where ((job/1000) < 1) and accountID = ?" : "?") + ")");
+        ps.setInt(0x01, jobType == 0x00 ? accountId : characterId);
         ps.executeUpdate(); 
         ps.close();
          
@@ -331,7 +333,7 @@ public class CashShop
         ps.setInt(1, paypalCash);
         ps.setInt(2, maplePoint);
         ps.setInt(3, gameCardCash);
-        ps.setInt(4, accountId);
+        ps.setInt(4, accountId); 
         ps.executeUpdate();
         ps.close();
          

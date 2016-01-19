@@ -208,6 +208,66 @@ public class CashShopHandler extends AbstractMaplePacketHandler
             
             c.sendPacket(MaplePacketCreator.showWishList(c.getPlayer().getCashShop().getWishList(), true));
         } 
+        else if (action == 0x06) /** INCREASE INVENTORY SLOT **/ 
+        {
+            slea.skip(0x01);
+            int cash = slea.readInt();
+            byte mode = slea.readByte();
+            
+            if (c.getPlayer().getCashShop().getCash(cash) <= 0x00)  
+            {
+                c.sendPacket(MaplePacketCreator.showCashShopMessage((byte) 0x00));
+                return;
+            }
+            
+            if (mode == 0x00) 
+            {
+                byte type = slea.readByte();
+                
+                if(c.getPlayer().getCashShop().getCash(cash) < 4000)
+                {
+                	c.sendPacket(MaplePacketCreator.showCashShopMessage((byte) 0xA5));
+                    return;	
+                }
+                
+                if (c.getPlayer().gainSlots(type, 0x04, false)) 
+                {
+                    c.getPlayer().getCashShop().gainCash(cash, -4000);
+                    c.sendPacket(MaplePacketCreator.showBoughtInventorySlots(type, c.getPlayer().getSlots(type)));   	
+                }
+                else
+                {
+                    c.getPlayer().dropMessage(ServerMessages.getInstance().getString("INVENTORY_SLOTS_ERROR"));
+                    c.sendPacket(MaplePacketCreator.enableActions());
+                    return;	
+                }
+            }
+            else 
+            {
+                CashItemInfo cItem = CashItemFactory.getItem(slea.readInt());
+                int type = (cItem.getItemId() - 9110000) / 1000;
+                
+                if(c.getPlayer().getCashShop().getCash(cash) < cItem.getPrice())
+                {
+                	c.sendPacket(MaplePacketCreator.showCashShopMessage((byte) 0xA5));
+                    return;	
+                }
+
+                if (c.getPlayer().gainSlots(type, 0x08, false)) 
+                {
+                    c.sendPacket(MaplePacketCreator.showBoughtInventorySlots(type, c.getPlayer().getSlots(type)));
+                    c.getPlayer().getCashShop().gainCash(cash, -cItem.getPrice());
+                }
+                else
+                {
+                    c.getPlayer().dropMessage(ServerMessages.getInstance().getString("INVENTORY_SLOTS_ERROR"));
+                    c.sendPacket(MaplePacketCreator.enableActions());
+                    return;	
+                }
+            }
+            
+            c.sendPacket(MaplePacketCreator.showNXMapleTokens(c.getPlayer()));
+        }
         else if (action == 0x07) /** INCREASE STORAGE SLOT **/ 
         {
             slea.skip(0x01);

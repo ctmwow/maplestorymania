@@ -677,60 +677,64 @@ public class MaplePacketCreator {
         }
     }
 
-    private static void addInventoryInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
+    private static void addInventoryInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) 
+    {
         mplew.writeInt(chr.getMeso()); // mesos
-        mplew.write(96); // equip slots
-        mplew.write(96); // use slots
-        mplew.write(96); // set-up slots
-        mplew.write(96); // etc slots
-        mplew.write(96); // cash slots
+        mplew.write((byte) chr.getSlots(MapleInventoryType.EQUIP.getType())); // equip slots
+        mplew.write((byte) chr.getSlots(MapleInventoryType.USE.getType())); // use slots
+        mplew.write((byte) chr.getSlots(MapleInventoryType.SETUP.getType())); // set-up slots
+        mplew.write((byte) chr.getSlots(MapleInventoryType.ETC.getType())); // etc slots
+        mplew.write((byte) chr.getSlots(MapleInventoryType.CASH.getType())); // cash slots
         mplew.writeLong(94354848000000000L);
         MapleInventory iv = chr.getInventory(MapleInventoryType.EQUIPPED);
         Collection<IItem> equippedC = iv.list();
         List<Item> equipped = new ArrayList<>(equippedC.size());
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        for (IItem item : equippedC) {
-            equipped.add((Item) item);
-        }
+        
+        for (IItem item : equippedC) 
+            equipped.add((Item) item); 
+        
         Collections.sort(equipped);
-        for (Item item : equipped) {
-            if (!ii.isCashItem(item.getItemId())) {
+        
+        for (Item item : equipped) 
+        {
+            if (!ii.isCashItem(item.getItemId())) 
                 addItemInfo(mplew, item, false);
-            }
         }
-        mplew.writeShort(0); // start of equipped nx
-        for (Item item : equipped) {
-            if (ii.isCashItem(item.getItemId())) {
+        
+        mplew.writeShort(0x00); // start of equipped nx
+        
+        for (Item item : equipped) 
+        {
+            if (ii.isCashItem(item.getItemId())) 
                 addItemInfo(mplew, item, false);
-            }
         }
-        mplew.writeShort(0); // start of equip inventory
-        iv = chr.getInventory(MapleInventoryType.EQUIP);
-        for (IItem item : iv.list()) {
+        
+        mplew.writeShort(0x00); // start of equip inventory
+        
+        for (IItem item : chr.getInventory(MapleInventoryType.EQUIP).list())
             addItemInfo(mplew, item, false);
-        }
-        mplew.writeShort(0);
-        mplew.writeShort(0);
-        //mplew.write(0); // start of use inventory
-        iv = chr.getInventory(MapleInventoryType.USE);
-        for (IItem item : iv.list()) {
+        
+        mplew.writeShort(0x00);
+        mplew.writeShort(0x00);
+        
+        for (IItem item : chr.getInventory(MapleInventoryType.USE).list()) 
             addItemInfo(mplew, item, false);
-        }
-        mplew.write(0); // start of set-up inventory
-        iv = chr.getInventory(MapleInventoryType.SETUP);
-        for (IItem item : iv.list()) {
+        
+        mplew.write(0x00); // start of set-up inventory
+        
+        for (IItem item : chr.getInventory(MapleInventoryType.SETUP).list()) 
             addItemInfo(mplew, item, false);
-        }
-        mplew.write(0); // start of etc inventory
-        iv = chr.getInventory(MapleInventoryType.ETC);
-        for (IItem item : iv.list()) {
+        
+        mplew.write(0x00); // start of etc inventory
+       
+        for (IItem item : chr.getInventory(MapleInventoryType.ETC).list()) 
             addItemInfo(mplew, item, false);
-        }
-        mplew.write(0); // start of cash inventory
-        iv = chr.getInventory(MapleInventoryType.CASH);
-        for (IItem item : iv.list()) {
+        
+        mplew.write(0x00); // start of cash inventory
+        
+        for (IItem item : chr.getInventory(MapleInventoryType.CASH).list()) 
             addItemInfo(mplew, item, false);
-        }
     }
 
     private static void addSkillRecord(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
@@ -3975,13 +3979,23 @@ public class MaplePacketCreator {
 
         return mplew.getPacket();
     }
+    
+	public static MaplePacket updateInventorySlotLimit(int type, int newLimit) 
+	{
+		final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+		mplew.writeShort(SendPacketOpcode.UPDATE_INVENTORY_SLOTS.getValue());
+		mplew.write(type);
+		mplew.write(newLimit);
+		return mplew.getPacket();
+	}
 
-    public static MaplePacket getInventoryFull() {
+    public static MaplePacket getInventoryFull() 
+    {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.MODIFY_INVENTORY_ITEM.getValue());
-        mplew.write(1);
-        mplew.write(0);
+        mplew.write(0x01);
+        mplew.write(0x00);
 
         return mplew.getPacket();
     }
@@ -5611,6 +5625,18 @@ public class MaplePacketCreator {
 
     	mplew.write(0x6A);
     	addCashItemInformation(mplew, item, accountId);
+
+    	return mplew.getPacket();
+    }
+    
+    public static MaplePacket showBoughtInventorySlots(int type, short slots) 
+    {
+    	final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(6);
+    	mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
+
+    	mplew.write(0x60);
+    	mplew.write(type);
+    	mplew.writeShort(slots);
 
     	return mplew.getPacket();
     }

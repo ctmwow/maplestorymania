@@ -234,7 +234,7 @@ public class MapleItemStorePersistence
     	{
     		PreparedStatement preparedStatment = con.prepareStatement("select * from cashinventory_eqp cs " +
 	    																"inner join characters chr ON chr.id = cs.CharacterId " +
-	    																"where chr." + (jobType == 0x00 ? "accountId" : "id") + " = ?");
+	    																"where chr." + (jobType == 0x00 ? "accountId" : "id") + " = ?" + (jobType == 0x00 ? " and ((chr.job / 1000) < 1) " : ""));
             preparedStatment.setInt(0x01, jobType == 0x00 ? accountId : characterId);
             
             ResultSet resultSet = preparedStatment.executeQuery();
@@ -246,7 +246,7 @@ public class MapleItemStorePersistence
     	{
     		PreparedStatement preparedStatment = con.prepareStatement("select * from cashinventory_use cs " +
 	    																"inner join characters chr ON chr.id = cs.CharacterId " +
-	    																"where chr." + (jobType == 0x00 ? "accountId" : "id") + " = ?");
+	    																"where chr." + (jobType == 0x00 ? "accountId" : "id") + " = ?" + (jobType == 0x00 ? " and ((chr.job / 1000) < 1) " : ""));
             preparedStatment.setInt(0x01, jobType == 0x00 ? accountId : characterId);
             
             ResultSet resultSet = preparedStatment.executeQuery();
@@ -258,7 +258,7 @@ public class MapleItemStorePersistence
     	{
     		PreparedStatement preparedStatment = con.prepareStatement("select * from cashinventory_setup cs " +
 	    																"inner join characters chr ON chr.id = cs.CharacterId " +
-	    																"where chr." + (jobType == 0x00 ? "accountId" : "id") + " = ?");
+	    																"where chr." + (jobType == 0x00 ? "accountId" : "id") + " = ?" + (jobType == 0x00 ? " and ((chr.job / 1000) < 1) " : ""));
             preparedStatment.setInt(0x01, jobType == 0x00 ? accountId : characterId);
             
             ResultSet resultSet = preparedStatment.executeQuery();
@@ -270,7 +270,7 @@ public class MapleItemStorePersistence
     	{
     		PreparedStatement preparedStatment = con.prepareStatement("select * from cashinventory_etc cs " +
 	    																"inner join characters chr ON chr.id = cs.CharacterId " +
-	    																"where chr." + (jobType == 0x00 ? "accountId" : "id") + " = ?");
+	    																"where chr." + (jobType == 0x00 ? "accountId" : "id") + " = ?" + (jobType == 0x00 ? " and ((chr.job / 1000) < 1) " : ""));
             preparedStatment.setInt(0x01, jobType == 0x00 ? accountId : characterId);
             
             ResultSet resultSet = preparedStatment.executeQuery();
@@ -282,13 +282,13 @@ public class MapleItemStorePersistence
     	{
     		PreparedStatement preparedStatment = con.prepareStatement("select * from cashinventory_cash cs " +
 	    																"inner join characters chr ON chr.id = cs.CharacterId " +
-	    																"where chr." + (jobType == 0x00 ? "accountId" : "id") + " = ?");
+	    																"where chr." + (jobType == 0x00 ? "accountId" : "id") + " = ?" + (jobType == 0x00 ? " and ((chr.job / 1000) < 1) " : ""));
             preparedStatment.setInt(0x01, jobType == 0x00 ? accountId : characterId);
             
             ResultSet resultSet = preparedStatment.executeQuery();
              
             while(resultSet.next())
-            {
+            { 
             	IItem tmpItem = buildItem(resultSet);
             	
             	if (ii.isPet(tmpItem.getItemId())) 
@@ -548,7 +548,7 @@ public class MapleItemStorePersistence
     		PreparedStatement preparedStatement = con.prepareStatement("INSERT INTO cashinventory_cash (CharacterId, CashInventoryPosition, ItemID, Position, Quantity, ExpireDate, Owner, Flag, IsGM, PetId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     		preparedStatement.setInt(0x01, characterId);
             
-            for (IItem item : items)  
+            for (IItem item : items)   
             { 
                 if (ii.getInventoryType(item.getItemId()).equals(MapleInventoryType.CASH))
                 {

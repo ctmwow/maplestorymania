@@ -1386,6 +1386,33 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         }
         return -1;
     }
+    
+    public static int getJobIdById(int id, int world) 
+    {
+        Connection con = DatabaseConnection.getConnection();
+        PreparedStatement ps;
+        try 
+        {
+            ps = con.prepareStatement("SELECT job FROM characters WHERE id = ? AND world = ?");
+            ps.setInt(0x01, id);
+            ps.setInt(0x02, world);
+            ResultSet rs = ps.executeQuery();
+            
+            if (!rs.next()) 
+            {
+                ps.close();
+                return -1;
+            }
+            int job = rs.getInt("job");
+            ps.close();
+            return job;
+        }
+        catch (SQLException e) 
+        {
+            logger.error("ERROR", e);
+        }
+        return -1;
+    }
 
     public boolean isActiveBuffedValue(int skillid) {
         synchronized (effects) {
@@ -2644,8 +2671,36 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         return GMLevel >= level;
     }
 
-    public MapleInventory getInventory(MapleInventoryType type) {
+    public MapleInventory getInventory(MapleInventoryType type) 
+    {
         return inventory[type.ordinal()];
+    }
+    
+    public byte getSlots(int type) 
+    {
+        return type == MapleInventoryType.CASH.getType() ? 0x60 : inventory[type].getSlotLimit();
+    }
+
+    public boolean gainSlots(int type, int slots) 
+    {
+        return gainSlots(type, slots, true);
+    }
+
+    public boolean gainSlots(int type, int slots, boolean update) 
+    {
+        slots += inventory[type].getSlotLimit();
+        if (slots <= 0x60) 
+        {
+            inventory[type].setSlotLimit((byte) slots);
+
+            saveToDB(true);
+            
+            if (update) 
+                client.sendPacket(MaplePacketCreator.updateInventorySlotLimit(type, slots));
+            
+            return true;
+        }
+        return false;
     }
 
     public MapleShop getShop() {
