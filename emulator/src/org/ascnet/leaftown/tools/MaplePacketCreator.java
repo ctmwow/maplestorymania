@@ -5440,7 +5440,7 @@ public class MaplePacketCreator {
         mplew.writeShort(SendPacketOpcode.CS_UPDATE.getValue());
         mplew.writeInt(chr.getCashShop().getCash(0x01)); // Paypal/PayByCash NX
         mplew.writeInt(chr.getCashShop().getCash(0x02)); // Maple Points
-        mplew.writeInt(chr.getCashShop().getCash(0x05)); // Game Card NX
+        mplew.writeInt(chr.getCashShop().getCash(0x04)); // Game Card NX
 
         return mplew.getPacket();
     }
