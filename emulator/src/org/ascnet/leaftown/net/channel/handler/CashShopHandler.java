@@ -46,6 +46,7 @@ import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -411,45 +412,65 @@ public class CashShopHandler extends AbstractMaplePacketHandler
         }
         else if (action == 0x1E) /** MAKE WITHIN NORMAL PURCHASES? **/ //TODO 
         {
-            slea.skip(1);
-            final int useNX = slea.readInt();
+            slea.skip(0x01);
+            
+            final int cashType = slea.readInt(); 
             final int snCS = slea.readInt();
             final CashItemInfo cashPackage = CashItemFactory.getItem(snCS);
-            final List<CashItemInfo> packageItems = CashItemFactory.getPackageItems(cashPackage.getItemId());
-            for (CashItemInfo item : packageItems) 
+            
+            if (!cashPackage.onSale()) 
             {
-                if (!(c.getPlayer().getInventory(MapleItemInformationProvider.getInstance().getInventoryType(item.getItemId())).getNextFreeSlot() > -0x01)) 
-                {
-                    c.sendPacket(MaplePacketCreator.showNXMapleTokens(c.getPlayer()));
-                    return;
-                }
-            }
-            if (!cashPackage.onSale() || !c.getPlayer().getCashShop().removeCash(useNX, cashPackage.getPrice())) 
-            {
+            	c.sendPacket(MaplePacketCreator.showCashShopMessage((byte) 0x00));
                 c.sendPacket(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.showNXMapleTokens(c.getPlayer()));
+                
                 return;
             }
-            for (CashItemInfo item : packageItems) 
+            
+            if(c.getPlayer().getCashShop().getCash(cashType) < cashPackage.getPrice())
             {
-                if (item.getItemId() >= 5000000 && item.getItemId() <= 5000100)
+            	c.sendPacket(MaplePacketCreator.showCashShopMessage((byte) 0xA5));
+                c.sendPacket(MaplePacketCreator.enableActions());
+                c.sendPacket(MaplePacketCreator.showNXMapleTokens(c.getPlayer()));
+                
+            	return;
+            }
+            
+            List<IItem> listItem = new ArrayList<IItem>();
+            
+            for (CashItemInfo item : CashItemFactory.getPackageItems(cashPackage.getItemId())) 
+            {
+            	IItem realItem = item.toItem();
+            	
+                if (realItem.getItemId() >= 5000000 && realItem.getItemId() <= 5000100)
                 {
                     MaplePet pet = MaplePet.createPet(c.getPlayer().getId(), item.getItemId());
-                    if (pet == null) 
-                        return;
-
-                    MapleInventoryManipulator.addById(c, item.getItemId(), (short) 1, "Cash Package was purchased.", null, pet);
+                    
+                    if (pet == null)
+                    {
+                    	c.sendPacket(MaplePacketCreator.showCashShopMessage((byte) 0x00));
+                        c.sendPacket(MaplePacketCreator.enableActions());
+                        c.sendPacket(MaplePacketCreator.showNXMapleTokens(c.getPlayer()));
+                        
+                        log.error("CANNOT CREATE PET FOR PACKAGE \r\n ACCID : " + c.getAccID());	
+                    }
+                    else
+                    	realItem.setPet(pet);
+                    
+                    c.getPlayer().getCashShop().addToInventory(realItem);
                 }
                 else 
-                    MapleInventoryManipulator.addById(c, item.getItemId(), (short) item.getCount(), "Cash Package was purchased.", null, null);
+                	c.getPlayer().getCashShop().addToInventory(realItem);
+                
+                listItem.add(realItem);
             }
-            c.sendPacket(MaplePacketCreator.showBoughtCSPackage(accountId, packageItems));
+            
+            c.getPlayer().getCashShop().gainCash(cashType, -cashPackage.getPrice());
+            
+            c.sendPacket(MaplePacketCreator.showBoughtCSPackage(accountId, listItem));
             c.sendPacket(MaplePacketCreator.showNXMapleTokens(c.getPlayer()));
-        } 
-        else if (action == 0x20) /** EVERYTHING IS ONE MESO? **/
-        {
-        	//TODO
         }
-        else if (action == 32)
+        else if (action == 32) /** EVERYTHING IS ONE MESO? **/ //TODO rework
         {
             int snCS = slea.readInt();
             CashItemInfo item = CashItemFactory.getItem(snCS);

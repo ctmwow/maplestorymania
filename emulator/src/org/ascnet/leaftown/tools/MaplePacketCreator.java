@@ -1225,7 +1225,7 @@ public class MaplePacketCreator {
         }
         
         short pos = item.getPosition();
-        boolean masking = false;
+        //boolean masking = false; TODO check
         
         if (!leaveOutPosition) 
         {
@@ -1233,10 +1233,7 @@ public class MaplePacketCreator {
             {
                 pos *= -0x01;
                 if (pos > 0x64 || ring) 
-                {
-                    masking = true;
                     mplew.writeShort(pos - 0x64);
-                }
                 else 
                     mplew.writeShort(pos);
             } 
@@ -5436,13 +5433,14 @@ public class MaplePacketCreator {
         mplew.write(type2);
     }
 
-    public static MaplePacket showNXMapleTokens(MapleCharacter chr) {
+    public static MaplePacket showNXMapleTokens(MapleCharacter chr) 
+    {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_UPDATE.getValue());
-        mplew.writeInt(chr.getCashShop().getCash(1)); // Paypal/PayByCash NX
-        mplew.writeInt(chr.getCashShop().getCash(2)); // Maple Points
-        mplew.writeInt(chr.getCashShop().getCash(4)); // Game Card NX
+        mplew.writeInt(chr.getCashShop().getCash(0x01)); // Paypal/PayByCash NX
+        mplew.writeInt(chr.getCashShop().getCash(0x02)); // Maple Points
+        mplew.writeInt(chr.getCashShop().getCash(0x05)); // Game Card NX
 
         return mplew.getPacket();
     }
@@ -5457,24 +5455,17 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    public static MaplePacket showBoughtCSPackage(int accountId, List<CashItemInfo> items) {
+    public static MaplePacket showBoughtCSPackage(int accountId, List<IItem> items) 
+    {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(137);
+        mplew.write(0x89);
         mplew.write(items.size());
-        for (CashItemInfo item : items) {
-            mplew.writeLong(12687098);
-            mplew.writeLong(accountId);
-            mplew.writeInt(item.getItemId());
-            mplew.writeInt(item.getSN());
-            mplew.writeShort(item.getCount());
-            mplew.write(0);
-            mplew.write(HexTool.getByteArrayFromHexString("00 50 4C 40 00 9C F4 78"));
-            mplew.writeInt(0);
-            mplew.writeLong(FileTimeUtil.getFileTimestamp(item.getExpiration().getTime()));
-            mplew.writeLong(0);
-        }
+        
+        for (IItem item : items) 
+        	addCashItemInformation(mplew, item, accountId);
+        
         mplew.writeShort(0);
 
         return mplew.getPacket();

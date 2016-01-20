@@ -3970,7 +3970,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     //TODO REVISE
-    private int getSharedCash() {
+    /*private int getSharedCash() 
+    {
         Connection con = DatabaseConnection.getConnection();
         int ret = 0;
         try {
@@ -3988,9 +3989,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             logger.error("SQL error: " + se.getLocalizedMessage(), se);
         }
         return ret;
-    }
+    }*/
 
-    private boolean tryDeductSharedCash(int deduct, String comment) {
+    /*private boolean tryDeductSharedCash(int deduct, String comment) {
         Connection con = DatabaseConnection.getConnection();
         try {
             int nx = 0;
@@ -4044,7 +4045,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             }
         }
         return false;
-    }
+    }*/
 
     public boolean haveItem(int itemid, int quantity, boolean checkEquipped, boolean exact) {
         // if exact is true, then possessed must be EXACTLY equal to quantity. else, possessed can be >= quantity
