@@ -27,9 +27,9 @@
 
 var exitMap;
  
-importPackage(Packages.world);
-importPackage(Packages.client);
-importPackage(Packages.server.maps);
+importPackage(Packages.org.ascnet.leaftown.world);
+importPackage(Packages.org.ascnet.leaftown.client);
+importPackage(Packages.org.ascnet.leaftown.server.maps);
 importPackage(java.lang);
 
 function init() {
@@ -171,7 +171,7 @@ function clearPQ(eim) {
         var player = iter.next();
         player.changeMap(bonusMap, bonusMap.getPortal(0));
         em.getClock(player.getClient(), 40);
-//        player.getClient().getSession().write(Packages.tools.MaplePacketCreator.getClock(40));
+//        player.getClient().getSession().write(Packages.org.ascnet.leaftown.tools.MaplePacketCreator.getClock(40));
     }
     eim.schedule("finish", 40000)
 }

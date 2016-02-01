@@ -31,35 +31,21 @@ import org.ascnet.leaftown.tools.data.output.LittleEndianWriter;
 
 import java.awt.Point;
 
-public class TeleportMovement extends AbstractLifeMovement {
-
-    private int unk;
-    private final Point oldpos;
-
-    public TeleportMovement(int type, Point position, int stance, int foothold, int oldx, int oldy) {
-        super(type, position, stance, foothold);
-        oldpos = new Point(oldx, oldy);
-    }
-
-    public int getUnk() {
-        return unk;
-    }
-
-    public Point getOldPos() {
-        return oldpos;
-    }
-
-    public void setUnk(int unk) {
-        this.unk = unk;
+public class TeleportMovement extends AbsoluteLifeMovement 
+{
+    public TeleportMovement(int type, Point position, int newstate) 
+    {
+        super(type, position, 0x00, newstate);
     }
 
     @Override
-    public void serialize(LittleEndianWriter lew) {
+    public void serialize(LittleEndianWriter lew) 
+    {
         lew.write(getType());
         lew.writeShort(getPosition().x);
         lew.writeShort(getPosition().y);
-        lew.writeShort(unk);
-        lew.write(getStance());
-        lew.writeShort(getFoothold());
+        lew.writeShort(getPixelsPerSecond().x);
+        lew.writeShort(getPixelsPerSecond().y);
+        lew.write(getNewstate());
     }
 }

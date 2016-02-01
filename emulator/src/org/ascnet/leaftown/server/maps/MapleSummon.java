@@ -37,60 +37,72 @@ import java.awt.Point;
 /**
  * @author Jan
  */
-public class MapleSummon extends AbstractAnimatedMapleMapObject {
-
+public class MapleSummon extends AbstractAnimatedMapleMapObject 
+{
     private final MapleCharacter owner;
     private final int skillLevel;
     private final int skill;
-    private int hp;
+    private int hp; 
     private final SummonMovementType movementType;
 
-    public MapleSummon(MapleCharacter owner, int skill, Point pos, SummonMovementType movementType) {
+    public MapleSummon(MapleCharacter owner, int skill, Point pos, SummonMovementType movementType) 
+    {
         super();
         this.owner = owner;
         this.skill = skill;
         skillLevel = owner.getSkillLevel(SkillFactory.getSkill(skill));
-        if (skillLevel == 0) {
+        
+        if (skillLevel == 0x00) 
             throw new RuntimeException("Trying to create a summon for a char without the skill");
-        }
+        
         this.movementType = movementType;
         setPosition(pos);
     }
 
-    public void sendSpawnData(MapleClient client) {
+    public void sendSpawnData(MapleClient client) 
+    {
         client.sendPacket(MaplePacketCreator.spawnSpecialMapObject(this, skillLevel, false));
     }
 
-    public void sendDestroyData(MapleClient client) {
+    public void sendDestroyData(MapleClient client) 
+    {
         client.sendPacket(MaplePacketCreator.removeSpecialMapObject(this, true));
     }
 
-    public MapleCharacter getOwner() {
+    public MapleCharacter getOwner()
+    {
         return owner;
     }
 
-    public int getSkill() {
+    public int getSkill() 
+    {
         return skill;
     }
 
-    public int getHP() {
+    public int getHP() 
+    {
         return hp;
     }
 
-    public void addHP(int delta) {
+    public void addHP(int delta) 
+    {
         hp += delta;
     }
 
-    public SummonMovementType getMovementType() {
+    public SummonMovementType getMovementType() 
+    {
         return movementType;
     }
 
-    public boolean isPuppet() {
+    public boolean isPuppet() 
+    {
         return skill == 3111002 || skill == 3211002 || skill == 5211001 || skill == 13111004;
     }
 
-    public boolean isSummon() {
-        switch (skill) {
+    public boolean isSummon() 
+    {
+        switch (skill) 
+        {
             case 3211005: // golden eagle
             case 3111005: // golden hawk
             case 2311006: // summon dragon
@@ -113,12 +125,14 @@ public class MapleSummon extends AbstractAnimatedMapleMapObject {
         }
     }
 
-    public int getSkillLevel() {
+    public int getSkillLevel() 
+    {
         return skillLevel;
     }
 
     @Override
-    public MapleMapObjectType getType() {
+    public MapleMapObjectType getType() 
+    {
         return MapleMapObjectType.SUMMON;
     }
 }

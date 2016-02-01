@@ -48,7 +48,7 @@ function action(mode, type, selection){
         if (status == 0) {
             cm.sendNext("See you next time.");
         } else {
-            cm.warp(103000000);
+            cm.getPlayer().changeMap(103000000, cm.getClient().getChannelServer().getMapFactory().getMap(103000000).getRandomSpawnpoint());
             cm.removeAll(4001007);
             cm.removeAll(4001008);
             cm.dispose();
@@ -65,7 +65,7 @@ function action(mode, type, selection){
             if (eim == null)
                 cm.warp(103000890, "st00"); // Warp player
             else if (cm.isLeader()) {
-                cm.getEventManager("KerningPQ").setProperty("KPQOpen" , "true");
+                //cm.getEventManager("KerningPQ").setProperty("KPQOpen" , "true");
                 eim.disbandParty();
             }
             else

@@ -38,6 +38,7 @@ import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class ChangeMapHandler extends AbstractMaplePacketHandler 
 {
@@ -46,40 +47,55 @@ public class ChangeMapHandler extends AbstractMaplePacketHandler
     @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
     {
-        MapleCharacter player = c.getPlayer();
+        final MapleCharacter player = c.getPlayer();
+        
         player.resetAfkTimer();
-        if (slea.available() == 0) 
+        
+        /** EXIT CASHSHOP **/
+        if (slea.available() == 0x00) 
         {
-            int channel = c.getChannel(); 
-            String ip = c.getChannelServer().getIP(channel);
-            String[] socket = ip.split(":");
             player.saveToDB(true);
             player.getCashShop().open(false);
             player.setInMTS(false);
             player.cancelSavedBuffs();
             player.resetCooldowns();
+
+            final String[] socket = c.getChannelServer().getIP(c.getChannel()).split(":");
+            
             c.getChannelServer().removePlayer(player);
             c.updateLoginState(MapleClient.LOGIN_SERVER_TRANSITION);
+            
             try 
             {
-                MapleCharacter.setLoggedInState(player.getId(), 0);
-                c.sendPacket(MaplePacketCreator.getChannelChange(InetAddress.getByName(socket[0]), Integer.parseInt(socket[1])));
+                MapleCharacter.setLoggedInState(player.getId(), 0x00);
+                
+                c.sendPacket(MaplePacketCreator.getChannelChange(InetAddress.getByName(socket[0x00]), Integer.parseInt(socket[0x01])));
             }
             catch (Exception e) 
             {
-                throw new RuntimeException(e);
+            	try 
+            	{
+					log.error("Client cannot be reconnected to channel. INET_ADDR {" + InetAddress.getByName(socket[0x00]) + "}:{" + Integer.parseInt(socket[0x01]) + "}", e);
+				}
+            	catch (UnknownHostException e1) 
+            	{
+            		log.error("Cannot resolve hostname {" + socket[0x00] + "}", e1);
+				}
             }
         }
         else 
         {
-            slea.skip(1); // 1 = from dying 2 = regular portal
+            slea.skip(0x01); // 1 = from dying 2 = regular portal
+            
             final int targetid = slea.readInt();
             final String startwp = slea.readMapleAsciiString();
             final MaplePortal portal = player.getMap().getPortal(startwp);
-            slea.skip(1);
-            final boolean useDeathItem = slea.readShort() == 1;
+            
+            slea.skip(0x01);
+            
+            final boolean useDeathItem = slea.readShort() == 0x01;
 
-            if (targetid != -1 && !player.isAlive()) 
+            if (targetid != -0x01 && !player.isAlive()) 
             {
                 boolean executeStandardPath = true;
                 boolean hasDeathItem = false;
@@ -91,42 +107,48 @@ public class ChangeMapHandler extends AbstractMaplePacketHandler
                 {
                     player.cancelAllBuffs();
                     MapleMap to = player.getMap().getReturnMap();
-                    if (useDeathItem && player.getInventory(MapleInventoryType.CASH).countById(5510000) > 0) 
+                    
+                    if (useDeathItem && player.getInventory(MapleInventoryType.CASH).countById(5510000) > 0x00) 
                     {
                         hasDeathItem = true;
                         to = player.getMap();
                     }
-                    player.setStance((byte) 0);
+                    
+                    player.setStance((byte) 0x00);
+                    
                     if (player.getMap().canExit() && to != null && to.canEnter() || player.isGM()) 
                     {
-                        player.setHp(50);
+                        player.setHp(0x32);
+                        
                         if (hasDeathItem) 
-                            MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, 5510000, 1, true, false);
+                            MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, 5510000, 0x01, true, false);
                         
                         player.changeMap(to, to.getRandomSpawnPoint());
                         
                     } 
                     else 
                     {
-                        c.sendPacket(MaplePacketCreator.serverNotice(5, "You will remain dead."));
+                        c.sendPacket(MaplePacketCreator.serverNotice(0x05, "You will remain dead."));
                         c.sendPacket(MaplePacketCreator.enableActions());
                     }
                 }
             }
-            else if (targetid != -1 && (player.isGM() || targetid == player.getAutoChangeMapId())) 
+            else if (targetid != -0x01 && (player.isGM() || targetid == player.getAutoChangeMapId())) 
             {
-                MapleMap to = c.getChannelServer().getMapFactory().getMap(targetid);
+                final MapleMap to = c.getChannelServer().getMapFactory().getMap(targetid);
+                
                 if (player.getMapId() == 2010000)
-                    player.changeMap(to, to.getPortal(5));
+                    player.changeMap(to, to.getPortal(0x05));
                 else
                     player.changeMap(to, to.getRandomSpawnPoint());
             }
-            else if (targetid != -1 && !player.isGM()) 
+            else if (targetid != -0x01 && !player.isGM()) 
             {
-                final int divi = player.getMapId() / 100;
+                final int divi = player.getMapId() / 0x64;
+                
                 boolean warp = false;
                 
-                if (divi == 9140900) // Aran Introduction
+                if (divi == 9140900) // Aran Introduction //TODO really necessary?
                 { 
                     if (targetid == 914090011 || targetid == 914090012 || targetid == 914090013 || targetid == 140090000) 
                         warp = true;
@@ -136,23 +158,19 @@ public class ChangeMapHandler extends AbstractMaplePacketHandler
                 	log.warn("Player {} attempted Map jumping without being a GM", player.getName());
                 else
                 {
-                	MapleMap to = c.getChannelServer().getMapFactory().getMap(targetid);
+                	final MapleMap to = c.getChannelServer().getMapFactory().getMap(targetid);
                 	player.changeMap(to, to.getRandomSpawnPoint());
                 }
             }
             else 
             {
                 if (player.getEventInstance() != null && (player.getMapId() == 910510201 || player.getMapId() == 108000700)) 
-                {
                     player.getEventInstance().playerMapExit(player);
-                }
+                
                 if (portal != null) 
-                {
                     portal.enterPortal(c);
-                }
                 else 
                 {
-                    //c.sendPacket(MaplePacketCreator.enableActions());
                     log.warn(MapleClient.getLogMessage(c, "Portal {} not found on map {}", startwp, player.getMap().getId()));
                     c.disconnect();
                 }

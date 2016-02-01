@@ -39,30 +39,33 @@ import java.util.Map;
 /**
  * @author Matze
  */
-public class MapleQuestStatus {
-
-    public enum Status {
-
-        UNDEFINED(-1),
-        NOT_STARTED(0),
-        STARTED(1),
-        COMPLETED(2);
+public class MapleQuestStatus 
+{
+    public enum Status 
+    {
+        UNDEFINED(-0x01),
+        NOT_STARTED(0x00),
+        STARTED(0x01),
+        COMPLETED(0x02);
 
         final int status;
 
-        private Status(int id) {
+        private Status(int id) 
+        {
             status = id;
         }
 
-        public int getId() {
+        public int getId() 
+        {
             return status;
         }
 
-        public static Status getById(int id) {
-            for (Status l : Status.values()) {
-                if (l.status == id) {
+        public static Status getById(int id) 
+        {
+            for (Status l : Status.values()) 
+            {
+                if (l.status == id) 
                     return l;
-                }
             }
             return null;
         }

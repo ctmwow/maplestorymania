@@ -28,7 +28,9 @@
 @	Function = LPQ - 5th Stage
 @
  */
-
+ 
+importPackage(Packages.org.ascnet.leaftown.tools);
+ 
 var status = 0;
 var party;
 var preamble;
@@ -74,7 +76,10 @@ function action(mode, type, selection) {
                     }
 		}else{
                     if(gaveItems == null){
-                        if(cm.itemQuantity(4001022) >= 24){
+                        if(cm.getPlayer().getMap().getCharacters().size() != eim.getPlayers().size()) {
+							cm.sendOk("Please wait for all of your party members to get here.");
+							cm.dispose();
+                        } else if(cm.itemQuantity(4001022) >= 24){
                             cm.sendOk("Good job! you have collected all 24 #b#t4001022#'s#k");
                         }else{
                             cm.sendOk("Sorry you don't have all 24 #b#t4001022#'s#k");
@@ -86,11 +91,14 @@ function action(mode, type, selection) {
                     }
 		}}
         }else if (status == 1){
-            cm.sendOk("You may continue to the next stage!");
             cm.removeAll(4001022);
-            cm.gate();
-            cm.clear();
-            cm.givePartyExp(5400, eim.getPlayers());
+            
+			var map = eim.getMapInstance(cm.getPlayer().getMapId());
+			map.broadcastMessage(MaplePacketCreator.showEffect("quest/party/clear"));
+			map.broadcastMessage(MaplePacketCreator.playSound("Party1/Clear"));
+			map.broadcastMessage(MaplePacketCreator.environmentChange("gate", 2));
+			
+            cm.givePartyExp("LudiPQ5th");
             eim.setProperty("5stageclear","true");
             eim.setProperty("leader" + nthtext + "gaveItems","done");
             cm.dispose();

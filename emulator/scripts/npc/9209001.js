@@ -50,8 +50,8 @@ function action(mode, type, selection) {
             cm.sendSimple("What would you like to know about the Maple 7th Day Market?#b\r\n#L0#Where does the Maple 7th Day Market take place?\r\n#L1#What can you do at the Maple 7th Day Market?\r\n#L2#I do not have any questions.");
     } else if(status == 1) {
         if (sel == 0) {
+        	cm.getPlayer().saveLocation("EVENT");
             cm.warp(680100000 + parseInt(Math.random() * 3));
-            cm.getPlayer().saveLocation("EVENT");//harhar
             cm.dispose();
         } else if (selection == 0) {
             cm.sendNext("The Maple 7th Day Market opens only on Sundays. You can enter if you find me in any town, Henesys, New Leaf City, Leafre, Kerning City, Ludibrium, I'm just about everywhere!");

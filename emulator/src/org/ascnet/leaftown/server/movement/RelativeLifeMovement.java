@@ -31,18 +31,20 @@ import org.ascnet.leaftown.tools.data.output.LittleEndianWriter;
 
 import java.awt.Point;
 
-public class RelativeLifeMovement extends AbstractLifeMovement {
-
-    public RelativeLifeMovement(int type, Point position, int stance, int foothold) {
-        super(type, position, stance, foothold);
+public class RelativeLifeMovement extends AbstractLifeMovement 
+{
+    public RelativeLifeMovement(int type, Point position, int duration, int newState) 
+    {
+        super(type, position, duration, newState);
     }
 
     @Override
-    public void serialize(LittleEndianWriter lew) {
+    public void serialize(LittleEndianWriter lew) 
+    {
         lew.write(getType());
         lew.writeShort(getPosition().x);
         lew.writeShort(getPosition().y);
-        lew.write(getStance());
-        lew.writeShort(getFoothold());
+        lew.write(getNewstate());
+        lew.writeShort(getDuration());
     }
 }

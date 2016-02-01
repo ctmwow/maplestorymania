@@ -55,7 +55,7 @@ function start(mode, type, selection) {
                     qm.dispose();
                 } else {
                     qm.gainItem(1142068, 1);
-                    qm.getPlayer().changeJob(Packages.client.MapleJob.WINDARCHER3);
+                    qm.getPlayer().changeJob(Packages.org.ascnet.leaftown.client.MapleJob.WINDARCHER3);
                     qm.sendOk("#h #, as of this moment, you are an Advanced Knight. From this moment on, you will be carrying a while lot of responsibility befitting your new title as an Advanced Knight of Cygnus Knights. You may view the world in a carefree mode, but please remember what your mission is.");
                     qm.completeQuest();
                     qm.dispose();

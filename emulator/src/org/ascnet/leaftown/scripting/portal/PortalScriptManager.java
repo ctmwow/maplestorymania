@@ -116,4 +116,9 @@ public class PortalScriptManager {
     public void clearScripts() {
         scripts.clear();
     }
+    
+    public void dispose()
+    {
+    	
+    }
 }

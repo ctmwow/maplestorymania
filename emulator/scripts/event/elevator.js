@@ -32,7 +32,7 @@
 ---------------------------------------------------------------------------------------------------
 **/
 
-importPackage(Packages.scripting.reactor);
+importPackage(Packages.org.ascnet.leaftown.scripting.reactor);
 var elevator_s;
 var elevator_m;
 var returnMap;

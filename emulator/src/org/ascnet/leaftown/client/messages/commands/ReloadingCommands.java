@@ -89,15 +89,16 @@ public class ReloadingCommands implements Command {
                 mc.dropMessage("Shops reloaded.");
                 break;
             case "!reloadevents":
-                for (ChannelServer instance : ChannelServer.getAllInstances()) {
+                for (ChannelServer instance : ChannelServer.getAllInstances()) 
+                {
                     if (instance != null)
                         instance.reloadEvents();
                 }
                 mc.dropMessage("Events reloaded.");
                 break;
-            case "!reloadmapevents":
-                MapScriptManager.getInstance().clearScripts();
-                mc.dropMessage("Map events reloaded.");
+            case "!reloadMapScript":
+                MapScriptManager.getInstance().clearCompiledScripts();
+                mc.dropMessage("Map Scripts reloaded.");
                 break;
             case "!reloadcommands":
                 CommandProcessor.getInstance().reloadCommands();

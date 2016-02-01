@@ -29,14 +29,11 @@ package org.ascnet.leaftown.server.movement;
 
 import java.awt.Point;
 
-public interface LifeMovement extends LifeMovementFragment {
-
+public interface LifeMovement extends LifeMovementFragment 
+{
     @Override
     Point getPosition();
-
-    int getStance();
-
-    int getFoothold();
-
+    int getNewstate();
+    int getDuration();
     int getType();
 }

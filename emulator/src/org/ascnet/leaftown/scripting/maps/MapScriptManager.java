@@ -30,7 +30,6 @@ package org.ascnet.leaftown.scripting.maps;
 import org.ascnet.leaftown.client.MapleClient;
 
 import javax.script.Compilable;
-import javax.script.CompiledScript;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -42,63 +41,59 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapScriptManager {
-
+public class MapScriptManager 
+{
+    protected static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MapScriptManager.class);
+    
     private static final MapScriptManager instance = new MapScriptManager();
-    private final Map<String, MapScript> scripts = new HashMap<>();
+    private final Map<String, MapScript> compiledScripts = new HashMap<>();
     private final ScriptEngineFactory sef;
 
-    private MapScriptManager() {
-        final ScriptEngineManager sem = new ScriptEngineManager();
-        sef = sem.getEngineByName("javascript").getFactory();
+    private MapScriptManager() 
+    {
+        sef = new ScriptEngineManager().getEngineByName("javascript").getFactory();
     }
 
-    public static MapScriptManager getInstance() {
+    public static MapScriptManager getInstance() 
+    {
         return instance;
     }
 
-    public void getMapScript(MapleClient c, String scriptName, boolean firstUser) {
-        if (scripts.containsKey(scriptName)) {
-            scripts.get(scriptName).start(new MapScriptMethods(c));
+    public void getMapScript(MapleClient c, String scriptName, boolean firstUser) 
+    {
+        if (compiledScripts.containsKey(scriptName)) 
+        {
+        	compiledScripts.get(scriptName).start(new MapScriptMethods(c));
+            return;
+        }
+        
+        final File scriptFile = new File("scripts/map/" + (firstUser ? "onFirstUserEnter" : "onUserEnter") + "/" + scriptName + ".js");
+        
+        if (!scriptFile.exists()) 
+        {
+        	log.warn("[MAP] Script File " + scriptFile.getAbsolutePath() + " cannot be found!");
             return;
         }
 
-        String type;
-        if (firstUser) {
-            type = "onFirstUserEnter";
-        } else {
-            type = "onUserEnter";
-        }
-
-        final File scriptFile = new File("scripts/map/" + type + "/" + scriptName + ".js");
-        if (!scriptFile.exists()) {
-            return;
-        }
-
-        FileReader fr = null;
         final ScriptEngine portal = sef.getScriptEngine();
-        try {
-            fr = new FileReader(scriptFile);
-            final CompiledScript compiled = ((Compilable) portal).compile(fr);
-            compiled.eval();
-        } catch (ScriptException | IOException e) {
-            System.err.println("THROW" + e);
-        } finally {
-            if (fr != null) {
-                try {
-                    fr.close();
-                } catch (IOException e) {
-                    System.err.println("ERROR CLOSING" + e);
-                }
-            }
+        
+        try 
+        {
+            ((Compilable) portal).compile(new FileReader(scriptFile)).eval();
+        }
+        catch (ScriptException | IOException e) 
+        {
+        	log.error("[MAP] Script " + scriptFile.getAbsolutePath() + " cannot by compiled!", e);
         }
 
         final MapScript script = ((Invocable) portal).getInterface(MapScript.class);
-        scripts.put(scriptName, script);
         script.start(new MapScriptMethods(c));
+        
+        compiledScripts.put(scriptName, script);
     }
 
-    public void clearScripts() {
-        scripts.clear();
+    public void clearCompiledScripts() 
+    {
+    	compiledScripts.clear();
     }
 }

@@ -55,7 +55,7 @@ function start(mode, type, selection) {
                     qm.dispose();
                 } else {
                     qm.gainItem(1142068, 1);
-                    qm.getPlayer().changeJob(Packages.client.MapleJob.DAWNWARRIOR3);
+                    qm.getPlayer().changeJob(Packages.org.ascnet.leaftown.client.MapleJob.DAWNWARRIOR3);
                     qm.sendOk("#h #, as of this moment, you are an Advanced Knight. From this moment on, you shall carry yourself with dignity and respect befitting your new title, an Advanced Knight of Cygnus Knights. May your glory continue to shine as bright as this moment.");
                     qm.completeQuest();
                     qm.dispose();

@@ -1,7 +1,7 @@
 /*
  * Cygnus 1st Job advancement - Wind Breaker
  */
-importPackage(Packages.client);
+importPackage(Packages.org.ascnet.leaftown.client);
 
 var status = -1;
 

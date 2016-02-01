@@ -24,6 +24,7 @@ var ticket = 4031134;
 var msg;
 var check;
 var access = false;
+var status = 0;
 
 function start() {
     cm.sendSimple("Have you heard of the beach with a spectacular view of the ocean called #b#m110000000##k, located a little far from #m"+cm.getPlayer().getMapId()+"#? I can take you there right now for either #b"+pay+" mesos#k, or if you have #b#t"+ticket+"##k with you, in which case you'll be in for free.\r\n\r\n#L0##bI'll pay "+pay+" mesos.#k#l\r\n#L1##bI have #t"+ticket+"##k#l\r\n#L2##bWhat is #t"+ticket+"#?#k#l");
@@ -36,7 +37,8 @@ function action(mode, type, selection) {
         if (mode == 0 && status == 0) {
             cm.dispose();
             return;
-        } if (mode == 0 && status == 1) {
+        } 
+		if (mode == 0 && status == 1) {
             cm.sendNext("You must have some buiness to take care of here. You must be tired from all that traveling and hunting. Go take some rest, and if you feel like changing your mind, then come talk to me.");
             cm.dispose();
             return;
@@ -72,7 +74,8 @@ function action(mode, type, selection) {
                     cm.dispose();
                 } else
                     access = true;
-            } if (access == true) {
+            } 
+			if (access == true) {
                 cm.getPlayer().saveLocation("FLORINA");
                 cm.warp(110000000);
                 cm.dispose();

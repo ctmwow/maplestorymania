@@ -29,16 +29,18 @@ package org.ascnet.leaftown.server.movement;
 
 import org.ascnet.leaftown.tools.data.output.LittleEndianWriter;
 
-public class BasicMovement extends AbstractLifeMovement {
-
-    public BasicMovement(int type, int stance, int foothold) {
+public class BasicMovement extends AbstractLifeMovement 
+{
+    public BasicMovement(int type, int stance, int foothold) 
+    {
         super(type, null, stance, foothold);
     }
 
     @Override
-    public void serialize(LittleEndianWriter lew) {
+    public void serialize(LittleEndianWriter lew) 
+    {
         lew.write(getType());
-        lew.write(getStance());
-        lew.writeShort(getFoothold());
+        lew.write(getDuration());
+        lew.writeShort(getNewstate());
     }
 }

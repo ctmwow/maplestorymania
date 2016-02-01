@@ -21,20 +21,56 @@
 */
 /*
  *@Author:  Moogra
- *@NPC:     4th Job Advancement NPC
+ *@NPC:     4th Job Thief Advancement NPC
  *@Purpose: Handles 4th job.
  */
 
 function start() {
-    if (cm.getLevel() < 120) {
-        cm.sendOk("Sorry, but you have to be at least level 120 to make the 4th Job Advancement.");
+	if(cm.getLevel() < 120 || Math.round(cm.getJobId() / 100) != 4) {
+		cm.sendOk("Please don't bother me right now, I am trying to concentrate.");
+		cm.dispose();
+    } else if (!cm.isQuestCompleted(6934)) {
+        cm.sendOk("You have not yet passed my trials. I can not advance you until you do so.");
         cm.dispose();
-    } else if (cm.getLevel() >=120)
-        cm.sendNext("Do you want to get your 4th Job Advancement?");
+    } else if ( cm.getJobId() % 100 % 10 != 2) {
+        cm.sendYesNo("You did a marvellous job passing my test. Are you ready to advance to your 4th job?");
+	} else {
+		cm.sendSimple("If I must, I can teach you the art of your class.\r\n#b#L0#Teach me the skills of my class.#l");
+		//cm.dispose();
+	}
 }
 
 function action(mode, type, selection) {
-    if (mode > 1)
-        cm.changeJobById(cm.getJobId() + 1);
+    if (mode >= 1 && cm.getJobId() % 100 % 10 != 2) {
+		cm.changeJobById(cm.getJobId() + 1);
+		if(cm.getJobId() == 412) {
+			cm.teachSkill(4120002, 0, 10, -1);
+			cm.teachSkill(4120005, 0, 10, -1);
+			cm.teachSkill(4121006, 0, 10, -1);
+		} else if(cm.getJobId() == 422) {
+			cm.teachSkill(4220002, 0, 10, -1);
+			cm.teachSkill(4220005, 0, 10, -1);
+			cm.teachSkill(4221007, 0, 10, -1);
+		}
+	} else if(mode >= 1 && cm.getJobId() % 100 % 10 == 2) {
+		if(cm.getJobId() == 412) {
+			if(cm.getPlayer().getSkillLevel(4121008) == 0)
+				cm.teachSkill(4121008 , 0, 10, -1);
+			if(cm.getPlayer().getSkillLevel(4121004) == 0)
+				cm.teachSkill(4121004 , 0, 10, -1);
+			if(cm.getPlayer().getSkillLevel(4121003) == 0)
+				cm.teachSkill(4121003 , 0, 10, -1);
+		} else if(cm.getJobId() == 422) {
+			if(cm.getPlayer().getSkillLevel(4221004) == 0)
+				cm.teachSkill(4221004 , 0, 10, -1);
+			if(cm.getPlayer().getSkillLevel(4221001) == 0)
+				cm.teachSkill(4221001 , 0, 10, -1);
+			if(cm.getPlayer().getSkillLevel(4221006) == 0)
+				cm.teachSkill(4221006 , 0, 10, -1);
+			if(cm.getPlayer().getSkillLevel(4221003) == 0)
+				cm.teachSkill(4221003 , 0, 10, -1);
+		}
+		cm.sendOk("It is done. Leave me now.");
+	}
     cm.dispose();
 }

@@ -34,42 +34,48 @@ import org.ascnet.leaftown.server.maps.MapleMapPortal;
 
 import java.awt.Point;
 
-public class PortalFactory {
-
+public class PortalFactory 
+{
     private int nextDoorPortal;
 
-    public PortalFactory() {
+    public PortalFactory() 
+    {
         nextDoorPortal = 0x80;
     }
 
-    public MaplePortal makePortal(int type, MapleData portal) {
+    public MaplePortal makePortal(int type, MapleData portal) 
+    {
         MapleGenericPortal ret = null;
-        if (type == MaplePortal.MAP_PORTAL) {
+        
+        if (type == MaplePortal.MAP_PORTAL) 
             ret = new MapleMapPortal();
-        } else {
+        else 
             ret = new MapleGenericPortal(type);
-        }
+
         loadPortal(ret, portal);
         return ret;
     }
 
-    private void loadPortal(MapleGenericPortal myPortal, MapleData portal) {
+    private void loadPortal(MapleGenericPortal myPortal, MapleData portal) 
+    {
         myPortal.setName(DataUtil.toString(portal.getChild("pn")));
         myPortal.setTarget(DataUtil.toString(portal.getChild("tn")));
         myPortal.setTargetMapId(DataUtil.toInt(portal.getChild("tm")));
-        int x = DataUtil.toInt(portal.getChild("x"));
-        int y = DataUtil.toInt(portal.getChild("y"));
-        myPortal.setPosition(new Point(x, y));
+        myPortal.setPosition(new Point(DataUtil.toInt(portal.getChild("x")), DataUtil.toInt(portal.getChild("y"))));
+        
         String script = DataUtil.toString(portal.getChild("script"), null);
-        if (script != null && script.length() == 0) {
+        
+        if (script != null && script.length() == 0x00) 
             script = null;
-        }
+        
         myPortal.setScriptName(script);
-        if (myPortal.getType() == MaplePortal.DOOR_PORTAL) {
+        
+        if (myPortal.getType() == MaplePortal.DOOR_PORTAL) 
+        {
             myPortal.setId(nextDoorPortal);
             nextDoorPortal++;
-        } else {
-            myPortal.setId(Integer.parseInt(portal.getName()));
         }
+        else 
+            myPortal.setId(Integer.parseInt(portal.getName()));
     }
 }

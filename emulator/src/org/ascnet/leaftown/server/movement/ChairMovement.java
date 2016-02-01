@@ -31,29 +31,33 @@ import org.ascnet.leaftown.tools.data.output.LittleEndianWriter;
 
 import java.awt.Point;
 
-public class ChairMovement extends AbstractLifeMovement {
-
+public class ChairMovement extends AbstractLifeMovement 
+{
     private int unk;
 
-    public ChairMovement(int type, Point position, int stance, int foothold) {
-        super(type, position, stance, foothold);
+    public ChairMovement(int type, Point position, int duration, int newState) 
+    {
+        super(type, position, duration, newState);
     }
 
-    public int getUnk() {
+    public int getUnk() 
+    {
         return unk;
     }
 
-    public void setUnk(int unk) {
+    public void setUnk(int unk)
+    {
         this.unk = unk;
     }
 
     @Override
-    public void serialize(LittleEndianWriter lew) {
+    public void serialize(LittleEndianWriter lew) 
+    {
         lew.write(getType());
         lew.writeShort(getPosition().x);
         lew.writeShort(getPosition().y);
         lew.writeShort(unk);
-        lew.write(getStance());
-        lew.writeShort(getFoothold());
+        lew.write(getNewstate());
+        lew.writeShort(getDuration());
     }
 }

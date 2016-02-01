@@ -19,6 +19,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/* ===========================================================
+			Resonance
+	NPC Name: 		Pusla
+	Map(s): 		Snow Island: Rien (140000000)
+	Description: 	Open Storage
+=============================================================
+Version 1.0 - Script Done.(11/6/2010)
+=============================================================
+*/
 function start() {
     cm.getPlayer().getStorage().sendStorage(cm.getClient(), 1200000);
     cm.dispose();

@@ -137,4 +137,9 @@ public class PortalPlayerInteraction extends AbstractPlayerInteraction
             return true;
         }
     }
+    
+    public void dispose()
+    {
+    	
+    }
 }

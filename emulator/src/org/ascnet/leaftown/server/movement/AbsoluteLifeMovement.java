@@ -31,40 +31,46 @@ import org.ascnet.leaftown.tools.data.output.LittleEndianWriter;
 
 import java.awt.Point;
 
-public class AbsoluteLifeMovement extends AbstractLifeMovement {
-
+public class AbsoluteLifeMovement extends AbstractLifeMovement 
+{
     private Point pixelsPerSecond;
     private int unk;
 
-    public AbsoluteLifeMovement(int type, Point position, int stance, int foothold) {
+    public AbsoluteLifeMovement(int type, Point position, int stance, int foothold) 
+    {
         super(type, position, stance, foothold);
     }
 
-    public Point getPixelsPerSecond() {
+    public Point getPixelsPerSecond() 
+    {
         return pixelsPerSecond;
     }
 
-    public void setPixelsPerSecond(Point wobble) {
+    public void setPixelsPerSecond(Point wobble) 
+    {
         pixelsPerSecond = wobble;
     }
 
-    public int getUnk() {
+    public int getUnk() 
+    {
         return unk;
     }
 
-    public void setUnk(int unk) {
+    public void setUnk(int unk) 
+    {
         this.unk = unk;
     }
 
     @Override
-    public void serialize(LittleEndianWriter lew) {
+    public void serialize(LittleEndianWriter lew) 
+    {
         lew.write(getType());
         lew.writeShort(getPosition().x);
         lew.writeShort(getPosition().y);
         lew.writeShort(pixelsPerSecond.x);
         lew.writeShort(pixelsPerSecond.y);
         lew.writeShort(unk);
-        lew.write(getStance());
-        lew.writeShort(getFoothold());
+        lew.write(getNewstate());
+        lew.writeShort(getDuration());
     }
 }

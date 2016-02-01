@@ -60,7 +60,7 @@ public class DebugCommands implements Command {
                 MapleQuest.getInstance(Integer.parseInt(splitted[1])).forfeit(c.getPlayer());
                 break;
             case "!nearestportal":
-                final MaplePortal portal = player.getMap().findClosestSpawnPoint(player.getPosition());
+                final MaplePortal portal = player.getMap().findClosestPortal(player.getPosition());
                 mc.dropMessage(portal.getName() + " id: " + portal.getId() + " script: " + portal.getScriptName());
                 break;
             case "!spawndebug":

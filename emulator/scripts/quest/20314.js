@@ -55,7 +55,7 @@ function start(mode, type, selection) {
                     qm.dispose();
                 } else {
                     qm.gainItem(1142068, 1);
-                    qm.getPlayer().changeJob(Packages.client.MapleJob.NIGHTWALKER3);
+                    qm.getPlayer().changeJob(Packages.org.ascnet.leaftown.client.MapleJob.NIGHTWALKER3);
                     qm.sendOk("#h #, from here on out, you are an Advanced Knight of Cygnus Knights. The title comes with a newfound broad view on everything. You may encounter temptations here and there, but I want you to keep your faith and beliefs intact and do not succumb to the darkness.");
                     qm.completeQuest();
                     qm.dispose();

@@ -21,10 +21,8 @@
 /*
 	Author: kevintjuh93
 */
-function enter(pi) 
-{
-	if (!pi.isQuestCompleted(21010)) 
-	{
+function enter(pi) {
+	if (!pi.isQuestCompleted(21010)) {
 		pi.message("You must complete the quest before proceeding to the next map.");
 		return false;
 	}

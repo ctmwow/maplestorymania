@@ -1,4 +1,4 @@
-importPackage(Packages.server.life);
+importPackage(Packages.org.ascnet.leaftown.server.life);
 
 var status = -1;
 

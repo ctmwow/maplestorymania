@@ -1824,18 +1824,23 @@ public class MaplePacketCreator {
      * @param GP       Amount of GP gained
      * @return The showStatusInfo packet
      */
-    public static MaplePacket showStatusInfo(byte type, byte typeExt, int itemId, int quantity, boolean loseMeso, int mesos, short iNetMeso, int GP) {
+    public static MaplePacket showStatusInfo(byte type, byte typeExt, int itemId, int quantity, boolean loseMeso, int mesos, short iNetMeso, int GP) 
+    {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
         mplew.write(type);
-        switch (type) {
+        switch (type) 
+        {
             case 0:
                 mplew.write(typeExt);
-                if (typeExt == 0 || typeExt == 2) {
+                if (typeExt == 0 || typeExt == 2) 
+                {
                     mplew.writeInt(itemId); // You have gained an item ({item name})
                     mplew.writeInt(quantity);
-                } else if (typeExt == 1) {
+                }
+                else if (typeExt == 1) 
+                {
                     mplew.write(loseMeso ? 1 : 0); // if != 0, A portion was not found after falling on the ground.
                     mplew.writeInt(mesos); // You have gained mesos (+0).
                     mplew.writeShort(iNetMeso); // Internet Cafe Meso Bonus
@@ -2399,11 +2404,12 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    private static void serializeMovementList(LittleEndianWriter lew, List<LifeMovementFragment> moves) {
+    private static void serializeMovementList(LittleEndianWriter lew, List<LifeMovementFragment> moves) 
+    {
         lew.write(moves.size());
-        for (LifeMovementFragment move : moves) {
+        
+        for (LifeMovementFragment move : moves) 
             move.serialize(lew);
-        }
     }
 
     public static MaplePacket movePlayer(int cid, int oid, List<LifeMovementFragment> moves) {
@@ -2417,7 +2423,8 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    public static MaplePacket moveSummon(int cid, int oid, Point startPos, List<LifeMovementFragment> moves) {
+    public static MaplePacket moveSummon(int cid, int oid, Point startPos, List<LifeMovementFragment> moves) 
+    {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.MOVE_SUMMON.getValue());
@@ -3147,11 +3154,13 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    private static <E extends ValueHolder<Long>> long getLongMask(List<Pair<E, Integer>> statups) {
-        long mask = 0;
-        for (Pair<E, Integer> statup : statups) {
+    private static <E extends ValueHolder<Long>> long getLongMask(final List<Pair<E, Integer>> statups) 
+    {
+        long mask = 0x00;
+        
+        for (Pair<E, Integer> statup : statups) 
             mask |= statup.getLeft().getValue();
-        }
+        
         return mask;
     }
 
@@ -3275,15 +3284,19 @@ public class MaplePacketCreator {
 
         return mplew.getPacket();
     }
+    
+	   public static MaplePacket giveGMEffect(int type, byte mode) 
+	   {
+		   final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+		   mplew.writeShort(SendPacketOpcode.GM.getValue());
+		   mplew.write(type);
+		   mplew.write(mode);
+		   return mplew.getPacket();
+	   }
 
-    public static MaplePacket giveGMHide(boolean hidden) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.writeShort(SendPacketOpcode.GM.getValue());
-        mplew.write(16);
-        mplew.write(hidden ? 1 : 0);
-
-        return mplew.getPacket();
+    public static MaplePacket giveGMHide(boolean hidden) 
+    {
+        return giveGMEffect(0x10, (byte) (hidden ? 0x01 : 0x00)); 
     }
 
     public static MaplePacket showMonsterRiding(int cid, List<Pair<MapleBuffStat, Integer>> statups, int itemId, int skillId) {
@@ -3345,25 +3358,42 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    public static MaplePacket giveForeignBuff(MapleCharacter c, List<Pair<MapleBuffStat, Integer>> statups, MapleStatEffect effect) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+    public static MaplePacket giveForeignBuff(final MapleCharacter c, final List<Pair<MapleBuffStat, Integer>> statups, final MapleStatEffect effect) 
+    {
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.GIVE_FOREIGN_BUFF.getValue());
         mplew.writeInt(c.getId());
-        long mask = getLongMask(statups);
-        mplew.writeLong(0);
-        mplew.writeLong(mask);
-        for (Pair<MapleBuffStat, Integer> statup : statups) {
-            if (effect.isPirateMorph()) {
-                mplew.writeShort(statup.getRight().shortValue() + c.getGender() * 100);
-            } else {
+        
+		 long firstmask = 0x00;
+		 long secondmask = 0x00;
+		 
+		 for (Pair<MapleBuffStat, Integer> statup : statups) 
+		 {
+			 if (statup.getLeft().isFirst()) 
+				 firstmask |= statup.getLeft().getValue();
+			 else 
+				 secondmask |= statup.getLeft().getValue();
+		 }
+		 
+		 mplew.writeLong(firstmask);
+		 mplew.writeLong(secondmask);
+        
+        for (Pair<MapleBuffStat, Integer> statup : statups) 
+        {
+            if (effect != null && effect.isPirateMorph()) 
+                mplew.writeShort(statup.getRight().shortValue() + c.getGender() * 0x64);
+            else 
                 mplew.writeShort(statup.getRight().shortValue());
-            }
         }
-        if (!effect.isMorph())
-            mplew.writeShort(20); // skill duration
-        mplew.writeShort(0);
-        mplew.writeShort(0);
+        
+        if (effect != null && !effect.isMorph())
+            mplew.writeShort(0x14);
+        else
+        	mplew.writeShort(0x00);
+        
+        mplew.writeShort(0x00);
+        mplew.writeShort(0x00);
 
         return mplew.getPacket();
     }
@@ -3997,12 +4027,19 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    public static MaplePacket getShowInventoryFull() {
+    public static MaplePacket getShowInventoryFull() 
+    {
         return showStatusInfo((byte) 0, (byte) -1, 0, 0, false, 0, (short) 0, 0);
     }
 
-    public static MaplePacket showItemUnavailable() {
+    public static MaplePacket showItemUnavailable() 
+    {
         return showStatusInfo((byte) 0, (byte) -2, 0, 0, false, 0, (short) 0, 0);
+    }
+    
+    public static MaplePacket showItemMessage(final int itemId) 
+    {
+        return showStatusInfo((byte) 0x07, (byte) 0x00, itemId, 0x00, false, 0x00, (short) 0x00, 0x00);
     }
     
    public static MaplePacket showBoughtStorageSlots(short slots) 
@@ -4791,6 +4828,11 @@ public class MaplePacketCreator {
         mplew.writeInt(0);
 
         return mplew.getPacket();
+    }
+    
+    public static MaplePacket mapEffect(String path) 
+    {
+    	return environmentChange(path, 3);
     }
 
     public static MaplePacket showGuildInfo(MapleCharacter c) {
@@ -7284,13 +7326,24 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    public static MaplePacket enableTutor(boolean enable) {
+    public static MaplePacket enableTutor(boolean enable) 
+    {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.TUTOR_ENABLE.getValue());
         mplew.write(enable ? 1 : 0);
 
         return mplew.getPacket();
+    }
+    
+    public static MaplePacket talkGuide(String talk) 
+    {
+    	final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+    	mplew.writeShort(SendPacketOpcode.TUTOR_ACTIONS.getValue());
+    	mplew.write(0x00);
+    	mplew.writeMapleAsciiString(talk);
+    	mplew.write(new byte[]{(byte) 0xC8, 0, 0, 0, (byte) 0xA0, (byte) 0x0F, 0, 0});
+    	return mplew.getPacket();
     }
 
     public static MaplePacket showTutorActions(byte mode, String text, int arg3, int arg4) {

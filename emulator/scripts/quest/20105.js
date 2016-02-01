@@ -1,30 +1,41 @@
 /*
  * Cygnus 1st Job advancement - Striker
  */
-importPackage(Packages.client);
+importPackage(Packages.org.ascnet.leaftown.client);
 
 
 var status = -1;
 
-function end(mode, type, selection) {
-    if (mode == 0) {
-	if (status == 0) {
-	    qm.sendNext("This is an important decision to make.");
-	    qm.dispose();
-	    return;
-	}
+function end(mode, type, selection) 
+{
+    if (mode == 0) 
+    {
+		if (status == 0) 
+		{
+		    qm.sendNext("É uma decisão importante a se tomar.");
+		    qm.dispose();
+		    return;
+		}
+		
 		status--;
-    } else {
+    }
+    else 
+    {
     	status++;
     }
-    if (status == 0) {
+    
+    if (status == 0) 
+    {
     	qm.sendYesNo("Have you made your decision? The decision will be final, so think carefully before deciding what to do. Are you sure you want to become a Striker?");
-    } else if (status == 1) {
+    } 
+    else if (status == 1) 
+    {
     	qm.sendNext("I have just molded your body to make it perfect for a Soul Master. If you wish to become more powerful, use Stat Window (S) to raise the appropriate stats. If you arn't sure what to raise, just click on #bAuto#k.");
-	if (qm.getPlayer().getJob().getId() != 1500) {
+	if (qm.getPlayer().getJob().getId() != 1500) 
+	{
 	    qm.gainItem(1482014, 1);
 	    qm.gainItem(1142066, 1);
-            qm.changeJob(MapleJob.THUNDERBREAKER1);
+	    qm.changeJob(MapleJob.THUNDERBREAKER1);
 	    qm.getPlayer().resetStats();
 	}
 	qm.forceCompleteQuest();

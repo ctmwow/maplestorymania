@@ -1,4 +1,4 @@
-importPackage(Packages.server.life);
+importPackage(Packages.org.ascnet.leaftown.server.life);
 
 function start(ms) {   	       
 	if(ms.getMapId() == 108010101) { // Archer

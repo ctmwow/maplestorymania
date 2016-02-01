@@ -1,5 +1,5 @@
-importPackage(Packages.client); 
-importPackage(Packages.server.maps); 
+importPackage(Packages.org.ascnet.leaftown.client); 
+importPackage(Packages.org.ascnet.leaftown.server.maps); 
 
 var status; 
 var sel; 

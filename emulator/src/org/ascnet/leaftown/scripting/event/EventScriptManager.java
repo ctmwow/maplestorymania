@@ -41,11 +41,12 @@ import java.util.logging.Logger;
 /**
  * @author Matze
  */
-public class EventScriptManager extends AbstractScriptManager {
-
-    private static class EventEntry {
-
-        public EventEntry(String script, Invocable iv, EventManager em) {
+public class EventScriptManager extends AbstractScriptManager 
+{
+    private static class EventEntry 
+    {
+        public EventEntry(String script, Invocable iv, EventManager em) 
+        {
             this.script = script;
             this.iv = iv;
             this.em = em;
@@ -58,21 +59,28 @@ public class EventScriptManager extends AbstractScriptManager {
 
     private final Map<String, EventEntry> events = new LinkedHashMap<>();
 
-    public EventScriptManager(ChannelServer cserv, String[] scripts) {
+    public EventScriptManager(ChannelServer cserv, String[] scripts) 
+    {
         super();
-        for (String script : scripts) {
-            if (script.length() != 0) {
+        
+        for (String script : scripts) 
+        {
+            if (script.length() != 0x00) 
+            {
                 final Invocable iv = getInvocable("event/" + script + ".js", null);
+                
                 events.put(script, new EventEntry(script, iv, new EventManager(cserv, iv, script)));
             }
         }
     }
 
-    public EventManager getEventManager(String event) {
+    public EventManager getEventManager(String event) 
+    {
         final EventEntry entry = events.get(event);
-        if (entry == null) {
+        
+        if (entry == null) 
             return null;
-        }
+
         return entry.em;
     }
 
@@ -105,7 +113,8 @@ public class EventScriptManager extends AbstractScriptManager {
     {
         for (EventEntry entry : events.values()) 
         {
-            entry.em.cancel();
+        	if(entry != null)
+        		entry.em.cancel();
         }
     }
 }

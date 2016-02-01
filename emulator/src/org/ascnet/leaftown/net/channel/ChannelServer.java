@@ -27,7 +27,6 @@
 
 package org.ascnet.leaftown.net.channel;
 
-import io.netty.channel.ChannelFuture;
 import org.ascnet.leaftown.client.MapleCharacter;
 import org.ascnet.leaftown.client.SkillFactory;
 import org.ascnet.leaftown.client.messages.CommandProcessor;
@@ -46,7 +45,6 @@ import org.ascnet.leaftown.provider.MapleDataProviderFactory;
 import org.ascnet.leaftown.provider.text.ServerMessages;
 import org.ascnet.leaftown.scripting.event.EventScriptManager;
 import org.ascnet.leaftown.server.AutobanManager;
-import org.ascnet.leaftown.server.CashItemFactory;
 import org.ascnet.leaftown.server.MapleSquad;
 import org.ascnet.leaftown.server.MapleSquadType;
 import org.ascnet.leaftown.server.ShutdownServer;
@@ -88,8 +86,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
-public class ChannelServer implements Runnable, ChannelServerMBean {
-
+public class ChannelServer implements Runnable, ChannelServerMBean 
+{
     private static int uniqueID = 1;
     private static Properties initialProp;
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ChannelServer.class);
@@ -140,21 +138,33 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         return worldRegistry;
     }
 
-    public void reconnectWorld() {
-        try { // check if the connection is really gone
+    public void reconnectWorld() 
+    {
+        try 
+        { // check if the connection is really gone
             wci.isAvailable();
-        } catch (RemoteException ex) {
-            synchronized (worldReady) {
+        } 
+        catch (RemoteException ex) 
+        {
+            synchronized (worldReady) 
+            {
                 worldReady = false;
             }
-            synchronized (cwi) {
-                synchronized (worldReady) {
+            
+            synchronized (cwi) 
+            {
+                synchronized (worldReady) 
+                {
                     if (worldReady)
                         return;
                 }
+                
                 log.warn("Reconnecting to world server");
-                synchronized (wci) {
-                    try { // completely re-establish the rmi connection
+                
+                synchronized (wci)
+                {
+                    try 
+                    { // completely re-establish the rmi connection
                         initialProp = new Properties();
                         FileReader fr = new FileReader(System.getProperty("org.ascnet.leaftown.channel.config"));
                         initialProp.load(fr);
@@ -183,21 +193,27 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
                         DatabaseConnection.setProps(dbProp);
                         DatabaseConnection.getConnection();
                         wci.serverReady();
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) 
+                    {
                         log.error("Reconnecting failed", e);
                     }
                     worldReady = true;
                 }
             }
-            synchronized (worldReady) {
+            
+            synchronized (worldReady) 
+            {
                 worldReady.notifyAll();
             }
         }
     }
 
     @Override
-    public void run() {
-        try {
+    public void run()
+    {
+        try 
+        {
             cwi = new ChannelWorldInterfaceImpl(this);
             wci = worldRegistry.registerChannelServer(key, cwi);
             props = wci.getGameProperties();
@@ -214,7 +230,9 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
             cashshop = Boolean.parseBoolean(props.getProperty("org.ascnet.leaftown.world.cashshop", "false"));
             mts = Boolean.parseBoolean(props.getProperty("org.ascnet.leaftown.world.mts", "false"));
             GMList = props.getProperty("org.ascnet.leaftown.world.GMList");
-        } catch (Exception e) {
+        } 
+        catch (Exception e) 
+        {
             throw new RuntimeException(e);
         }
 
@@ -225,20 +243,27 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         TimerManager tMan = TimerManager.getInstance();
         tMan.start();
         tMan.register(AutobanManager.getInstance(), 60000);
-        try {
+        
+        try 
+        {
             server = new Server(new InetSocketAddress(port), channel);
             server.run();
             log.info("Channel {}: Listening on port {}", channel, port);
             wci.serverReady();
             eventSM.init();
-        } catch (IOException e) {
+        } 
+        catch (IOException e)
+        {
             log.error("Binding to port " + port + " failed (ch: " + channel + ")", e);
-        } catch (Exception e) {
+        } 
+        catch (Exception e) 
+        {
             log.error("An error occured while loading ChannelServer", e);
         }
     }
 
-    public void shutdown() { // dc all clients by hand so we get sessionClosed...
+    public void shutdown()
+    {
         eventSM.cancel();
         server.stop();
         shutdown = true;
@@ -246,17 +271,22 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         Collection<MapleCharacter> allchars = Collections.synchronizedCollection(players.getAllCharacters());
 
         MapleCharacter chrs[] = allchars.toArray(new MapleCharacter[allchars.size()]);
-        for (MapleCharacter chr : chrs) {
-            if (chr != null && chr.getClient() != null) {
+        for (MapleCharacter chr : chrs) 
+        {
+            if (chr != null && chr.getClient() != null) 
+            {
                 futures.add(chr.getClient().getDisconnectLatch());
                 chr.getClient().disconnect();
             }
         }
 
-        for (CountDownLatch future : futures) {
-            try {
+        for (CountDownLatch future : futures) 
+        {
+            try 
+            {
                 future.await();
-            } catch (InterruptedException ignored) {}
+            }
+            catch (InterruptedException ignored) {}
         }
 
         finishedShutdown = true;
@@ -265,19 +295,23 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         cwi = null;
     }
 
-    public void unbind() {
+    public void unbind() 
+    {
         server.stop();
     }
 
-    public boolean hasFinishedShutdown() {
+    public boolean hasFinishedShutdown() 
+    {
         return finishedShutdown;
     }
 
-    public MapleMapFactory getMapFactory() {
+    public MapleMapFactory getMapFactory() 
+    {
         return mapFactory;
     }
 
-    public static ChannelServer newInstance(String key) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
+    public static ChannelServer newInstance(String key) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException 
+    {
         ChannelServer instance = new ChannelServer(key);
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         mBeanServer.registerMBean(instance, new ObjectName("org.ascnet.leaftown.net.channel:type=ChannelServer,name=ChannelServer" + uniqueID++));
@@ -285,90 +319,115 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         return instance;
     }
 
-    public static ChannelServer getInstance(int channel) {
+    public static ChannelServer getInstance(int channel)
+    {
         ChannelServer ret = null;
-        try {
+        try 
+        {
             ret = instances.get(channel);
-        } catch (IndexOutOfBoundsException e) {
-        }
+        } 
+        catch (IndexOutOfBoundsException e) { }
+        
         return ret;
     }
 
-    public void addPlayer(MapleCharacter chr) {
+    public void addPlayer(MapleCharacter chr)
+    {
         players.registerPlayer(chr);
     }
 
-    public IPlayerStorage getPlayerStorage() {
+    public IPlayerStorage getPlayerStorage()
+    {
         return players;
     }
 
-    public void removePlayer(MapleCharacter chr) {
+    public void removePlayer(MapleCharacter chr) 
+    {
         players.deregisterPlayer(chr);
     }
 
-    public int getConnectedClients() {
+    public int getConnectedClients() 
+    {
         return players.getAllCharacters().size();
     }
 
     @Override
-    public String getServerMessage() {
+    public String getServerMessage()
+    {
         return serverMessage;
     }
 
     @Override
-    public void setServerMessage(String newMessage) {
+    public void setServerMessage(String newMessage) 
+    {
         serverMessage = newMessage;
         broadcastPacket(MaplePacketCreator.serverMessage(serverMessage));
     }
 
-    public String getGMList() {
-        if (GMList == null || GMList.length() < 2)
+    public String getGMList() 
+    {
+        if (GMList == null || GMList.length() < 0x02)
 	        reloadGMList();
+        
 	    return GMList;
     }
 
-	public void reloadGMList() {
+	public void reloadGMList() 
+	{
 		StringBuilder sb = new StringBuilder();
-		for (MapleCharacter character : players.getAllCharacters()) {
+		
+		for (MapleCharacter character : players.getAllCharacters()) 
+		{
 			if (character.isGM())
 				sb.append(character.getName()).append(", ");
 		}
-		sb.setLength(sb.length() - 2);
+		
+		sb.setLength(sb.length() - 0x02);
 		GMList = sb.toString();
 	}
 
     public void broadcastPacket(MaplePacket data, boolean smega) {
+    	
         ArrayList<MapleCharacter> allChars = new ArrayList<>(players.getAllCharacters());
-        for (MapleCharacter chr : allChars) {
+        
+        for (MapleCharacter chr : allChars) 
+        {
             if (smega && !chr.getSmegaEnabled())
                 continue;
+            
             chr.getClient().sendPacket(data);
         }
         allChars.clear();
     }
 
-    public void broadcastPacket(MaplePacket data) {
+    public void broadcastPacket(MaplePacket data) 
+    {
         broadcastPacket(data, false);
     }
 
-    public void broadcastGMPacket(MaplePacket data) {
-        for (MapleCharacter chr : players.getAllCharacters()) {
+    public void broadcastGMPacket(MaplePacket data) 
+    {
+        for (MapleCharacter chr : players.getAllCharacters()) 
+        {
             if (chr.isGM())
                 chr.getClient().sendPacket(data);
         }
     }
 
     @Override
-    public int getExpRate() {
+    public int getExpRate() 
+    {
         return expRate;
     }
 
     @Override
-    public void setExpRate(int expRate) {
+    public void setExpRate(int expRate) 
+    {
         this.expRate = expRate;
     }
 
-    public int getChannel() {
+    public int getChannel() 
+    {
         return channel;
     }
 
@@ -604,41 +663,44 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         }
     }
 
-    public static void main(String args[]) throws IOException, NotBoundException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
-        FileReader fileReader = null;
-        try {
-            Properties dbProp = new Properties();
-            fileReader = new FileReader(System.getProperty("br.com.maplestorymania.db.properties"));
-            dbProp.load(fileReader);
-            fileReader.close();
+    public static void main(String args[]) throws IOException, NotBoundException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException 
+    {
+        try 
+        {
+            final Properties dbProp = new Properties();
+            dbProp.load(new FileReader(System.getProperty("br.com.maplestorymania.db.properties")));
+            
             DatabaseConnection.setProps(dbProp);
             DatabaseConnection.getConnection();
-        } catch (Exception ex) {
-        } finally {
-            try {
-                fileReader.close();
-            } catch (IOException ex) {
-            }
+        }
+        catch (Exception ex) 
+        {
         }
 
         ServerMessages.getInstance().load(new Locale("ptBR", "BR"));
         
         initialProp = new Properties();
         initialProp.load(new FileReader(System.getProperty("org.ascnet.leaftown.channel.config")));
+        
         Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("org.ascnet.leaftown.world.host"), Registry.REGISTRY_PORT, new SslRMIClientSocketFactory());
         worldRegistry = (WorldRegistry) registry.lookup("WorldRegistry");
-        for (int i = 0; i < Integer.parseInt(initialProp.getProperty("org.ascnet.leaftown.channel.count", "0")); i++) {
+        
+        for (int i = 0x00; i < Integer.parseInt(initialProp.getProperty("org.ascnet.leaftown.channel.count", "0")); i++)
             newInstance(initialProp.getProperty("org.ascnet.leaftown.channel." + i + ".key")).run();
-        }
+
         SkillFactory.loadSkills();
         CommandProcessor.registerMBean();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() 
+        {
             @Override
-            public void run() {
+            public void run() 
+            {
                 log.info("Shutting down.");
+                
                 for(ChannelServer cs : ChannelServer.getAllInstances())
                     cs.shutdown();
+                
                 log.info("Shutdown complete; exiting.");
             }
         }));
@@ -711,17 +773,7 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         }
         return partym;
     }
-
-	/*public List<MapleCharacter> getAllCharsWithPlayerNPCs() {
-        List<MapleCharacter> ret = new ArrayList<>();
-		for (MapleCharacter chr : getPlayerStorage().getAllCharacters()) {
-			if (chr.hasPlayerNPC()) {
-				ret.add(chr);
-			}
-		}
-		return ret;
-	}*/
-
+    
     public void unloadMap(int mapid) {
         mapFactory.destroyMap(mapid);
     }

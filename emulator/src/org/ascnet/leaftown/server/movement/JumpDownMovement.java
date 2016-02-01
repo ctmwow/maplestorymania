@@ -31,49 +31,58 @@ import org.ascnet.leaftown.tools.data.output.LittleEndianWriter;
 
 import java.awt.Point;
 
-public class JumpDownMovement extends AbstractLifeMovement {
-
+public class JumpDownMovement extends AbstractLifeMovement 
+{
     private Point pixelsPerSecond;
-    private int unk, unk2;
+    private int unk;
+    private int fh;
 
-    public JumpDownMovement(int type, Point position, int stance, int foothold) {
-        super(type, position, stance, foothold);
+    public JumpDownMovement(int type, Point position, int duration, int newState) 
+    {
+        super(type, position, duration, newState);
     }
 
-    public Point getPixelsPerSecond() {
+    public Point getPixelsPerSecond() 
+    {
         return pixelsPerSecond;
     }
 
-    public void setPixelsPerSecond(Point wobble) {
+    public void setPixelsPerSecond(Point wobble) 
+    {
         pixelsPerSecond = wobble;
     }
 
-    public int getUnk() {
+    public int getUnk()
+    {
         return unk;
     }
 
-    public void setUnk(int unk) {
+    public void setUnk(int unk) 
+    {
         this.unk = unk;
     }
 
-    public int getUnk2() {
-        return unk2;
+    public int getFH() 
+    {
+        return fh;
     }
 
-    public void setUnk2(int unk2) {
-        this.unk2 = unk2;
+    public void setFH(int fh) 
+    {
+        this.fh = fh;
     }
 
     @Override
-    public void serialize(LittleEndianWriter lew) {
+    public void serialize(LittleEndianWriter lew) 
+    {
         lew.write(getType());
         lew.writeShort(getPosition().x);
         lew.writeShort(getPosition().y);
         lew.writeShort(pixelsPerSecond.x);
         lew.writeShort(pixelsPerSecond.y);
         lew.writeShort(unk);
-        lew.writeShort(unk2);
-        lew.write(getStance());
-        lew.writeShort(getFoothold());
+        lew.writeShort(fh);
+        lew.write(getNewstate());
+        lew.writeShort(getDuration());
     }
 }

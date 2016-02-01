@@ -25,8 +25,9 @@
 * @Name:   So Gong
 * @Map(s): Dojo Hall
 */
-importPackage(Packages.server.maps);
+importPackage(Packages.org.ascnet.leaftown.server.maps);
 
+var disabled = false;
 var belts = Array(1132000, 1132001, 1132002, 1132003, 1132004);
 var belt_level = Array(25, 35, 45, 60, 75);
 var belt_points = Array(200, 1800, 4000, 9200, 17000);
@@ -35,6 +36,12 @@ var status = -1;
 var selectedMenu = -1;
 
 function start() {
+	if(disabled) {
+		cm.sendOk("My master has requested that the dojo be #rclosed#k at this time so I can't let you in.");
+		cm.dispose();
+		return;
+	}
+	
     if (isRestingSpot(cm.getPlayer().getMap().getId())) {
         var text = "I'm surprised you made it this far! But it won't be easy from here on out. You still want the challenge?\r\n\r\n#b#L0#I want to continue#l\r\n#L1#I want to leave#l\r\n";
         if (!cm.getPlayer().getDojoParty()) {
@@ -69,12 +76,10 @@ function action(mode, type, selection) {
                         if (mode == 0) {
                             cm.sendNext("Haha! Who are you trying to impress with a heart like that?\r\nGo back home where you belong!");
                         } else {
-                            for (var i = 0 ; i < 39; i++) { //only 32 stages, but 38 maps
-                                if(cm.getClient().getChannelServer().getMapFactory().getMap(925020000 + 100 * i).getCharacters().size() > 0) {
-                                    cm.sendOk("Someone is already in Dojo");
-                                    cm.dispose();
-                                    return;
-                                }
+                           if(cm.getClient().getChannelServer().getMapFactory().getMap(925020010).getCharacters().size() > 0) {
+								cm.sendOk("Someone is already in Dojo");
+								cm.dispose();
+								return;
                             }
                             cm.warp(925020010, 0);
                             cm.getPlayer().setFinishedDojoTutorial();
@@ -85,10 +90,17 @@ function action(mode, type, selection) {
                     if (status == 0) {
                         cm.sendYesNo("The last time you took the challenge by yourself, you went up to level " + cm.getPlayer().getDojoStage() + ". I can take you there right now. Do you want to go there?");
                     } else {
-                        cm.warp(mode == 1 ? cm.getPlayer().getDojoStage() : 925020100, 0);
+                        cm.warp(mode == 1 ? 925020000 + cm.getPlayer().getDojoStage() * 100 : 925020100, 0);
                         cm.dispose();
                     }
                 } else {
+					for (var i = 1 ; i < 39; i++) { //only 32 stages, but 38 maps
+						if(cm.getClient().getChannelServer().getMapFactory().getMap(925020000 + 100 * i).getCharacters().size() > 0) {
+							cm.sendOk("Someone is already in the Dojo." + i);
+							cm.dispose();
+							return;
+						}
+					}
                     cm.getClient().getChannelServer().getMapFactory().getMap(925020100).resetReactors();
                     cm.getClient().getChannelServer().getMapFactory().getMap(925020100).killAllMonsters();
                     cm.warp(925020100, 0);
@@ -117,12 +129,18 @@ function action(mode, type, selection) {
                 } else if (party.getMembers().size() == 1) {
                     cm.sendNext("You're going to take on the challenge as a one-man party?");
                 } else if (!isBetween30) {
-                    cm.sendNext("You're going to take on the challenge as a one-man party?");
+                    cm.sendNext("Your partys level ranges are too broad to enter. Please make sure all of your party members are within #r30 levels#k of each other.");
                 } else {
+					for (var i = 1 ; i < 39; i++) { //only 32 stages, but 38 maps
+						if(cm.getClient().getChannelServer().getMapFactory().getMap(925020000 + 100 * i).getCharacters().size() > 0) {
+							cm.sendOk("Someone is already in the Dojo.");
+							cm.dispose();
+							return;
+						}
+					}
                     cm.getClient().getChannelServer().getMapFactory().getMap(925020100).resetReactors();
                     cm.getClient().getChannelServer().getMapFactory().getMap(925020100).killAllMonsters();
                     cm.warpParty(925020100);
-                    cm.setDojoParty(true);
                     cm.dispose();
                 }
                 cm.dispose();
@@ -148,9 +166,9 @@ function action(mode, type, selection) {
                         if (cm.getPlayer().getLevel() > level)
                             cm.gainItem(belt, 1);
                         else
-                            cm.sendNext("In order to receive #i" + belt + "# #b#t" + belt + "##k, you have to be at least over level #b" + level + "#k and you need to have earned at least #b" + points + " training points#k.\r\n\r\nIf you want to obtain this belt, you need #r" + (cm.getPlayer().getDojoPoints() - points) + "#k more training points.");
+                            cm.sendNext("In order to receive #i" + belt + "# #b#t" + belt + "##k, you have to be at least over level #b" + level + "#k and you need to have earned at least #b" + points + " training points#k.\r\n\r\nIf you want to obtain this belt, you need #r" + (points - cm.getPlayer().getDojoPoints()) + "#k more training points.");
                     } else
-                        cm.sendNext("In order to receive #i" + belt + "# #b#t" + belt + "##k, you have to be at least over level #b" + level + "#k and you need to have earned at least #b" + points + " training points#k.\r\n\r\nIf you want to obtain this belt, you need #r" + (cm.getPlayer().getDojoPoints() - points) + "#k more training points.");
+                        cm.sendNext("In order to receive #i" + belt + "# #b#t" + belt + "##k, you have to be at least over level #b" + level + "#k and you need to have earned at least #b" + points + " training points#k.\r\n\r\nIf you want to obtain this belt, you need #r" + (points - cm.getPlayer().getDojoPoints()) + "#k more training points.");
                     cm.dispose();
                 }
             } else if (selectedMenu == 3) { //I want to reset my training points.
@@ -216,11 +234,11 @@ function action(mode, type, selection) {
             } else {
                 if (mode == 0) {
                     cm.sendNext("You think you can go even higher? Good luck!");
-                } else if (cm.getPlayer().getDojoStage() == cm.getPlayer().getMap().getId()) {
+                } else if (925020000 + cm.getPlayer().getDojoStage() * 100 == cm.getMapId()) {
                     cm.sendOk("Looks like you came all the way up here without recording your score. Sorry, but you can't record now.");
                 } else {
                     cm.sendNext("I recorded your score. If you tell me the next time you go up, you'll be able to start where you left off.");
-                    cm.getPlayer().setDojoStage(cm.getPlayer().getMap().getId());
+                    cm.getPlayer().setDojoStage((cm.getMapId() - 925020000) / 100);
                 }
                 cm.dispose();
             }

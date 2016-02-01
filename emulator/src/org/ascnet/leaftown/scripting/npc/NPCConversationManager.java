@@ -625,7 +625,13 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return getClient().getChannelServer().getBossDropRate();
     }
 
-    public int getMesoRate() {
+    public int getMeso() 
+    {
+    	return getPlayer().getMeso();
+    }
+    
+    public int getMesoRate() 
+    {
         return getClient().getChannelServer().getMesoRate();
     }
 
@@ -1172,8 +1178,13 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public void removeNPC(MapleMap map) {
         map.getNPC(npc).sendDestroyData(c);
     }
+    
+    public void resetStats() 
+    {
+    	getPlayer().resetStats();
+    }
 
-    public void gainDonorItem(int itemid, String charName) {
+    public void gainDonorItem(int itemid, String charName) { 
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         IItem item = ii.getEquipById(itemid);
         Equip eqp = (Equip) item;

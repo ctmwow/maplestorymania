@@ -55,7 +55,7 @@ function start(mode, type, selection) {
                     qm.dispose();
                 } else {
                     qm.gainItem(1142068, 1);
-                    qm.getPlayer().changeJob(Packages.client.MapleJob.THUNDERBREAKER3);
+                    qm.getPlayer().changeJob(Packages.org.ascnet.leaftown.client.MapleJob.THUNDERBREAKER3);
                     qm.sendOk("#h #, from here on out, you will become an Advanced Knight of the Knights of Cygnus! As your standing rises, so does the difficulty of the tasks you will be receiving. But challenge is good, right? You have to enjoy life. Enjoy what's given to you!");
                     qm.completeQuest();
                     qm.dispose();

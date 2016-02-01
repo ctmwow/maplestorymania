@@ -300,13 +300,13 @@ public class MapleMapFactory {
                     newMap.addSeat(Integer.parseInt(seat.getName()), DataUtil.toPoint(seat));
                 }
             }
-            if (portals) {
+            
+            if (portals) 
+            {
                 PortalFactory portalFactory = new PortalFactory();
-                for (MapleData portal : mapData.getChild("portal")) {
-                    int type = DataUtil.toInt(portal.getChild("pt"));
-                    MaplePortal myPortal = portalFactory.makePortal(type, portal);
-                    newMap.addPortal(myPortal);
-                }
+                
+                for (MapleData portal : mapData.getChild("portal")) 
+                    newMap.addPortal(portalFactory.makePortal(DataUtil.toInt(portal.getChild("pt")), portal));
             }
             if (channel > 0) {
                 ChannelServer cs = ChannelServer.getInstance(channel);

@@ -26,7 +26,7 @@
  */
 
 var status = 0;
-
+var minimumCouponsNeeded = 200;
 function start() {
     status = -1;
     action(1,0,0);
@@ -41,20 +41,39 @@ function action(mode, type, selection){
         else
             status--;
         if (status == 0) {
-            if (!cm.isLeader()) {
+            if (!isLeader()) {
                 cm.sendOk("Give any coupons to the leader of the party and tell them to talk to me.");
                 cm.dispose();
-            } else
+            } else {
                 cm.sendYesNo("Do you have all the coupons of the party and would like to get out of here?");
+			}
         } else if (status == 1) {
-            var members = cm.getPlayer().getEventInstance().getPlayers();
-            cm.givePartyExp(50 * (cm.itemQuantity(4001106)), members);
-            if (cm.itemQuantity(4001106) >= 30)
-                cm.warpMembers(809050017, members);
-             else 
-                cm.warpMembers(809050016, members);
-            cm.removeFromParty(4001106, members);
+			if (cm.itemQuantity(4001106) < minimumCouponsNeeded){
+				cm.sendOk("Sorry, but you do not have at least " + minimumCouponsNeeded + " coupons! Talk to me again when you've collected more!");
+                cm.dispose();
+				return;
+			}
+			var party = cm.getPartyMembers();
+            for (var i = 0; i < party.size(); i++) {
+                if (party.get(i).getMap().getId() != 809050015) {
+                    cm.sendOk("A member of your party is not presently in the map.");
+                    cm.dispose();
+                    return;
+                }
+            }
+			var members = cm.getPlayer().getEventInstance().getPlayers();
+			//cm.removeFromParty(4001106, members);
+			cm.gainItem(4001106, -200);
+			cm.givePartyExp("LudiMazePQ");
+			cm.warpParty(809050016);
             cm.dispose();
         }	
     }
+}
+
+function isLeader(){
+    if(cm.getParty() == null)
+        return false;
+    else
+        return cm.isLeader();
 }

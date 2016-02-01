@@ -21,7 +21,7 @@
 */
 
 function enter(pi) {
-    if (pi.itemQuantity(3992040) > 0) {
+    if (pi.hasItem(3992040)) {
         pi.warp(610010201, "sB2_1");
         return false;
     }

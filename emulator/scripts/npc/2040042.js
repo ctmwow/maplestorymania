@@ -30,6 +30,8 @@
 @	Description: You need a ranged person here. The ranged person must kill the three Ratz, and they'll trigger something. What's next is for you to find out! Get me 3 passes!
 */
 
+importPackage(Packages.org.ascnet.leaftown.tools);
+
 var status = 0;
 var party;
 var preamble;
@@ -71,12 +73,15 @@ function action(mode, type, selection) {
                     }
                 }
                 if(gaveItems == null){
-                    cm.sendSimple("What's up?\r\n#L0#I've got your passes!#l\r\n#L1#There's something wrong here.#l");
+                    cm.sendSimple("What's up?\r\n#L0#I've got your passes!#l\r\n"); // #L1#There's something wrong here.#l
                 }
             }
         }else if (status == 1){
             if (selection == 0) {
-                if(cm.itemQuantity(4001022) >= 3){
+                if(cm.getPlayer().getMap().getCharacters().size() != eim.getPlayers().size()) {
+					cm.sendOk("Please wait for all of your party members to get here.");
+					cm.dispose();
+                } else if(cm.itemQuantity(4001022) >= 3){
                     cm.sendOk("Good job! you have collected all 3 #b#t4001022#'s#k");
                 }else{
                     cm.sendOk("Sorry you don't have all 3 #b#t4001022#'s#k");
@@ -91,11 +96,14 @@ function action(mode, type, selection) {
                 }
             }
         }else if (status == 2){
-            cm.sendOk("You may continue to the next stage!");
             cm.removeAll(4001022);
-            cm.gate();
-            cm.clear();
-            cm.givePartyExp(6600, eim.getPlayers());
+            
+			var map = eim.getMapInstance(cm.getPlayer().getMapId());
+			map.broadcastMessage(MaplePacketCreator.showEffect("quest/party/clear"));
+			map.broadcastMessage(MaplePacketCreator.playSound("Party1/Clear"));
+			map.broadcastMessage(MaplePacketCreator.environmentChange("gate", 2));
+			
+            cm.givePartyExp("LudiPQ7th");
             eim.setProperty("7stageclear","true");
             eim.setProperty("leader" + nthtext + "gaveItems","done");
             cm.dispose();

@@ -30,7 +30,7 @@
 	1.0 - First Version by Information
 ---------------------------------------------------------------------------------------------------
 **/
-
+var status = 0;
 var cost = 30000;
 
 function start() {
@@ -49,8 +49,8 @@ function action(mode, type, selection) {
             return;
         }
         if(status == 1) {
-            if(cm.getMeso() >= cost && cm.canHold(4031045)) {
-                cm.gainItem(4031045,1);
+            if(cm.getMeso() >= cost) {
+                cm.warp(200000100);
                 cm.gainMeso(-cost);
             } else
                 cm.sendOk("Are you sure you have #b"+cost+" mesos#k? If so, then I urge you to check your etc. inventory, and see if it's full or not.");

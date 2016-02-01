@@ -60,6 +60,7 @@ import org.ascnet.leaftown.server.life.MobSkillFactory;
 import org.ascnet.leaftown.server.life.SpawnPoint;
 import org.ascnet.leaftown.server.playerinteractions.IMaplePlayerShop;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
+import org.ascnet.leaftown.tools.Pair;
 import org.ascnet.leaftown.tools.Randomizer;
 import org.ascnet.leaftown.tools.StringUtil;
 
@@ -317,7 +318,8 @@ public class MapleMap {
         throw new RuntimeException("Out of OIDs on map " + mapId + " (channel: " + channel + ")");
     }
 
-    public void mapMessage(int type, String message) {
+    public void mapMessage(int type, String message) 
+    {
         broadcastMessage(MaplePacketCreator.serverNotice(type, message));
     }
 
@@ -954,40 +956,50 @@ public class MapleMap {
      *
      * @param monster
      */
-    public void updateMonsterController(MapleMonster monster) {
-        if (monster.getController() != null) {
+    public void updateMonsterController(MapleMonster monster) 
+    {
+        if (monster.getController() != null) 
+        {
             // monster has a controller already, check if he's still on this map
-            if (monster.getController().getMap() != this) {
+            if (monster.getController().getMap() != this) 
+            {
                 log.warn("Monstercontroller wasn't on same map");
                 monster.getController().stopControllingMonster(monster);
-            } else {
-                // controller is on the map, monster has an controller, everything is fine
-                return;
             }
+            else 
+                return; // controller is on the map, monster has an controller, everything is fine
         }
-        int mincontrolled = -1;
+        
+        int mincontrolled = -0x01;
         MapleCharacter newController = null;
         objectLock.lock();
-        try {
-            for (MapleCharacter chr : characters) {
-                if (!chr.isHidden() && (chr.getControlledMonsters().size() < mincontrolled || mincontrolled == -1)) {
-                    //if (!chr.getName().equals("FaekChar")) { // TODO remove me for production release
+        
+        try 
+        {
+            for (MapleCharacter chr : characters) 
+            {
+                if (!chr.isHidden() && (chr.getControlledMonsters().size() < mincontrolled || mincontrolled == -1)) 
+                {
                     mincontrolled = chr.getControlledMonsters().size();
                     newController = chr;
-                    //}
                 }
             }
-        } finally {
+        }
+        finally 
+        {
             objectLock.unlock();
         }
-        if (newController != null) { // was a new controller found? (if not no one is on the map)
-            if (monster.isFirstAttack()) {
+        
+        if (newController != null) 
+        {
+            if (monster.isFirstAttack()) 
+            {
                 newController.controlMonster(monster, true);
                 monster.setControllerHasAggro(true);
                 monster.setControllerKnowsAboutAggro(true);
-            } else {
+            } 
+            else// was a new controller found? (if not no one is on the map) 
                 newController.controlMonster(monster, false);
-            }
         }
     }
 
@@ -1449,31 +1461,46 @@ public class MapleMap {
      *
      * @param chr
      */
-    public void addPlayer(MapleCharacter chr) {
+    public void addPlayer(MapleCharacter chr) 
+    {
         objectLock.lock();
-        try {
+        
+        try 
+        {
             characters.add(chr);
             mapobjects.put(chr.getObjectId(), chr);
-        } finally {
+        }
+        finally 
+        {
             objectLock.unlock();
         }
-        for (MaplePlayerNPC pnpc : playerNPCs) {
+        
+        for (MaplePlayerNPC pnpc : playerNPCs) 
             chr.getClient().sendPacket(MaplePacketCreator.getPlayerNPC(pnpc));
-        }
-        if (!chr.isHidden()) {
+        
+        if (!chr.isHidden()) 
+        {
             broadcastMessage(chr, MaplePacketCreator.spawnPlayerMapobject(chr, false), true);
             broadcastMessage(chr, MaplePacketCreator.playerGuildName(chr), false);
             broadcastMessage(chr, MaplePacketCreator.playerGuildInfo(chr), false);
-            for (MapleCharacter c : getCharacters()) {
-                if (c.hasGMLevel(5) && !c.isHidden()) {
-                    chr.finishAchievement(11);
+            
+            for (MapleCharacter c : getCharacters()) 
+            {
+                if (c.hasGMLevel(0x05) && !c.isHidden()) 
+                { 
+                    chr.finishAchievement(0x0B);
                     break;
                 }
             }
-        } else {
-            chr.getClient().sendPacket(MaplePacketCreator.giveGMHide(true));
+        } 
+        else 
+        {
+        	chr.getClient().sendPacket(MaplePacketCreator.giveGMHide(true));
+            broadcastGMMessage(chr, MaplePacketCreator.giveForeignBuff(chr, Collections.singletonList(new Pair<MapleBuffStat, Integer>(MapleBuffStat.DARKSIGHT, 0x00)), null), false);
         }
+        
         sendObjectPlacement(chr);
+        
         if (mapId >= 914000200 && mapId <= 914000220) {
             chr.getClient().sendPacket(MaplePacketCreator.tempStatsUpdate());
         } else {
@@ -1637,7 +1664,8 @@ public class MapleMap {
      *
      * @param packet
      */
-    public void broadcastMessage(MaplePacket packet) {
+    public void broadcastMessage(MaplePacket packet) 
+    {
         broadcastMessage(null, packet, Double.POSITIVE_INFINITY, null, null);
     }
 
@@ -1648,8 +1676,14 @@ public class MapleMap {
      * @param packet
      * @param repeatToSource
      */
-    public void broadcastMessage(MapleCharacter source, MaplePacket packet, boolean repeatToSource) {
+    public void broadcastMessage(MapleCharacter source, MaplePacket packet, boolean repeatToSource) 
+    {
         broadcastMessage(repeatToSource ? null : source, packet, Double.POSITIVE_INFINITY, source.getPosition(), null);
+    }
+    
+    public void broadcastGMMessage(MapleCharacter source, MaplePacket packet, boolean repeatToSource) 
+    {
+        broadcastGMMessage(repeatToSource ? null : source, packet, Double.POSITIVE_INFINITY, source.getPosition(), null);
     }
 
     /**
@@ -1689,31 +1723,66 @@ public class MapleMap {
         broadcastMessage(source, packet, MapleCharacter.MAX_VIEW_RANGE_SQ, rangedFrom, null);
     }
 
-    private void broadcastMessage(MapleCharacter source, MaplePacket packet, double rangeSq, Point rangedFrom, MapleMapObject mo) {
+    private void broadcastMessage(MapleCharacter source, MaplePacket packet, double rangeSq, Point rangedFrom, MapleMapObject mo) 
+    {
         objectLock.lock();
-        try {
-            for (MapleCharacter chr : characters) {
-                if (chr != source) {
-                    if (rangeSq < Double.POSITIVE_INFINITY) {
-                        if (rangedFrom.distanceSq(chr.getPosition()) <= rangeSq && chr.canSeeItem(mo)) {
+        try 
+        {
+            for (MapleCharacter chr : characters) 
+            {
+                if (chr != source) 
+                {
+                    if (rangeSq < Double.POSITIVE_INFINITY) 
+                    {
+                        if (rangedFrom.distanceSq(chr.getPosition()) <= rangeSq && chr.canSeeItem(mo)) 
                             chr.getClient().sendPacket(packet);
-                        }
-                    } else {
-                        chr.getClient().sendPacket(packet);
                     }
+                    else 
+                        chr.getClient().sendPacket(packet);
                 }
             }
-        } finally {
+        } 
+        finally 
+        {
+            objectLock.unlock();
+        }
+    }
+    
+    private void broadcastGMMessage(MapleCharacter source, MaplePacket packet, double rangeSq, Point rangedFrom, MapleMapObject mo) 
+    {
+        objectLock.lock();
+        try  
+        {
+            for (MapleCharacter chr : characters) 
+            {
+                if (chr != source && (chr.getGMLevel() > source.getGMLevel())) 
+                {
+                    if (rangeSq < Double.POSITIVE_INFINITY) 
+                    {
+                        if (rangedFrom.distanceSq(chr.getPosition()) <= rangeSq && chr.canSeeItem(mo)) 
+                            chr.getClient().sendPacket(packet);
+                    }
+                    else 
+                        chr.getClient().sendPacket(packet);
+                }
+            }
+        } 
+        finally 
+        {
             objectLock.unlock();
         }
     }
 
-    private boolean isNonRangedType(MapleMapObjectType type) {
-        switch (type) {
+    private boolean isNonRangedType(MapleMapObjectType type) 
+    {
+        switch (type) 
+        {
             case PLAYER:
             case MIST:
             case HIRED_MERCHANT:
                 return true;
+			default:
+				break;
         }
         return false;
     }
@@ -1853,11 +1922,12 @@ public class MapleMap {
             spawnPoints.add(myPortal);
     }
 
-    public MaplePortal getPortal(String portalname) {
-        for (MaplePortal port : portals.values()) {
-            if (port.getName().equals(portalname)) {
+    public MaplePortal getPortal(String portalname) 
+    {
+        for (MaplePortal port : portals.values()) 
+        {
+            if (port.getName().equals(portalname)) 
                 return port;
-            }
         }
         return null;
     }
@@ -2013,6 +2083,22 @@ public class MapleMap {
         for (MaplePortal portal : spawnPoints) {
             double distance = portal.getPosition().distanceSq(from);
             if (distance < shortestDistance) {
+                closest = portal;
+                shortestDistance = distance;
+            }
+        }
+        return closest;
+    }
+    
+    public MaplePortal findClosestPortal(Point from) 
+    {
+        MaplePortal closest = null;
+        double shortestDistance = Double.POSITIVE_INFINITY;
+        for (MaplePortal portal : portals.values()) 
+        {
+            double distance = portal.getPosition().distanceSq(from);
+            if (distance < shortestDistance) 
+            {
                 closest = portal;
                 shortestDistance = distance;
             }

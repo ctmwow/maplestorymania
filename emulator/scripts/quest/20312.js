@@ -55,7 +55,7 @@ function start(mode, type, selection) {
                     qm.dispose();
                 } else {
                     qm.gainItem(1142068, 1);
-                    qm.getPlayer().changeJob(Packages.client.MapleJob.BLAZEWIZARD3);
+                    qm.getPlayer().changeJob(Packages.org.ascnet.leaftown.client.MapleJob.BLAZEWIZARD3);
                     qm.sendOk("#h #, as of this moment, you are an Advanced Knight. From this moment on, you will train yourself with fervor as you will lead your group of Knights for the safety of this world. That fervor will provide you with plenty of courage.");
                     qm.completeQuest();
                     qm.dispose();

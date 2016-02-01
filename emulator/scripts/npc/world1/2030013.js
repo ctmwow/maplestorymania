@@ -20,7 +20,7 @@
 */
 
 importPackage(java.lang);
-importPackage(Packages.server);
+importPackage(Packages.org.ascnet.leaftown.server);
 
 /* 
 	Adobis

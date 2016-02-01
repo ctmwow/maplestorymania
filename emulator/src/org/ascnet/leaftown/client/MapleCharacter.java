@@ -67,6 +67,7 @@ import org.ascnet.leaftown.server.maps.MapleMapObject;
 import org.ascnet.leaftown.server.maps.MapleMapObjectType;
 import org.ascnet.leaftown.server.maps.MapleMist;
 import org.ascnet.leaftown.server.maps.MapleSummon;
+import org.ascnet.leaftown.server.maps.SavedLocation;
 import org.ascnet.leaftown.server.maps.SavedLocationType;
 import org.ascnet.leaftown.server.maps.SummonMovementType;
 import org.ascnet.leaftown.server.movement.LifeMovementFragment;
@@ -137,7 +138,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private int hair, face;
     private final AtomicInteger meso = new AtomicInteger();
     private int remainingAp, remainingSp;
-    private final int savedLocations[];
+    private final SavedLocation savedLocations[];
     private int fame;
     private long lastfametime;
     private List<Integer> lastmonthfameids;
@@ -296,29 +297,30 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private boolean ccRequired = false;
     private final NumberFormat nf = new DecimalFormat("#,###,###,###");
     private Map<Short, String> area_info = new LinkedHashMap<>();
+    private long arrivalTime = 0x00;
 
     private MapleCharacter(boolean channelServ) 
     {
         inventory = new MapleInventory[MapleInventoryType.values().length];
         
         for (MapleInventoryType type : MapleInventoryType.values()) 
-            inventory[type.ordinal()] = new MapleInventory(type, (byte) 32);
+            inventory[type.ordinal()] = new MapleInventory(type, (byte) 0x20);
         
         quests = new LinkedHashMap<>();
         questRecordsEx = new LinkedHashMap<>();
-        savedLocations = new int[SavedLocationType.values().length];
+        savedLocations = new SavedLocation[SavedLocationType.values().length];
         
         for (int i = 0x00; i < SavedLocationType.values().length; i++) 
-            savedLocations[i] = -0x01;
+            savedLocations[i] = null;
 
         setPosition(new Point(0x00, 0x00));
         
         if (channelServ) 
         {
             anticheat = new CheatTracker(this);
-            setStance((byte) 0);
-            setFoothold((short) 0);
-            pets = new ArrayList<>(3);
+            setStance((byte) 0x00);
+            setFoothold((short) 0x00);
+            pets = new ArrayList<>(0x03);
         }
         else 
             anticheat = null;
@@ -704,14 +706,13 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ps.close();
 
             ps = con.prepareStatement("SELECT `locationtype`,`map` FROM savedlocations WHERE characterid = ?");
-            ps.setInt(1, charid);
+            ps.setInt(0x01, charid);
             rs = ps.executeQuery();
+            
+            //TODO loadPortal
             while (rs.next()) 
-            {
-                String locationType = rs.getString("locationtype");
-                int mapid = rs.getInt("map");
-                ret.savedLocations[SavedLocationType.valueOf(locationType).ordinal()] = mapid;
-            }
+                ret.savedLocations[SavedLocationType.valueOf(rs.getString("locationtype")).ordinal()] = new SavedLocation(rs.getInt("map"), 0x00);
+            
             rs.close();
             ps.close();
 
@@ -1197,13 +1198,14 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
             deleteWhereCharacterId(con, "DELETE FROM savedlocations WHERE characterid = ?");
             ps = con.prepareStatement("INSERT INTO savedlocations (characterid, `locationtype`, `map`) VALUES (?, ?, ?)");
-            ps.setInt(1, id);
+            ps.setInt(0x03, id);
+            //TODO save portal
             for (SavedLocationType savedLocationType : SavedLocationType.values())
             {
-                if (savedLocations[savedLocationType.ordinal()] != -1) 
+                if (savedLocations[savedLocationType.ordinal()] != null) 
                 {
-                    ps.setString(2, savedLocationType.name());
-                    ps.setInt(3, savedLocations[savedLocationType.ordinal()]);
+                    ps.setString(0x02, savedLocationType.name());
+                    ps.setInt(0x03, savedLocations[savedLocationType.ordinal()].getMapId());
                     ps.addBatch();
                 }
             }
@@ -2385,6 +2387,57 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         client.sendPacket(org.ascnet.leaftown.tools.MaplePacketCreator.updatePlayerStats(statups));
     }
     
+    public void resetStats() 
+    {
+        List<Pair<MapleStat, Integer>> statup = new ArrayList<>(0x05);
+        int tap = 0x00, tsp = 0x01;
+        int tstr = 0x04, tdex = 0x04, tint = 0x04, tluk = 0x04;
+        int levelap = (isCygnus() ? 0x06 : 0x05);
+        switch (job.getId()) 
+        {
+            case 0x64:
+            case 0x44C:
+            case 0x834://?
+                tstr = 0x23;
+                tap = ((getLevel() - 0x0A) * levelap) + 0x17;
+                tsp += ((getLevel() - 0x0A) * 0x03);
+                break;
+            case 0xC8:
+            case 0x4B0:
+                tint = 0x14;
+                tap = ((getLevel() - 0x08) * levelap) + 0x1C;
+                tsp += ((getLevel() - 0x08) * 0x03);
+                break;
+            case 0x12C:
+            case 0x514:
+            case 0x190:
+            case 0x578:
+                tdex = 0x19;
+                tap = ((getLevel() - 0x0A) * levelap) + 0x21;
+                tsp += ((getLevel() - 0x0A) * 0x03);
+                break;
+            case 0x1F4:
+            case 0x5DC:
+                tdex = 0x14;
+                tap = ((getLevel() - 0x0A) * levelap) + 0x26;
+                tsp += ((getLevel() - 0x0A) * 0x03);
+                break;
+        }
+        this.remainingAp = tap;
+        this.remainingSp = tsp;
+        this.dex = tdex;
+        this.int_ = tint;
+        this.str = tstr;
+        this.luk = tluk;
+        statup.add(new Pair<>(MapleStat.AVAILABLEAP, tap));
+        statup.add(new Pair<>(MapleStat.AVAILABLESP, tsp));
+        statup.add(new Pair<>(MapleStat.STR, tstr));
+        statup.add(new Pair<>(MapleStat.DEX, tdex));
+        statup.add(new Pair<>(MapleStat.INT, tint));
+        statup.add(new Pair<>(MapleStat.LUK, tluk));
+        client.sendPacket(org.ascnet.leaftown.tools.MaplePacketCreator.updatePlayerStats(statup));
+    }
+    
     public void changeSkillLevel(ISkill skill, byte newLevel, byte newMasterlevel, long expiration)  
     {
         if (newLevel > -1) 
@@ -2658,9 +2711,20 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             }
         }
     }
+    
+    public boolean isCygnus() 
+    {
+        return getJobType() == 0x01;
+    }
 
-    public boolean isGM() {
-        return GMLevel > 0;
+    public boolean isAran() 
+    { 
+        return (getJob().getId() >= 0x7D0) && (getJob().getId() <= 0x840);
+    }
+
+    public boolean isGM() 
+    {
+        return GMLevel > 0x00;
     }
 
     public int getGMLevel() {
@@ -2714,17 +2778,30 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     public int getMeso() {
         return meso.get();
     }
-
-    public int getSavedLocation(SavedLocationType type) {
-        return savedLocations[type.ordinal()];
+    
+    public int getSavedLocation(String type) 
+    {
+        SavedLocation sl = savedLocations[SavedLocationType.valueOf(type).ordinal()];
+        
+        if (sl == null) 
+            return -0x01; 
+        
+        int m = sl.getMapId();
+         
+        if (!SavedLocationType.valueOf(type).equals(SavedLocationType.WORLDTOUR)) 
+            clearSavedLocation(SavedLocationType.valueOf(type));
+        return m;
+    }
+    
+    public void saveLocation(String type) 
+    { 
+        MaplePortal closest = map.findClosestPortal(getPosition());
+        savedLocations[SavedLocationType.valueOf(type).ordinal()] = new SavedLocation(getMapId(), closest != null ? closest.getId() : 0);
     }
 
-    public void saveLocation(SavedLocationType type) {
-        savedLocations[type.ordinal()] = getMapId();
-    }
-
-    public void clearSavedLocation(SavedLocationType type) {
-        savedLocations[type.ordinal()] = -1;
+    public void clearSavedLocation(SavedLocationType type) 
+    {
+        savedLocations[type.ordinal()] = null;
     }
 
     public void gainMeso(int gain, boolean show) {
@@ -5656,7 +5733,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         buffCount = 0;
     }
 
-    public void confirmationCallback() {
+    public void confirmationCallback() 
+    {
         NPCScriptManager.getInstance().dispose(client);
         if (confirmationCallback != null)
             confirmationCallback.run();
@@ -5664,7 +5742,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         confirmationFailCallback = null;
     }
 
-    public void confirmationFailCallback() {
+    public void confirmationFailCallback() 
+    {
         NPCScriptManager.getInstance().dispose(client);
         if (confirmationFailCallback != null)
             confirmationFailCallback.run();
@@ -5672,7 +5751,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         confirmationCallback = null;
     }
 
-    public void callConfirmationNpc(Runnable r, Runnable fr, int id, int cfmid, String... text) {
+    public void callConfirmationNpc(Runnable r, Runnable fr, int id, int cfmid, String... text) 
+    {
         confirmationCallback = r;
         confirmationFailCallback = fr;
         NPCScriptManager.getInstance().start(client, id, "confirm_" + cfmid, text);
@@ -5755,4 +5835,14 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     {
     	return cashShop;
     }
+    
+    public void setArrivalTime(int duration) 
+    {
+        arrivalTime = System.currentTimeMillis() + (duration * 0x3E8);
+    }
+
+   public boolean isRideFinished() 
+   {
+       return arrivalTime < System.currentTimeMillis();
+   }
 }

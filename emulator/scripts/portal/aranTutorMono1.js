@@ -22,11 +22,9 @@
 /*
 By kevintjuh93
 */
-function enter(pi) 
-{	
+function enter(pi) { 
 	pi.blockPortal();
-	if (pi.containsAreaInfo(21002, "mo2=o")) 
-	{
+	if (pi.containsAreaInfo(21002, "mo2=o")) {
 	    return false;
 	}
 	pi.playSound("Aran/balloon");

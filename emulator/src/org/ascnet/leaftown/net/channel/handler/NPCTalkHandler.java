@@ -33,40 +33,53 @@ import org.ascnet.leaftown.client.MapleInventory;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
 import org.ascnet.leaftown.scripting.npc.NPCScriptManager;
 import org.ascnet.leaftown.server.life.MapleNPC;
-import org.ascnet.leaftown.server.maps.MapleMap;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 public class NPCTalkHandler extends AbstractMaplePacketHandler 
 {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NPCTalkHandler.class);
-    private static final String confirmFormat = "Your %1$s inventory is has 4 or less slots free. No compensation will be given for items lost due to having insufficient space in your inventory.\r\n\r\nDo you still want to speak to this NPC?";
+    private static final String confirmFormat = "O inventário [%1$s] tem menos de 4 slots vagos. Não nos responsabilizamos por items perdidos caso não haja espaço disponível em seu inventário.\r\n\r\nDeseja realmente falar com o NPC?";
 
     @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, final MapleClient c)
     {
-
         final int oid = slea.readInt();
-        MapleCharacter chr = c.getPlayer();
-        if (chr == null || chr.getMap().getMapObject(oid) == null || !(chr.getMap().getMapObject(oid) instanceof MapleNPC) || chr.getCheatTracker().checkNPCClick()) {
+        final MapleCharacter chr = c.getPlayer();
+        
+        if (!c.getPlayer().isAlive()) 
+        {
             c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
+        if (chr == null || chr.getMap().getMapObject(oid) == null || !(chr.getMap().getMapObject(oid) instanceof MapleNPC) || chr.getCheatTracker().checkNPCClick()) 
+        {
+            c.sendPacket(MaplePacketCreator.enableActions());
+            return;
+        }
+        
         final MapleNPC npc = (MapleNPC) chr.getMap().getMapObject(oid);
-        if (npc.hasShop()) {
-            if (chr.getShop() != null) {
+        
+        if (npc.hasShop()) 
+        {
+            if (chr.getShop() != null) 
+            {
                 chr.setShop(null);
-                c.sendPacket(MaplePacketCreator.confirmShopTransaction((byte) 20));
+                c.sendPacket(MaplePacketCreator.confirmShopTransaction((byte) 0x14));
             }
             npc.sendShop(c);
             return;
         }
-        for (MapleInventory ivnt : c.getPlayer().allInventories()) {
-            if (ivnt.getFreeSlots() < 4) {
-                Runnable r = new Runnable() {
-
+        
+        for (MapleInventory ivnt : c.getPlayer().allInventories()) 
+        {
+            if (ivnt.getFreeSlots() < 0x04) 
+            {
+                Runnable r = new Runnable() 
+                {
                     @Override
-                    public void run() {
+                    public void run() 
+                    {
                         handlePacketInt(oid, c);
                     }
                 };
@@ -80,9 +93,11 @@ public class NPCTalkHandler extends AbstractMaplePacketHandler
 
     private void handlePacketInt(final int oid, final MapleClient c) 
     {
-        MapleCharacter chr = c.getPlayer();
+        final MapleCharacter chr = c.getPlayer();
         final MapleNPC npc = (MapleNPC) chr.getMap().getMapObject(oid);
-        if (c.getCM() != null || c.getQM() != null || !chr.getMap().containsNPC(npc.getId())) {
+        
+        if (c.getCM() != null || c.getQM() != null || !chr.getMap().containsNPC(npc.getId())) 
+        {
             c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
@@ -92,9 +107,5 @@ public class NPCTalkHandler extends AbstractMaplePacketHandler
         	log.debug("=PLAYER " + c.getPlayer().getName() + " STARTED NPC " + npc.getName() + "(" + npc.getId() + ")");
             NPCScriptManager.getInstance().start(c, npc.getId());
         }
-        // 0 = next button
-        // 1 = yes no
-        // 2 = accept decline
-        // 5 = select a link
     }
 }

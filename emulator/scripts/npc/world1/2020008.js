@@ -19,8 +19,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-importPackage(Packages.client);
-importPackage(Packages.server.quest);
+importPackage(Packages.org.ascnet.leaftown.client);
+importPackage(Packages.org.ascnet.leaftown.server.quest);
 
 var status = 0;
 var job;

@@ -24,13 +24,26 @@
  */
 function enter(pi) {
     var mapid = pi.getPlayer().getMapId();
-    var togo = mapid / 100 % 10 == 5 ? mapid + 9500 : mapid + 100;
-    if (pi.getPlayer().getMapId() != 270040100) {
-        pi.warp(togo, 0);
-        return true;
-    } else {
-        pi.warp(270050000, 0);
-        return true;
-    }
-    return false;
+	var map = (mapid - 270010000) / 100;
+	//pi.getPlayer().dropMessage(5, map + " " + pi.isQuestCompleted(3534));
+    if (map < 5 && pi.isQuestCompleted(3500 + map)) {
+		pi.warp(mapid + 10, "out00");
+	} else if (map == 5 && pi.isQuestCompleted(3502 + map)) {
+		pi.warp(270020000, "out00");
+	} else if (map > 100 && map < 105 && pi.isQuestCompleted(3407 + map)) {
+		pi.warp(mapid + 10, "out00");
+	} else if (map == 105 && pi.isQuestCompleted(3514)) {
+		pi.warp(270030000, "out00");
+	} else if (map > 200 && map < 205 && pi.isQuestCompleted(3314 + map)) {
+		pi.warp(mapid + 10, "out00");
+	} else if (map == 205 && pi.isQuestCompleted(3519)) {
+		pi.warp(270040000, "out00");
+	} else if (map == 300 && (pi.haveItem(4032002) || pi.isQuestCompleted(3522))) {
+		pi.warp(270040100, "out00");
+	} else {
+		pi.message("You don't have permission to pass through here.");
+		return false;
+	}
+	pi.playPortalSound();
+	return true;
 }

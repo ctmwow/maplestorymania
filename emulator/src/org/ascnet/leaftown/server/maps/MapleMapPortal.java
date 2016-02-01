@@ -29,9 +29,10 @@ package org.ascnet.leaftown.server.maps;
 
 import org.ascnet.leaftown.server.MaplePortal;
 
-public class MapleMapPortal extends MapleGenericPortal {
-
-    public MapleMapPortal() {
+public class MapleMapPortal extends MapleGenericPortal 
+{
+    public MapleMapPortal() 
+    {
         super(MaplePortal.MAP_PORTAL);
     }
 }

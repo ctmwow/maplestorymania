@@ -2,7 +2,7 @@
  * Cygnus 1st Job advancement - Flame Wizard
  */
 
-importPackage(Packages.client);
+importPackage(Packages.org.ascnet.leaftown.client);
 
 var status = -1;
 

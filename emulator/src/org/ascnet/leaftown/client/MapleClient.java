@@ -242,7 +242,7 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
             }
             h.handlePacket(bba, this);
         }
-        super.channelRead(ctx, msg);
+        //super.channelRead(ctx, msg);
     }
 
     @Override
@@ -1324,11 +1324,13 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
 		this.idleTask = idleTask;
 	}*/
 
-    public NPCConversationManager getCM() {
+    public NPCConversationManager getCM() 
+    {
         return NPCScriptManager.getInstance().getCM(this);
     }
 
-    public QuestActionManager getQM() {
+    public QuestActionManager getQM() 
+    {
         return QuestScriptManager.getInstance().getQM(this);
     }
 

@@ -49,8 +49,8 @@
  */
 
 
-importPackage(Packages.net.world);
-importPackage(Packages.tools);
+importPackage(Packages.org.ascnet.leaftown.net.world);
+importPackage(Packages.org.ascnet.leaftown.tools);
 
 var exitMap;
 var instanceId;

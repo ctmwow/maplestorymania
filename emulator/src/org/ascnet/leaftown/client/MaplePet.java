@@ -324,7 +324,7 @@ public class MaplePet
     
     public void setSummoned(boolean summoned_)
     {
-    	summoned = summoned_ ? (byte)0x01 : (byte)0x00;
+    	summoned = summoned_ ? (byte) 0x01 : (byte) 0x00;
     }
 
     public boolean canConsume(int itemId) 
@@ -349,7 +349,7 @@ public class MaplePet
                     Point position = move.getPosition();
                     pos = position;
                 }
-                stance = ((LifeMovement) move).getStance();
+                stance = ((LifeMovement) move).getNewstate();
             }
         }
     }

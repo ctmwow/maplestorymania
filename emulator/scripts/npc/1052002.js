@@ -218,11 +218,11 @@ function action(mode, type, selection) {
                         if (!cm.haveItem(mats[i]))
                             complete = false;
                         else
-                        if (!cm.haveItem(mats[i],matQty[i] * selection)) complete=false;
+                        if (!cm.haveItem(mats[i],matQty[i] * qty)) complete=false;
                 }
             }
             else 
-            if (!cm.haveItem(mats,matQty * selection)) complete=false;
+            if (!cm.haveItem(mats,matQty * qty)) complete=false;
         }
 			
         if (!complete)

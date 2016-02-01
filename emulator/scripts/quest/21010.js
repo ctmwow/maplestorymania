@@ -23,7 +23,7 @@
 	Author : kevintjuh93
 	Quest  : Puka - Aran Tutorial
 */
-importPackage(Packages.org.ascnet.leaftown.client);
+importPackage(Packages.org.ascnet.leaftown.org.ascnet.leaftown.client);
 
 var status = -1;
 

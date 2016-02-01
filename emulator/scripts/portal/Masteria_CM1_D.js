@@ -21,7 +21,7 @@
 */
 
 function enter(pi) {
-    if (pi.itemQuantity(3992039) > 0) {
+    if (pi.hasItem(3992039)) {
         pi.warp(610020000, "CM1_E");
         return false;
     }

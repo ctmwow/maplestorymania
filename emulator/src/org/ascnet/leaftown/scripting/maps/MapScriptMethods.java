@@ -35,7 +35,7 @@ public class MapScriptMethods extends AbstractPlayerInteraction
 {
     public MapScriptMethods(MapleClient c) 
     {
-        super(c);
+        super(c); 
     }
     
     public void displayAranIntro() 

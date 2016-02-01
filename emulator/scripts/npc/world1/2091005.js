@@ -25,7 +25,7 @@
 * @Name:   So Gong
 * @Map(s): Dojo Hall
 */
-importPackage(Packages.server.maps);
+importPackage(Packages.org.ascnet.leaftown.server.maps);
 
 var belts = Array(1132000, 1132001, 1132002, 1132003, 1132004);
 var belt_level = Array(25, 35, 45, 60, 75);

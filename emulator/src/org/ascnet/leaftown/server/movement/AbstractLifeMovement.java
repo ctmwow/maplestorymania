@@ -29,38 +29,42 @@ package org.ascnet.leaftown.server.movement;
 
 import java.awt.Point;
 
-public abstract class AbstractLifeMovement implements LifeMovement {
+public abstract class AbstractLifeMovement implements LifeMovement 
+{
+    private Point position;
+    private int duration;
+    private int newstate, type;
 
-    private final Point position;
-    private final int stance;
-    private final int foothold;
-    private final int type;
-
-    public AbstractLifeMovement(int type, Point position, int stance, int foothold) {
+    public AbstractLifeMovement(int type, Point position, int duration, int newstate) 
+    {
         super();
         this.type = type;
         this.position = position;
-        this.stance = stance;
-        this.foothold = foothold;
+        this.duration = duration;
+        this.newstate = newstate;
     }
 
     @Override
-    public int getType() {
-        return type;
+    public int getType() 
+    {
+        return this.type;
     }
 
     @Override
-    public int getFoothold() {
-        return foothold;
+    public int getDuration() 
+    {
+        return duration;
     }
 
     @Override
-    public int getStance() {
-        return stance;
+    public int getNewstate() 
+    {
+        return newstate;
     }
 
     @Override
-    public Point getPosition() {
+    public Point getPosition() 
+    {
         return position;
     }
 }

@@ -103,17 +103,16 @@ public class NPCScriptManager extends AbstractScriptManager
             }
             
             engine.put("cm", cm);
-            for (int paramid = 0; paramid < params.length; paramid++)
-            {
+            
+            for (int paramid = 0x00; paramid < params.length; paramid++)
                 engine.put("param" + paramid, params[paramid]);
-            }
+            
             scripts.put(c, iv);
             iv.invokeFunction("start");
         } 
         catch (Exception e) 
         {
-            log.error("Error executing NPC script in start " + npc + " with filename " + fname + ". " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error executing NPC script in start " + npc + " with filename " + fname + ". " + e.getMessage(), e);
             dispose(c);
             cms.remove(c);
         }
@@ -162,6 +161,7 @@ public class NPCScriptManager extends AbstractScriptManager
             {
                 if (c.getCM() != null && c.getCM().getNpc() != 9103001)
                     log.error("Error executing NPC script in action " + c.getCM().getNpc() + ". " + e.getMessage(), e);
+                
                 dispose(c);
             }
         }
@@ -170,6 +170,7 @@ public class NPCScriptManager extends AbstractScriptManager
     public void dispose(NPCConversationManager cm) 
     {
         final MapleClient c = cm.getC();
+        
         cms.remove(c);
         scripts.remove(c);
         resetContext("npc/" + cm.getNpc() + ".js", c);
@@ -178,6 +179,7 @@ public class NPCScriptManager extends AbstractScriptManager
     public void dispose(MapleClient c)
     {
         final NPCConversationManager npccm = cms.get(c);
+        
         if (npccm != null) 
             dispose(npccm);
     }

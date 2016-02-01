@@ -34,40 +34,50 @@ import org.ascnet.leaftown.server.maps.MapleMap;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
-public class ChangeMapSpecialHandler extends AbstractMaplePacketHandler {
-
+public class ChangeMapSpecialHandler extends AbstractMaplePacketHandler 
+{
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, final MapleClient c) {
-        if (System.currentTimeMillis() - c.getPlayer().getLastWarpTime() < 2000) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, final MapleClient c) 
+    {
+        if (System.currentTimeMillis() - c.getPlayer().getLastWarpTime() < 2000) 
+        {
             c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
+        
         slea.readByte();
         String startwp = slea.readMapleAsciiString();
-        slea.readByte();
-        slea.readByte();
+        slea.readShort();
 
         MaplePortal portal = c.getPlayer().getMap().getPortal(startwp);
+        
         c.getPlayer().setLastWarpTime(System.currentTimeMillis());
-        if (c.getPlayer().getMap().isDojoMap() && c.getPlayer().getMap().getDojoStage() != 38) {
-            if (portal != null) {
-                if (c.getPlayer().getMap().countMobOnMap(9300216) > 0) {
-                    c.getPlayer().getClient().sendPacket(MaplePacketCreator.showOwnBuffEffect(0, 7, (byte) c.getPlayer().getLevel()));
+        
+        if (c.getPlayer().getMap().isDojoMap() && c.getPlayer().getMap().getDojoStage() != 38) 
+        {
+            if (portal != null) 
+            {
+                if (c.getPlayer().getMap().countMobOnMap(9300216) > 0x00) 
+                {
+                    c.getPlayer().getClient().sendPacket(MaplePacketCreator.showOwnBuffEffect(0x00, 0x07, (byte) c.getPlayer().getLevel()));
                     MapleMap map = c.getPlayer().getEventInstance().getMapInstance(c.getPlayer().getMap().getNextDojoMap());
-                    c.getPlayer().changeMap(map, map.getPortal(0));
-                } else {
-                    c.sendPacket(MaplePacketCreator.serverNotice(5, "You haven't killed the boss yet. Please kill it before continuing."));
+                    c.getPlayer().changeMap(map, map.getPortal(0x00));
+                }
+                else 
+                {
+                    c.sendPacket(MaplePacketCreator.serverNotice(0x05, "You haven't killed the boss yet. Please kill it before continuing."));
                     c.sendPacket(MaplePacketCreator.enableActions());
                 }
-            } else {
+            } 
+            else 
                 c.sendPacket(MaplePacketCreator.enableActions());
-            }
-        } else {
-            if (portal != null) {
+        } 
+        else 
+        {
+            if (portal != null) 
                 portal.enterPortal(c);
-            } else {
+            else 
                 c.sendPacket(MaplePacketCreator.enableActions());
-            }
         }
     }
 }

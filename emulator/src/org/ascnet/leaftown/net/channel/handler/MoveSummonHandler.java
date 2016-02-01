@@ -39,23 +39,27 @@ import java.awt.Point;
 import java.util.Collection;
 import java.util.List;
 
-public class MoveSummonHandler extends AbstractMovementPacketHandler {
-
+public class MoveSummonHandler extends AbstractMovementPacketHandler 
+{
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
+    {
         final int oid = slea.readInt();
         final Point startPos = StreamUtil.readShortPoint(slea);
         final List<LifeMovementFragment> res = parseMovement(slea);
         final MapleCharacter player = c.getPlayer();
         final Collection<MapleSummon> summons = player.getSummons().values();
+        
         MapleSummon summon = null;
-        for (MapleSummon sum : summons) {
-            if (sum.getObjectId() == oid) {
+        for (MapleSummon sum : summons) 
+        {
+            if (sum.getObjectId() == oid) 
                 summon = sum;
-            }
         }
-        if (summon != null && res != null && !res.isEmpty()) {
-            updatePosition(res, summon, 0);
+        
+        if (summon != null && res != null && !res.isEmpty()) 
+        {
+            updatePosition(res, summon, 0x00);
             player.getMap().broadcastMessage(player, MaplePacketCreator.moveSummon(player.getId(), oid, startPos, res), summon.getPosition());
         }
     }

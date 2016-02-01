@@ -8,7 +8,7 @@ Version 1.0 - Script Done.(18/7/2010)
 =============================================================
 */
 
-importPackage(Packages.client);
+importPackage(Packages.org.ascnet.leaftown.client);
 
 var status = -1;
 

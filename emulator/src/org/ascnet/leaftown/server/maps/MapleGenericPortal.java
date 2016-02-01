@@ -27,18 +27,15 @@
 
 package org.ascnet.leaftown.server.maps;
 
-import org.ascnet.leaftown.client.MapleCharacter;
 import org.ascnet.leaftown.client.MapleClient;
-import org.ascnet.leaftown.client.anticheat.CheatingOffense;
 import org.ascnet.leaftown.scripting.portal.PortalScriptManager;
 import org.ascnet.leaftown.server.MaplePortal;
-import org.ascnet.leaftown.server.fourthjobquests.FourthJobQuestsPortalHandler;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 
 import java.awt.Point;
 
-public class MapleGenericPortal implements MaplePortal {
-
+public class MapleGenericPortal implements MaplePortal 
+{
     private String name;
     private String target;
     private Point position;
@@ -49,132 +46,127 @@ public class MapleGenericPortal implements MaplePortal {
     private boolean status = true;
     private boolean spawned = false;
 
-    public MapleGenericPortal(int type) {
+    public MapleGenericPortal(int type) 
+    {
         this.type = type;
     }
 
     @Override
-    public int getId() {
+    public int getId() 
+    {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(int id) 
+    {
         this.id = id;
     }
 
     @Override
-    public String getName() {
+    public String getName() 
+    {
         return name;
     }
 
     @Override
-    public Point getPosition() {
+    public Point getPosition() 
+    {
         return position;
     }
 
     @Override
-    public String getTarget() {
+    public String getTarget() 
+    {
         return target;
     }
 
     @Override
-    public int getTargetMapId() {
+    public int getTargetMapId() 
+    {
         return targetmap;
     }
 
     @Override
-    public int getType() {
+    public int getType() 
+    {
         return type;
     }
 
     @Override
-    public String getScriptName() {
+    public String getScriptName()
+    {
         return scriptName;
     }
 
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name = name;
     }
 
-    public void setPosition(Point position) {
+    public void setPosition(Point position)
+    {
         this.position = position;
     }
 
-    public void setTarget(String target) {
+    public void setTarget(String target)
+    {
         this.target = target;
     }
 
-    public void setTargetMapId(int targetmapid) {
+    public void setTargetMapId(int targetmapid)
+    {
         targetmap = targetmapid;
     }
 
     @Override
-    public void setScriptName(String scriptName) {
+    public void setScriptName(String scriptName) 
+    {
         this.scriptName = scriptName;
     }
 
     @Override
-    public void setPortalStatus(boolean newStatus) {
+    public void setPortalStatus(boolean newStatus) 
+    {
         status = newStatus;
     }
 
     @Override
-    public boolean getPortalStatus() {
+    public boolean getPortalStatus() 
+    {
         return status;
     }
 
     @Override
-    public void setSpawned(boolean newSpawned) {
+    public void setSpawned(boolean newSpawned) 
+    {
         spawned = newSpawned;
     }
 
     @Override
-    public boolean hasSpawned() {
+    public boolean hasSpawned() 
+    {
         return spawned;
     }
 
     @Override
-    public void enterPortal(MapleClient c) {
-        MapleCharacter player = c.getPlayer();
-        double distanceSq = position.distanceSq(player.getPosition());
-        if (distanceSq > 22500) {
-            player.getCheatTracker().registerOffense(CheatingOffense.USING_FARAWAY_PORTAL, "D" + Math.sqrt(distanceSq));
-        }
-
+    public void enterPortal(MapleClient c) 
+    {
         boolean changed = false;
-        if (scriptName != null) {
-            if (!FourthJobQuestsPortalHandler.handlePortal(scriptName, c.getPlayer()))
-                changed = PortalScriptManager.getInstance().executePortalScript(this, c);
-        } else if (targetmap != 999999999) {
-            MapleMap to;
-            if (player.getEventInstance() == null) {
-                to = c.getChannelServer().getMapFactory().getMap(targetmap);
-            } else {
-                to = player.getEventInstance().getMapInstance(targetmap);
-            }
-            if (!player.getMap().canExit() && !player.isGM()) {
-                c.sendPacket(MaplePacketCreator.serverNotice(5, "You are not allowed to exit this map."));
-                c.sendPacket(MaplePacketCreator.enableActions());
-                return;
-            }
-            if (!to.canEnter() && !player.isGM()) {
-                c.sendPacket(MaplePacketCreator.serverNotice(5, "You are not allowed to enter " + to.getStreetName() + " : " + to.getMapName()));
-                c.sendPacket(MaplePacketCreator.enableActions());
-                return;
-            }
-            if ((player.getLevel() >= to.getLevelForceMove() || player.getLevel() < to.getLevelLimit()) && !player.isGM()) {
-                c.sendPacket(MaplePacketCreator.portalBlock((byte) 3));
-                return;
-            }
-            MaplePortal pto = to.getPortal(target);
-            if (pto == null) { // fallback for missing portals - no real life case anymore - intresting for not implemented areas
-                pto = to.getRandomSpawnPoint();
-            }
-            c.getPlayer().changeMap(to, pto); //late resolving makes this harder but prevents us from loading the whole world at once
+        if (getScriptName() != null)
+            changed = PortalScriptManager.getInstance().executePortalScript(this, c);
+        else if (getTargetMapId() != 999999999) 
+        {
+            MapleMap to = c.getPlayer().getEventInstance() == null ? c.getChannelServer().getMapFactory().getMap(getTargetMapId()) : c.getPlayer().getEventInstance().getMapInstance(getTargetMapId());
+            MaplePortal pto = to.getPortal(getTarget());
+            
+            if (pto == null) 
+                pto = to.getPortal(0x00);
+            
+            c.getPlayer().changeMap(to, pto);
             changed = true;
         }
-        if (!changed) {
+        
+        if (!changed) 
             c.sendPacket(MaplePacketCreator.enableActions());
-        }
     }
 }

@@ -1,75 +1,81 @@
-/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-status = -1;
-close = false;
-oldSelection = -1;
+var status = 0;
+var ticketSelection = -1;
+var text = "Here's the ticket reader.";
+var hasTicket = false;
+var NLC = false;
 
 function start() {
-    var text = "Here's the ticket reader.";
-    if (cm.haveItem(4031713) || cm.haveItem(4031036) || cm.haveItem(4031037) || cm.haveItem(4031038))
-        text += " You will be brought in inmmediately. Which ticket you would like to use?#b";
-    else
-        close = true;
-    if (cm.haveItem(4031713))
-        text += "\r\n#L3##t4031713#";
-    for (var i = 0; i < 3; i++)
-        if (cm.haveItem(4031036 + i))
-            text += "\r\n#L" + i + "##t" + (4031036 + i) +"#";
-    if (close) {
-        cm.sendOk(text);
-        cm.dispose();
-    } else
-        cm.sendSimple(text);
+	cm.sendSimple("Pick your destination.\n\r\n#L0##bKerning City Subway#l\r\n#L1##bKerning square Shopping Center (Get on the subway)#l\n\n\r\n#L2#Enter Contruction Site#l\r\n#L3#New Leaf City#l");
 }
 
 function action(mode, type, selection) {
-    status++;
-    if (mode != 1) {
-        if(mode == 0)
-            cm.sendNext("You must have some business to take care of here, right?");
-        cm.dispose();
-        return;
+    if (mode == -1) {
+    	cm.dispose();
+    	return;
+    } else if (mode == 0) {
+           cm.dispose();
+           return;
+    } else {
+    	status++;
     }
-    if (status == 0) {
-        if (selection == 3) {
-            var em = cm.getEventManager("Subway");
-            if (em.getProperty("entry") == "true")
+    if (status == 1) {
+        if (selection == 0) {
+    		cm.warp(103000101);
+    		cm.dispose();
+    		return;
+        } else if (selection == 1) {
+            cm.warp(103000310);
+            cm.dispose();
+        } else if (selection == 2) {
+            if (cm.haveItem(4031036) || cm.haveItem(4031037) || cm.haveItem(4031038)) {
+                text += " You will be brought in immediately. Which ticket you would like to use?#b";
+                for (var i = 0; i < 3; i++) {
+                    if (cm.haveItem(4031036 + i)) {
+                        text += "\r\n#b#L" + (i + 1) + "##t" + (4031036 + i) +"#";
+                    }
+                }
+                cm.sendSimple(text);  
+                hasTicket = true;
+            } else { 
+            	cm.sendOk("It seems as though you don't have a ticket!");
+            	cm.dispose();
+            	return;
+            }
+        } else if (selection == 3) {
+        	if (!cm.haveItem(4031711) && cm.getPlayer().getMapId() == 103000100) {
+                    cm.sendOk("It seems you don't have a ticket! You can buy one from Bell.");
+                    cm.dispose();
+                    return;
+        	}
+                cm.gainItem(4031711, -1);
+                cm.warp(600010001);
+                cm.dispose();
+            if (em.getProperty("entry") == "true") {
                 cm.sendYesNo("It looks like there's plenty of room for this ride. Please have your ticket ready so I can let you in. The ride will be long, but you'll get to your destination just fine. What do you think? Do you wants to get on this ride?");
-            else {
+            } else {
                 cm.sendNext("We will begin boarding 1 minute before the takeoff. Please be patient and wait for a few minutes. Be aware that the subway will take off right on time, and we stop receiving tickets 1 minute before that, so please make sure to be here on time.");
                 cm.dispose();
+                return;
             }
-        }else{
-            cm.sendNext("Good Luck!"); //Not GMS-like
         }
-        oldSelection = selection;
-    } else if (status == 1) {
-        if (oldSelection == 3) {
-            cm.gainItem(4031713, -1);
-            cm.warp(600010004);
-        } else {
-            cm.gainItem(4031036 + oldSelection, -1);
-            cm.warp(103000900 + (oldSelection * 3));
-        }
-        cm.dispose();
+    } else if (status == 2) {
+    	if (hasTicket) {
+    		ticketSelection = selection;
+            if (ticketSelection > -1) {
+                cm.gainItem(4031035 + ticketSelection, -1);
+                cm.warp(103000897 + (ticketSelection * 3));
+                hasTicket = false;
+                cm.dispose();
+                return;
+            }
+    	}
+	    if (cm.haveItem(4031711)) {
+		   	cm.gainItem(4031711, -1);
+	        cm.warp(600010004);
+	    	cm.dispose();
+	    	return;
+		}
     }
 }

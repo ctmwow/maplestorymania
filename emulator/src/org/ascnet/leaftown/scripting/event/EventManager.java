@@ -60,10 +60,17 @@ public class EventManager {
         this.name = name;
     }
 
-    public void cancel() {
-        try {
+    public void cancel() 
+    {
+    	if(iv == null)
+    		return;
+    	
+        try 
+        {
             iv.invokeFunction("cancelSchedule", (Object) null);
-        } catch (ScriptException | NoSuchMethodException ex) {
+        }
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventManager.class.getName()).log(Level.SEVERE, "Error in event script " + name, ex);
         }
     }

@@ -20,6 +20,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 function start() {
-    cm.warp(101000000, 0);
-    cm.dispose();
+    cm.sendYesNo("Would you like to exit the Guild Quest?");
+}
+
+function action(mode, type, selection) {
+	if(mode == 1) {
+		var eim = cm.getPlayer().getEventInstance();
+		if(eim != null) {
+			eim.removePlayer(cm.getPlayer());
+		}
+	}
+	cm.dispose();
 }
