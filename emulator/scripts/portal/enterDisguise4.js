@@ -25,10 +25,6 @@
 */
 
 function enter(pi) {
-	if(pi.isQuestStarted(20301) || pi.isQuestStarted(20302) || pi.isQuestStarted(20303) || pi.isQuestStarted(20304) || pi.isQuestStarted(20305)) {
-		pi.warp(108010630, "out00");
-	} else {
-		pi.warp(130010120, "out00");
-	}
+	pi.warp(130010120, "in01");
 	return true;
 }

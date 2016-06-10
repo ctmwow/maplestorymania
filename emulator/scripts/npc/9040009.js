@@ -71,8 +71,7 @@ function action(mode, type, selection) {
                                     cm.sendOk("Excellent work. Please proceed to the next stage.");
                                     cm.showEffect("quest/party/clear");
                                     cm.playSound("Party1/Clear");
-                                    var prev = eim.getProperty("stage1clear");
-									eim.setProperty("stage1clear","true");
+                                    var prev = eim.setProperty("stage1clear","true",true);
                                     if (prev == null) {
                                         cm.getGuild().gainGP(15);
                                     }
@@ -125,7 +124,7 @@ function getReactors() {
     var iter = cm.getPlayer().getMap().getMapObjects().iterator();
     while (iter.hasNext()) {
         var mo = iter.next();
-        if (mo.getType() == Packages.org.ascnet.leaftown.server.maps.MapleMapObjectType.REACTOR && !mo.getName().equals("statuegate")) {
+        if (mo.getType() == MapleMapObjectType.REACTOR && !mo.getName().equals("statuegate")) {
             reactors.push(mo.getObjectId());
         }
     }

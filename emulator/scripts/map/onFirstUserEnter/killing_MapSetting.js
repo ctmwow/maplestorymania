@@ -1,4 +1,4 @@
-importPackage(Packages.org.ascnet.leaftown.tools);
+importPackage(Packages.tools);
 
 function start(ms) { 
     var pq = ms.getPyramid();

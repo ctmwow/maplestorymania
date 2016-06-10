@@ -24,8 +24,8 @@
 	Map(s): 		New Leaf City
 	Description: 		Quest - Pet Evolution
 */
-importPackage(Packages.org.ascnet.leaftown.client);
-importPackage(Packages.org.ascnet.leaftown.server);
+importPackage(Packages.client);
+importPackage(Packages.server);
 
 var status = -1;
 

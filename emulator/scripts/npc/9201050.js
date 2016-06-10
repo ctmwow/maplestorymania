@@ -46,9 +46,9 @@ function action(mode, type, selection) {
                 for (var i = 0; i < info.length; i++)
                     selStr += "\r\n#L" + i + "# " + info[i] + "#l";
                 cm.sendSimple(selStr);
-            } else if (!cm.getQuestStarted(4911)){
+            }
+            else if (!cm.getQuestStarted(4911)){
                 cm.sendNext("Good job! You've solved all of my questions about NLC. Enjoy of your trip!");
-                cm.isQuestCompleted(4911);
                 cm.dispose();
                 return;
             }
@@ -101,15 +101,13 @@ function action(mode, type, selection) {
                     break;
                 case 10:
                     if (cm.getLevel() >= minlevel) {
-                        if (!cm.isQuestCompleted(4900)) {
-                            cm.sendNext("No problem. I'll give you something nice if you answer them correctly!");
-                            cm.startQuest(4900);
-                        } else {
-                            cm.sendNext("Eager, are we? How about you explore a bit more before I let you take the quiz?");
-                            cm.dispose();
-                            break;
-                        }
+                        cm.sendNext("No problem. I'll give you something nice if you answer them correctly!");
+                        cm.startQuest(4900);
                     }
+                    else
+                        cm.sendNext("Eager, are we? How about you explore a bit more before I let you take the quiz?");
+                    cm.dispose();
+                    break;
             }
         }
     }

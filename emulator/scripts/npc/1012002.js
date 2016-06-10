@@ -84,8 +84,8 @@ function action(mode, type, selection) {
         }else if (selection == 5) { //arrow refine
             var selStr = "Arrows? Not a problem at all.#b";
             items = [2060000,2061000,2060001,2061001,2060002,2061002];
-            for (var i = 0; i < items.length; i++)
-                selStr += "\r\n#L" + i + "##t" + items[i] + "##l";
+            for (var i = 0; i < arrows.length; i++)
+                selStr += "\r\n#L" + i + "##t" + arrows[i] + "##l";
         }
         selectedType = selection;
         cm.sendSimple(selStr);
@@ -128,7 +128,7 @@ function action(mode, type, selection) {
             var costSet = [0,0,0,0,0,0]
         }
         if(selectedType != 4){
-            item = items[selectedItem];
+            item = itemSet[selectedItem];
             mats = matSet[selectedItem];
             matQty = matQtySet[selectedItem];
             cost = costSet[selectedItem];

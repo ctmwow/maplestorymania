@@ -24,9 +24,7 @@
  * Author: kevintjuh93
  *
 */
-
 function start(ms) {
-/*
 	if (ms.getPlayer().getMapId() == 110000000 || (ms.getPlayer().getMapId() >= 100000000 && ms.getPlayer().getMapId() < 105040300)) {	
 		ms.explorerQuest(29005, "Beginner Explorer");//Beginner Explorer	
 	} else if (ms.getPlayer().getMapId() >= 105040300 && ms.getPlayer().getMapId() <= 105090900) {
@@ -46,5 +44,5 @@ function start(ms) {
 	} 
 	if (ms.getPlayer().getMapId() == 104000000) {	       
 		ms.mapEffect("maplemap/enter/104000000");
-	}*/
+	}
 }

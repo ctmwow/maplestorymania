@@ -23,11 +23,9 @@
  *9201023 - Nana(K)
  *@author Jvlaple
  */
-var status = -1; 
-
-
+ 
 function start() {
-	cm.sendOk("Your skills have been added!");
+    status = -1;
     action(1, 0, 0);
 }
 
@@ -43,81 +41,6 @@ function action(mode, type, selection) {
             status++;
         else
             status--;
-	      if (cm.getPlayer().getJob().getId() > 2000) {
-	    	  if (cm.getPlayer().getSkillLevel(21001003) < 1)
-	    	  	cm.teachSkill(21001003, 0, 20,-1); // Pole Arm Booster
-	    	  if (cm.getPlayer().getSkillLevel(21100004) < 1)  
-	    		  cm.teachSkill(21100004,0, 20,-1); // Combo Smash
-	    	  if (cm.getPlayer().getSkillLevel(21100005) < 1)
-		        cm.teachSkill(21100005,0, 20,-1); // Combo Drain
-	    	  if (cm.getPlayer().getSkillLevel(21100000) < 1)
-		        cm.teachSkill(21100000,0, 20,-1); // Pole Arm Mastery
-	    	  if (cm.getPlayer().getSkillLevel(21100002) < 1)
-		        cm.teachSkill(21100002,0, 30,-1); // Final Charge
-	    	  if (cm.getPlayer().getSkillLevel(21110002) < 1)
-		        cm.teachSkill(21110002,0, 20,-1); // Full Swing
-	    	  if (cm.getPlayer().getSkillLevel(21110002) > 1)
-			        cm.teachSkill(21110007, cm.getPlayer().getSkillLevel(21110002), 20,-1); // Full Swing
-	    	  if (cm.getPlayer().getSkillLevel(21110002) > 1)
-			        cm.teachSkill(21110008, cm.getPlayer().getSkillLevel(21110002), 20,-1); // Full Swing
-	      } else if (cm.getPlayer().getJob().getId() == 232) {
-	    	  if (cm.getPlayer().getSkillLevel(2321008) < 1)
-	    		  cm.teachSkill(2321008, 0, 10,-1); // Genesis 
-	    	  if (cm.getPlayer().getSkillLevel(2321006) < 1)
-		    	  cm.teachSkill(2321006, 0, 10,-1); // res 	    	  
-	      } else if (cm.getPlayer().getJob().getId() == 112) { 
-	    	  if (cm.getPlayer().getSkillLevel(1121006) < 1)
-	    		  cm.teachSkill(1121006, 0, 10,-1); // pali rush
-	    	  if (cm.getPlayer().getSkillLevel(1121002) < 1)
-		    	  cm.teachSkill(1121002, 0, 10,-1); // power stance	 	    	  
-	      } else if (cm.getPlayer().getJob().getId() == 122) { 
-	    	  if (cm.getPlayer().getSkillLevel(1221007) < 1)
-	    		  cm.teachSkill(1221007, 0, 10,-1); // hero rush	  
-	    	  if (cm.getPlayer().getSkillLevel(1221002) < 1)
-		    	  cm.teachSkill(1221002, 0, 10,-1); // power stance	  	    	  
-	      } else if (cm.getPlayer().getJob().getId() == 132) { 
-	    	  if (cm.getPlayer().getSkillLevel(1320006) < 1)
-	    	  cm.teachSkill(1320006, 0, 10,-1); // Berzerk
-	    	  if (cm.getPlayer().getSkillLevel(1321003) < 1)
-	    	  cm.teachSkill(1321003, 0, 10,-1); // DrK Rush
-	    	  if (cm.getPlayer().getSkillLevel(1321002) < 1)
-		    	  cm.teachSkill(1321002, 0, 10,-1); // power stance	 	    	  
-	      } else if (cm.getPlayer().getJob().getId() == 312) { 
-	    	  if (cm.getPlayer().getSkillLevel(3121008) < 1)
-	    	  cm.teachSkill(3121008, 0, 10,-1); // Concentrate	    	  
-	      } else if (cm.getPlayer().getJob().getId() == 512) { 
-	    	  if (cm.getPlayer().getSkillLevel(5121003) < 1)
-		    	  cm.teachSkill(5121003, 0, 10,-1); // super transformation
-	    	  if (cm.getPlayer().getSkillLevel(5121004) < 1)
-		    	  cm.teachSkill(5121004, 0, 10,-1); // demo
-	    	  if (cm.getPlayer().getSkillLevel(5121005) < 1)
-		    	  cm.teachSkill(5121005, 0, 10,-1); // snatch
-	      } else if (cm.getPlayer().getJob().getId() == 522) { 
-	    	  if (cm.getPlayer().getSkillLevel(5221006) < 1)
-		    	  cm.teachSkill(5221006, 0, 10,-1); // ship
-	    	  if (cm.getPlayer().getSkillLevel(5221007) < 1)
-		    	  cm.teachSkill(5221007, 0, 10,-1); // cannon
-	    	  if (cm.getPlayer().getSkillLevel(5221008) < 1)
-		    	  cm.teachSkill(5221008, 0, 10,-1); // torpedo
-	    	  if (cm.getPlayer().getSkillLevel(5221009) < 1)
-		    	  cm.teachSkill(5221009, 0, 10,-1); // hypno 
-	    	  if (cm.getPlayer().getSkillLevel(5221003) < 1)
-		    	  cm.teachSkill(5221003, 0, 10,-1); // air strike	    	  
-	      } else if (cm.getPlayer().getJob().getId() == 422) { 
-	    	  if (cm.getPlayer().getSkillLevel(4221001) < 1)
-		    	  cm.teachSkill(4221001, 0, 10,-1); // assassinate
-	    	  if (cm.getPlayer().getSkillLevel(4221006) < 1)
-		    	  cm.teachSkill(4221006, 0, 10,-1); // smoke screen  
-	      } else if (cm.getPlayer().getJob().getId() == 222) { 
-	    	  if (cm.getPlayer().getSkillLevel(2221007) < 1)
-		    	  cm.teachSkill(2221007, 0, 10,-1); // blizzard
-	      } else if (cm.getPlayer().getJob().getId() == 212) { 
-	    	  if (cm.getPlayer().getSkillLevel(2121007) < 1)
-		    	  cm.teachSkill(2121007, 0, 10,-1); // meteor	    	  
-	    	  
-	      }
-	    	  cm.dispose();
-        /*
         if (cm.getPlayer().getMarriageQuestLevel() == 1 || cm.getPlayer().getMarriageQuestLevel() == 52) {
             if (!cm.haveItem(4000015, 40)) {
                 if (status == 0) {
@@ -137,6 +60,7 @@ function action(mode, type, selection) {
         } else {
             cm.sendOk("Hi, I'm Nana the love fairy... Hows it going?");
             cm.dispose();
-        }*/
+        }
     }
 }
+					

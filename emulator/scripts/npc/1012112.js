@@ -25,9 +25,6 @@
  */
 var status = 0;
 var chosen = 0;
-var min = 3;
-var minLevel = 10;
-
 
 function start() {
     status = -1;
@@ -42,68 +39,56 @@ function action(mode, type, selection) {
             cm.dispose();
             return;
         }
-        if (mode == 1) {
+        if (mode == 1)
             status++;
-        } else {
+        else
             status--;
-        }
-        if (cm.getPlayer().getMapId() == 100000200) {
-            if (cm.getParty() == null || !cm.isLeader()) {
+        if (cm.getPlayer().getMapId() == 100000200){
+            if (!cm.isLeader()) {
                 if (status == 0) {
                     cm.sendNext("Hi there! I'm Tory. This place is covered with mysterious aura of the full moon, and no one person can enter here by him/herself.");
                 } else if (status == 1) {
-                    cm.sendOk("If you'd like to enter here, the leader of your party will have to talk to me. Talk to your party leader about this.");
-                    cm.dispose();
-                }
+                    cm.sendSimple("If you'd like to enter here, the leader of your party will have to talk to me. Talk to your party leader about this.");
+                } 
             } else {
                 if (status == 0) {
                     cm.sendNext("I'm Tory. Inside here is a beautiful hill where the primrose blooms. There's a tiger that lives in the hill, Growlie, and he seems to be looking for something to eat.");
                 } else if (status == 1) {
                     cm.sendSimple("Would you like to head over to the hill of primrose and join forces with your party members to help Growlie out?\r\n#b#L0# Yes, I will go.#l");
                 } else if (status == 2) {
-                    var party = cm.getPartyMembers();
-                    var onmap = 0;
-                    for (var i = 0; i < party.size(); i++) {
-                        if (party.get(i).getMap().getId() == 100000200) {
-                            if (party.get(i).getLevel() < minLevel) {
-                                cm.sendOk("A member of your party does not meet the level requirement.");
-                                cm.dispose();
-                                return;
+                    if (cm.getParty() == null) {
+                        cm.sendOk("You are not in a party.");
+                        cm.dispose();
+                        return;
+                    } else {
+                        var cango = true;
+                        var things = cm.getClient().getChannelServer().getPartyMembers(cm.getPlayer().getParty());
+                        var onmap = 0;
+                        for (var i = 0; i < things.size(); i++) {
+                            if (things.get(i).getMap().getId() == cm.getPlayer().getParty().getLeader().getMapid()) {
+                                if (things.get(i).getLevel() < 10) {
+                                    cango = false;
+                                    break;
+                                }
+                                onmap++;
                             }
-                            onmap++;
+                        }
+                        if (onmap < 3 || cm.getClient().getChannelServer().getMapFactory().getMap(910010000).getAllPlayer().getSize() > 0)
+                            cango = false;
+                        if (cango) {
+                            cm.getClient().getChannelServer().getMapFactory().getMap(910010000).resetRiceCakes(); // lol lame method
+                            cm.getClient().getChannelServer().getMapFactory().getMap(910010000).setAllowHPQSummon(false); // lol lame method
+                            cm.warpParty(910010000);
+                            cm.dispose();
+                        } else {
+                            // insert message here
+                            cm.sendOk("UNDER CONSTRUCTION");
+                            cm.dispose();
                         }
                     }
-                    if (onmap < min) {
-                        cm.sendOk("A member of your party is not presently in the map.");
-                        cm.dispose();
-                        return;
-                    }
-                    if (cm.getClient().getChannelServer().getMapFactory().getMap(910010000).getAllPlayer().size() > 0) {
-                        cm.sendOk("Someone is already attempting the PQ. Please wait for them to finish, or find another channel.");
-                        cm.dispose();
-                        return;
-                    }
-                    var em = cm.getEventManager("HenesysPQ");
-                    if (em == null) { 
-                        cm.sendOk("This PQ is currently broken. Please report it on the forum!");
-                        cm.dispose();
-                        return;
-                    }
-
-                    var prop = em.getProperty("state");
-                    if (prop == null || prop.equals("0")) { //Start the PQ
-					    cm.removeHPQItems();
-                        em.setProperty("latestLeader", cm.getPlayer().getName());
-                        em.startInstance(cm.getParty(), cm.getPlayer().getMap());
-                    } else {
-                        cm.sendOk("Someone is already attempting the PQ. Please wait for them to finish, or find another channel.");
-                        cm.dispose();
-                        return;
-                    }
-                    cm.dispose();
                 }
             }
-        } else if (cm.getPlayer().getMap().getId() == 910010100 || cm.getPlayer().getMap().getId() == 910010400) {
+        } else if (cm.getPlayer().getMap().getId() == 910010100) {
             if (status == 0) {
                 cm.sendSimple("I appreciate you giving some rice cakes for the hungry Growlie. It looks like you have nothing else to do now. Would you like to leave this place?\r\n#L0#I want to give you the rest of my rice cakes.#l\r\n#L1#Yes, please get me out of here.#l");
             } else if (status == 1) {
@@ -135,6 +120,14 @@ function action(mode, type, selection) {
                 } else if (cm.getPlayer().getGivenRiceCakes() < 20) {
                     cm.sendOk("Thank you for rice cake number " + cm.getPlayer().getGivenRiceCakes() + "!! I really appreciate it!");
                 }
+            }
+        } else if (cm.getPlayer().getMap().getId() == 910010400) {
+            if (status == 0) {
+                cm.sendNext("Are you guys done putting a good whooping on those pigs? It looks like you'll have nothing else to do here now. Would you like to leave this place? \r\n#b#L0# Yes, I'd like to leave here.#l");
+            } else if (status == 1) {
+                if (cm.getParty() != null)
+                    cm.warpParty(100000200);
+                cm.dispose();
             }
         }
     }

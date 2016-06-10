@@ -28,9 +28,6 @@
 @	Function = LPQ - 3rd Stage
 @
 */
-
-importPackage(Packages.org.ascnet.leaftown.tools);
-
 var status = 0;
 var party;
 var preamble;
@@ -72,11 +69,9 @@ function action(mode, type, selection) {
                     }
                 } else {
                     if (gaveItems == null) {
-                        if(cm.getPlayer().getMap().getCharacters().size() != eim.getPlayers().size()) {
-							cm.sendOk("Please wait for all of your party members to get here.");
-							cm.dispose();
-                        } else if (cm.itemQuantity(4001022) >= 32) {
+                        if (cm.itemQuantity(4001022) >= 32) {
                             cm.sendOk("Good job! you have collected all 32 #b#t4001022#'s#k");
+                            cm.removeAll(4001022);
                         } else {
                             cm.sendOk("Sorry you don't have all 32 #b#t4001022#'s#k");
                             cm.dispose();
@@ -89,14 +84,9 @@ function action(mode, type, selection) {
             }
         } else if (status == 1) {
             cm.sendOk("You may continue to the next stage!");
-            
-			var map = eim.getMapInstance(cm.getPlayer().getMapId());
-			map.broadcastMessage(MaplePacketCreator.showEffect("quest/party/clear"));
-			map.broadcastMessage(MaplePacketCreator.playSound("Party1/Clear"));
-			map.broadcastMessage(MaplePacketCreator.environmentChange("gate", 2));
-	
-			cm.removeAll(4001022);
-            cm.givePartyExp("LudiPQ3rd");
+            cm.gate();
+            cm.clear();
+            cm.givePartyExp(4200, eim.getPlayers());
             eim.setProperty("3stageclear","true");
             eim.setProperty("leader" + nthtext + "gaveItems","done");
             cm.dispose();

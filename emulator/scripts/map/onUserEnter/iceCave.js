@@ -1,5 +1,4 @@
-function start(ms) 
-{
+function start(ms) {
 	ms.teachSkill(20000014, -1, 0, -1);
 	ms.teachSkill(20000015, -1, 0, -1);
 	ms.teachSkill(20000016, -1, 0, -1);

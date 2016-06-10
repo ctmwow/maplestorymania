@@ -26,7 +26,7 @@
 	Quest ID : 		21000
 */
 
-importPackage(Packages.org.ascnet.leaftown.client);
+importPackage(Packages.client);
 
 var status = -1;
 

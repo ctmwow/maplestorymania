@@ -32,8 +32,8 @@
 var status;
 var minLevel = 21;
 var maxLevel = 255;
-var minPlayers = 3;
-var maxPlayers = 6;
+var minPlayers = 1;
+var maxPlayers = 4;
 
 function start() {
     status = -1;
@@ -63,7 +63,7 @@ function action(mode, type, selection) {
                     levelValid++;
             }
             if (inMap < minPlayers || inMap > maxPlayers) {
-                cm.sendOk("Your party is not a party of "+minPlayers+". Please make sure all your members are present and qualified to participate in this quest.");
+                cm.sendOk("Your party is not a party of "+minPlayers+". Please make sure all your members are present and qualified to participate in this quest. I see #b" + inMap + "#k of your party members are in Kerning. If this seems wrong, #blog out and log back in,#k or reform the party.");
                 cm.dispose();
             } else if (levelValid != inMap) {
                 cm.sendOk("Please make sure all your members are present and qualified to participate in this quest. This PQ requires players ranging from level "+minLevel+" to level "+maxLevel+". I see #b" + levelValid + "#k members are in the right level range. If this seems wrong, #blog out and log back in,#k or reform the party.");
@@ -75,9 +75,10 @@ function action(mode, type, selection) {
                 } else if (em.getProperty("KPQOpen").equals("true")) {
                     // Begin the PQ.
                     em.startInstance(cm.getParty(), cm.getPlayer().getMap());
-                    party = cm.getParty();
-                    cm.removePartyItems(4001008);
-                    cm.removePartyItems(4001007);
+                    // Remove Passes and Coupons GMS DOESNT DO THIS!!!
+                    //party = cm.getPlayer().getEventInstance().getPlayers();
+                    //cm.removeFromParty(4001008, party);
+                    //cm.removeFromParty(4001007, party);
                     em.setProperty("KPQOpen" , "false");
                 } else {
                     cm.sendNext("There is already another party inside. Please wait !");

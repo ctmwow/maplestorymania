@@ -21,7 +21,7 @@
 */
 
 function enter(pi) {
-    if (pi.hasItem(3992040)) {
+    if (pi.itemQuantity(3992040) > 0) {
         pi.warp(610010004, "U5_1");
         return false;
     }

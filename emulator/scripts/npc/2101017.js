@@ -20,8 +20,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-importPackage(Packages.org.ascnet.leaftown.tools);
-importPackage(Packages.org.ascnet.leaftown.client);
+importPackage(Packages.tools);
+importPackage(Packages.client);
 
 status = -1;
 var sel;

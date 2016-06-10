@@ -28,10 +28,8 @@ function start() {
                 var prev = eim.setProperty("bossclear","true",true);
                 if (prev == null) {
                     var start = parseInt(eim.getProperty("entryTimestamp"));
-                    var diff = Packages.org.ascnet.leaftown.System.currentTimeMillis() - start;
+                    var diff = System.currentTimeMillis() - start;
                     var points = 1000 - Math.floor(diff / (100 * 60));
-					if(points < 100)
-						points = 100;
                     cm.getGuild().gainGP(points);
                 }
                 eim.finishPQ();

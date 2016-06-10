@@ -1,36 +1,30 @@
-var mapp = -1;
-var map = 0;
+/*
+	This file is part of the OdinMS Maple Story Server
+    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
+		       Matthias Butz <matze@odinms.de>
+		       Jan Christian Meyer <vimes@odinms.de>
 
-function enter(pi) 
-{
-    if (pi.getQuestStatus(20701).getId() == 1) 
-    {
-    	map = 913000000;
-    }
-    else if (pi.getQuestStatus(20702).getId() == 1) 
-    {
-    	map = 913000100;
-    }
-    else if (pi.getQuestStatus(20703).getId() == 1) 
-    {
-    	map = 913000200;
-    }
-    
-    if (map > 0) 
-    {
-    	if (pi.getPlayerCount(map) == 0) 
-    	{
-    		var mapp = pi.getMap(map);
-    		mapp.respawn();
-    		pi.warp(map, 0);
-    	} 
-    	else 
-    	{
-    		pi.playerMessage(5, "Someone is already in this map.");
-    	}
-    } 
-    else 
-    {
-    	pi.playerMessage(5, "Hall #1 can only be entered if you're engaged in Kiku's Acclimation Training.");
-    }
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation version 3 as published by
+    the Free Software Foundation. You may not use, modify or distribute
+    this program under any other version of the GNU Affero General Public
+    License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/* 
+	Map(s): 		Empress' Road : Training Forest III
+	Description: 		Takes you to Entrance to Drill Hall
+*/
+
+function enter(pi) {
+	pi.warp(130020000, "west00");
+	return true;
 }

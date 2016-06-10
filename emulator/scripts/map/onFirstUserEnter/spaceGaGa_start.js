@@ -23,7 +23,7 @@
  *@Author:     kevintjuh93
 */
 
-importPackage(Packages.org.ascnet.leaftown.tools); 
+importPackage(Packages.tools); 
 var player;
 
 function start(ms) { 

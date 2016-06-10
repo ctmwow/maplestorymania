@@ -29,7 +29,7 @@
 	1.0 - First Version by Information
 ---------------------------------------------------------------------------------------------------
 **/
-var status = 0;
+
 function start() {
     cm.sendSimple ("What do you want from me?\r #L0##bGather up some information on the hideout.#l\r\n#L1#Take me to the hideout#l\r\n#L2#Nothing#l#k");
 }

@@ -25,10 +25,12 @@ Kerning PQ: 4th stage to final stage portal
 
 function enter(pi) {
     var eim = pi.getPlayer().getEventInstance();
-    var target = eim.getMapInstance(103000805);
+    var target = eim.getMapInstance(103000804);
     if (eim.getProperty("4stageclear") != null) {
         pi.getPlayer().changeMap(target, target.getPortal("st00"));
         return true;
+    } else {
+        pi.playerMessage("The warp is currently unavailable.");
+        return false;
     }
-    return false;
 }

@@ -31,8 +31,8 @@ var stimID;
 
 function start() {
     var selStr = "A dragon's power is not to be underestimated. If you like, I can add its power to one of your weapons. However, the weapon must be powerful enough to hold its potential...#b"
-    var options = new Array("What's a stimulator?","Create a Warrior weapon","Create a Bowman weapon","Create a Magician weapon","Create a Thief weapon","Create a Pirate Weapon",
-        "Create a Warrior weapon with a Stimulator","Create a Bowman weapon with a Stimulator","Create a Magician weapon with a Stimulator","Create a Thief weapon with a Stimulator","Create a Pirate Weapon with a Stimulator");
+    var options = new Array("What's a stimulator?","Create a Warrior weapon","Create a Bowman weapon","Create a Magician weapon","Create a Thief weapon",
+        "Create a Warrior weapon with a Stimulator","Create a Bowman weapon with a Stimulator","Create a Magician weapon with a Stimulator","Create a Thief weapon with a Stimulator");
     for (var i = 0; i < options.length; i++){
         selStr += "\r\n#L" + i + "# " + options[i] + "#l";
     }
@@ -48,9 +48,9 @@ function action(mode, type, selection) {
     }
     if (status == 1) {
         selectedType = selection;
-        if (selectedType > 5) {
+        if (selectedType > 4) {
             stimulator = true;
-            selectedType -= 5;
+            selectedType -= 4;
         }
         else
             stimulator = false;
@@ -86,14 +86,7 @@ function action(mode, type, selection) {
                 selStr += "\r\n#L" + i + "# " + weapon[i] + "#l";
             }
             cm.sendSimple(selStr);
-        } else if (selectedType == 5){ //pirate weapon
-			var selStr = "Very well, then which Pirate weapon shall recieve a dragon's power?#b";
-			var weapon = new Array ("Dragon Slash Claw#k - Lv. 110 Knuckle#b","Dragonfire Revolver#k - Lv. 110 Gun#b");
-			for (var i = 0; i < weapon.length; i++){
-				selStr += "\r\n#L" + i + "# " + weapon[i] + "#l";
-			}
-			cm.sendSimple(selStr);
-	    }
+        }
     } else if (status == 2) {
         selectedItem = selection;
         if (selectedType == 1){ //warrior weapon
@@ -133,16 +126,7 @@ function action(mode, type, selection) {
             mats = matSet[selectedItem];
             matQty = matQtySet[selectedItem];
             cost = costSet[selectedItem];
-        } else if (selectedType == 5){ //pirate weapon
-			var itemSet = new Array(1482013,1492013);
-			var matSet = new Array(new Array(1482012,4000244,4000245,4005000,4005002),new Array(1492012,4000244,4000245,4005000,4005002));
-			var matQtySet = new Array(new Array(1,20,25,5,3),new Array(1,20,25,3,5));
-			var costSet = new Array(120000,120000);
-			item = itemSet[selectedItem];
-			mats = matSet[selectedItem];
-			matQty = matQtySet[selectedItem];
-			cost = costSet[selectedItem];
-		}
+        }
         var prompt = "You want me to make a #t" + item + "#? In that case, I'm going to need specific items from you in order to make it. Make sure you have room in your inventory, though!#b";
         if(stimulator){
             stimID = getStimID(item);
@@ -161,9 +145,7 @@ function action(mode, type, selection) {
     } else if (status == 3) {
         var complete = true;
         if (cm.getMeso() < cost) {
-            cm.sendOk("My fee is for the good of all of Leafre. If you cannot pay it, then begone.");
-			cm.dispose();
-			return;
+            cm.sendOk("My fee is for the good of all of Leafre. If you cannot pay it, then begone.")
         } else {
             if (mats instanceof Array) {
                 for(var i = 0; complete && i < mats.length; i++) {
@@ -172,12 +154,12 @@ function action(mode, type, selection) {
                             complete = false;
                         }
                     } else {
-                        if (!cm.haveItem(mats[i], matQty[i]))
+                        if (!cm.haveItem(mats[i], matQty[i] * selection))
                             complete=false;
                     }
                 }
             } else {
-                if (!cm.haveItem(mats,matQty))
+                if (!cm.haveItem(mats,matQty * selection))
                     complete=false;
             }
         }
@@ -200,7 +182,7 @@ function action(mode, type, selection) {
                 cm.gainItem(stimID, -1);
                 var deleted = Math.floor(Math.random() * 10);
                 if (deleted != 0) {
-                    cm.gainItem(item, 1, true, true);
+                    cm.addRandomItem(item);
                     cm.sendOk("The process is complete. Treat your weapon well, lest you bring the wrath of the dragons upon you.");
                 } else {
                     cm.sendOk("Unfortunately, the dragon's essence has... conflicted with your weapon. My apologies for your loss.");
@@ -242,10 +224,6 @@ function getStimID(equipID){
             return 4130012;
         case 146: //xbow
             return 4130013;
-		case 148: // Knuckle
-			return 4130016;
-		case 149:
-			return 4130017;
         case 133: //dagger
             return 4130014;
         case 147: //claw

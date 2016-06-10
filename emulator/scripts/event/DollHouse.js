@@ -22,7 +22,7 @@
 /**
  *Dollhouse Event
 **/
-importPackage(Packages.org.ascnet.leaftown.tools);
+importPackage(Packages.tools);
 
 var returnMap;
 var map;

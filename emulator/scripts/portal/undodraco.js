@@ -20,7 +20,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 function enter(pi) {
-    pi.cancelItem(2210016);
-    pi.warp(240000110, 2);
+    pi.warp(240000110, 0);
     return true;
-}  
+}

@@ -19,22 +19,20 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var status = 0;
+/*var status = 0;
 
 function start() {
-	cm.dispose();
-    /*var em = cm.getEventManager("lolcastle");
+    var em = cm.getEventManager("lolcastle");
     if (em == null || !em.getProperty("entryPossible").equals("true")) {
         cm.sendOk("I am Ria.");
         cm.dispose();
     } else
     cm.sendNext("I am Ria. For a small fee of #b1000000 meso#k I can send you to the #rField of Judgement#k.");
-*/
+
 }
 
 function action(mode, type, selection) {
-	        cm.dispose();
- /*   if (mode == -1)
+    if (mode == -1)
         cm.dispose();
     else {
         if (mode == 0) {
@@ -66,5 +64,6 @@ function action(mode, type, selection) {
             cm.gainMeso(-1000000);
             cm.dispose();
         }
-    }*/
+    }
 }
+*/
