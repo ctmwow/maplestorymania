@@ -30,6 +30,7 @@ package org.ascnet.leaftown.net.channel.remote;
 import org.ascnet.leaftown.client.BuddyList.BuddyAddResult;
 import org.ascnet.leaftown.client.BuddyList.BuddyOperation;
 import org.ascnet.leaftown.net.MaplePacket;
+import org.ascnet.leaftown.net.channel.IPlayerStorage;
 import org.ascnet.leaftown.net.world.MapleMessenger;
 import org.ascnet.leaftown.net.world.MapleParty;
 import org.ascnet.leaftown.net.world.MaplePartyCharacter;
@@ -44,8 +45,8 @@ import java.util.List;
 /**
  * @author Matze
  */
-public interface ChannelWorldInterface extends Remote, WorldChannelCommonOperations {
-
+public interface ChannelWorldInterface extends Remote, WorldChannelCommonOperations 
+{
     public void setChannelId(int id) throws RemoteException;
 
     public int getChannelId() throws RemoteException;
@@ -95,4 +96,6 @@ public interface ChannelWorldInterface extends Remote, WorldChannelCommonOperati
     public void updateMessenger(MapleMessenger messenger, String namefrom, int position, int fromchannel) throws RemoteException;
 
     public boolean playerIsOnline(int id) throws RemoteException;
+    
+    public IPlayerStorage playerStorage() throws RemoteException;
 }

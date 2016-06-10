@@ -38,6 +38,7 @@ import org.ascnet.leaftown.client.MapleBuffStat;
 import org.ascnet.leaftown.client.MapleCharacter;
 import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.client.MapleDisease;
+import org.ascnet.leaftown.client.MapleFamilyCharacterInfo;
 import org.ascnet.leaftown.client.MapleInventory;
 import org.ascnet.leaftown.client.MapleInventoryType;
 import org.ascnet.leaftown.client.MapleKeyBinding;
@@ -7420,9 +7421,154 @@ public class MaplePacketCreator {
 	   mplew.writeInt(1);
 	   return mplew.getPacket();
    }
-   
+    
    public static MaplePacket playPortalSound()
    {
 	   return showAnimationEffect((byte) 0x07);
+   }
+
+   public static final MaplePacket sendFamilyInvite(final MapleCharacter c) 
+   {
+       final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+       mplew.writeShort(SendPacketOpcode.FAMILY_JOIN_REQUEST.getValue());
+       
+       mplew.writeInt(c.getId());
+       mplew.writeMapleAsciiString(c.getName());
+       
+       return mplew.getPacket();
+   }
+   
+   public static final MaplePacket loadFamily(final MapleCharacter player) 
+   {
+       final String[] title = 
+    	   {
+    		   "Reunião de Família", 
+    		   "Convocar Família", 
+    		   "Taxa Drop 1.5x (15 min)", 
+    		   "Taxa EXP 1.5x (15 min)", 
+    		   "Ligação de Família (30 min)", 
+    		   "Taxa Drop 2x (15 min)", 
+    		   "Taxa EXP (15 min)", 
+    		   "Taxa Drop 2x (30 min)", 
+    		   "Taxa EXP 2x (30 min)", 
+    		   "Taxa Drop da Party 2x (30 min)", 
+    		   "Taxa EXP da Party 2x (30 min)" };
+       
+       final String[] description = 
+    	   {
+    		   "[ALVO] Eu\n[EFEITO] Teleporta para um membro da familia da sua escolha", 
+    		   "[ALVO] 1 Membro da Familia\n[EFEITO] Teleporta um membro da familia para onde você está.", 
+    		   "[ALVO] Eu\n[TEMPO] 15 min.\n[EFEITO] Taxa de Drop dos monstros aumentado em #c1.5x#.\n*  Se um evento de aumento da taxa de Drop estiver ativo, o efeito não funcionará.", 
+    		   "[ALVO] Eu\n[TEMPO] 15 min.\n[EFEITO] Taxa de EXP ganho dos monstros aumentado em #c1.5x#.\n* Se um evento de aumento da taxa de EXP estiver ativo, o efeito não funcionará.",
+    		   "[ALVO] Pelo menos 6 membros da família com o Pedigree abaixo do meu\n[TEMPO] 30 min.\n[EFEITO] Taxa de EXP e Drop dos monstros são aumentadas em #c2x#. \n* Se algum evento de aumento das taxas estiver ativo, o efeito não funcionará", 
+    		   "[ALVO] Eu\n[TEMPO] 15 min.\n[EFEITO] Taxa de Drop dos monstros aumentado em #c2x#.\n* Se um evento de aumento da taxa de Drop estiver ativo, o efeito não funcionará.", 
+    		   "[ALVO] Eu\n[TEMPO] 15 min.\n[EFEITO] Taxa de EXP ganho dos monstros aumentado em #c2x#.\n* Se um evento de aumento da taxa de EXP estiver ativo, o efeito não funcionará.", 
+    		   "[ALVO] Eu\n[TEMPO] 30 min.\n[EFEITO] Taxa de Drop dos monstros aumentado em #c2x#.\n* Se um evento de aumento da taxa de Drop estiver ativo, o efeito não funcionará.", 
+    		   "[ALVO] Eu\n[TEMPO] 30 min.\n[EFEITO] Taxa de EXP ganho dos monstros aumentado em #c2x#. \n* Se um evento de aumento da taxa de EXP estiver ativo, o efeito não funcionará.", 
+    		   "[ALVO] Minha Party\n[TEMPO] 30 min.\n[EFEITO] Taxa de Drop dos monstros aumentado em #c2x#.\n* v", 
+    		   "[ALVO] Minha Party\n[TEMPO] 30 min.\n[EFEITO] Taxa de EXP ganho dos monstros aumentado em #c2x#.\n* Se um evento de aumento da taxa de EXP estiver ativo, o efeito não funcionará."};
+       
+       final int[] repCost = {0x03, 0x05, 0x07, 0x08, 0x0A, 0x0C, 0x0F, 0x14, 0x19, 0x28, 0x32};
+       
+       final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+       mplew.writeShort(SendPacketOpcode.FAMILY_PRIVILEGE_LIST.getValue());
+       mplew.writeInt(0x0B);
+       
+       for (int i = 0x00; i < 0x0B; i++) 
+       {
+           mplew.write(i > 0x04 ? (i % 0x02) + 0x01 : i);
+           mplew.writeInt(repCost[i] * 0x64);
+           mplew.writeInt(0x01);
+           mplew.writeMapleAsciiString(title[i]);
+           mplew.writeMapleAsciiString(description[i]);
+       }
+       
+       return mplew.getPacket();
+   }
+   
+   public static final MaplePacket getSeniorMessage(final String name) 
+   {
+       MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+       mplew.writeShort(SendPacketOpcode.FAMILY_JOIN_ACCEPTED.getValue());
+       mplew.writeMapleAsciiString(name);
+       mplew.writeInt(0x00); //UNKNOW 4^1 BYTE
+       
+       return mplew.getPacket();
+   }
+   
+   public static final MaplePacket familyLoggedIn(final boolean online, final String name) 
+   {
+       MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+       mplew.writeShort(SendPacketOpcode.FAMILY_NOTIFY_LOGIN_OR_LOGOUT.getValue());
+       mplew.write(online ? 0x01 : 0x00);
+       mplew.writeMapleAsciiString(name);
+
+       return mplew.getPacket();
+   }
+   
+   public static final MaplePacket getFamilyInfo(final MapleFamilyCharacterInfo f) 
+   {
+       final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+       mplew.writeShort(SendPacketOpcode.FAMILY_INFO_RESULT.getValue());
+       
+       mplew.writeInt(f.getReputation());
+       mplew.writeInt(f.getTotalReputation());
+       mplew.writeInt(f.getTodayReputation());
+       mplew.writeShort(f.getJunior1() > 0x00 ? (f.getJunior2() > 0x00 ? 0x02 : 0x01) : 0x00);
+       mplew.writeShort(f.getTotalJuniors());
+       
+       mplew.writeShort(0x00); //UNKNOW 2^1 BYTE
+        
+       if(f.getFamily() != null && f.getFamily().getId() > 0x00)
+       {
+           mplew.writeInt(f.getFamily().getLeaderId());
+           mplew.writeMapleAsciiString(f.getFamily().getLeaderName());
+           mplew.writeMapleAsciiString(f.getFamily().getNotice());   
+       }
+       else
+    	   mplew.writeLong(0L);
+       
+       mplew.writeInt(0x00); // BUFFS ? Entitlement ? TODO
+       
+       return mplew.getPacket();
+   }
+
+   /* Family Result Message
+    * 67: You do not belong to the same family.<br>
+    * 69: The character you wish to add as\r\na Junior must be in the same map.<br>
+    * 70: This character is already a Junior of another character.<br>
+    * 71: The Junior you wish to add\r\nmust be at a lower rank.<br>
+    * 72: The gap between you and your\r\njunior must be within 20 levels.<br>
+    * 73: Another character has requested to add this character.\r\nPlease try again later.<br>
+    * 74: Another character has requested a summon.\r\nPlease try again later.<br>
+    * 75: The summons has failed. Your current location or state does not allow a summons.<br>
+    * 76: The family cannot extend more than 1000 generations from above and below.<br>
+    * 77: The Junior you wish to add\r\nmust be over Level 10.<br>
+    * 78: You cannot add a Junior \r\nthat has requested to change worlds.<br>
+    * 79: You cannot add a Junior \r\nsince you've requested to change worlds.<br>
+    * 80: Separation is not possible due to insufficient Mesos.\r\nYou will need %d Mesos to\r\nseparate with a Senior.<br>
+    * 81: Separation is not possible due to insufficient Mesos.\r\nYou will need %d Mesos to\r\nseparate with a Junior.<br>
+    * 82: The Entitlement does not apply because your level does not match the corresponding area.<br>
+    */
+   public static MaplePacket sendFamilyMessage(final int type, final int mesos) 
+   {
+       final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(0x06);
+       mplew.writeShort(SendPacketOpcode.FAMILY_RESULT.getValue());
+       mplew.writeInt(type);
+       mplew.writeInt(mesos);
+       
+       return mplew.getPacket();
+   }
+   
+   public static final MaplePacket sendFamilyJoinResponse(final boolean accepted, final String added) 
+   {
+       final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+       mplew.writeShort(SendPacketOpcode.FAMILY_JOIN_REQUEST_RESULT.getValue());
+       mplew.write(accepted ? 1 : 0);
+       mplew.writeMapleAsciiString(added);
+       
+       return mplew.getPacket();
    }
 }

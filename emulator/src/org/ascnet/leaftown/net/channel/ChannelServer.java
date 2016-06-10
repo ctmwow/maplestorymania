@@ -458,13 +458,20 @@ public class ChannelServer implements Runnable, ChannelServerMBean
         }
     }
 
-    public WorldChannelInterface getWorldInterface() {
-        synchronized (worldReady) {
+    public WorldChannelInterface getWorldInterface() 
+    {
+        synchronized (worldReady) 
+        {
             reconnectWorld();
-            while (!worldReady) {
-                try {
+            
+            while (!worldReady) 
+            {
+                try 
+                {
                     worldReady.wait();
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) 
+                {
                 }
             }
         }

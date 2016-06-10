@@ -115,13 +115,13 @@ public class QuestScriptManager extends AbstractScriptManager
             if (iv == null) 
             {
                 qm.dispose();
-                return;
+                return; 
             }
-            
-            iv.invokeFunction("end", (byte) 0x01, (byte) 0x00, 0x00); // start it off as something
             
             engine.put("qm", qm);
             scripts.put(c, iv);
+            
+            iv.invokeFunction("end", (byte) 0x01, (byte) 0x00, 0x00); // start it off as something
         } 
         catch (Exception e) 
         {

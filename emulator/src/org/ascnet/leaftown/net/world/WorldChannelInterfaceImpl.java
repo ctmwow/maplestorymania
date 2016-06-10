@@ -27,6 +27,7 @@
 
 package org.ascnet.leaftown.net.world;
 
+import org.ascnet.leaftown.client.MapleFamily;
 import org.ascnet.leaftown.database.DatabaseConnection;
 import org.ascnet.leaftown.net.MaplePacket;
 import org.ascnet.leaftown.net.channel.remote.ChannelWorldInterface;
@@ -57,8 +58,8 @@ import java.util.Properties;
 /**
  * @author Matze
  */
-public class WorldChannelInterfaceImpl extends UnicastRemoteObject implements WorldChannelInterface {
-
+public class WorldChannelInterfaceImpl extends UnicastRemoteObject implements WorldChannelInterface 
+{
     private static final long serialVersionUID = -5568606556235590482L;
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(WorldChannelInterfaceImpl.class);
     private ChannelWorldInterface cb;
@@ -371,6 +372,12 @@ public class WorldChannelInterfaceImpl extends UnicastRemoteObject implements Wo
         }
         return foundsChars.toArray(new CharacterIdChannelPair[foundsChars.size()]);
     }
+    
+    @Override
+    public MapleFamily getFamily(int id) throws RemoteException 
+    {
+        return WorldRegistryImpl.getInstance().getFamily(id);
+    }
 
     @Override
     public MapleGuild getGuild(int id) throws RemoteException {
@@ -675,4 +682,10 @@ public class WorldChannelInterfaceImpl extends UnicastRemoteObject implements Wo
             }
         }
     }
+
+	@Override
+	public void setFamily(MapleFamily family, int cid) throws RemoteException 
+	{
+		getChannelInterface(WorldRegistryImpl.getInstance().find(cid)).playerStorage().getCharacterById(cid).setMapleFamily(family);
+	}
 }

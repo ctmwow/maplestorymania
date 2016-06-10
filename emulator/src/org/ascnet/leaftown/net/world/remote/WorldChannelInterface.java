@@ -27,6 +27,7 @@
 
 package org.ascnet.leaftown.net.world.remote;
 
+import org.ascnet.leaftown.client.MapleFamily;
 import org.ascnet.leaftown.net.MaplePacket;
 import org.ascnet.leaftown.net.channel.remote.ChannelWorldInterface;
 import org.ascnet.leaftown.net.world.CharacterIdChannelPair;
@@ -49,8 +50,8 @@ import java.util.Properties;
 /**
  * @author Matze
  */
-public interface WorldChannelInterface extends Remote, WorldChannelCommonOperations {
-
+public interface WorldChannelInterface extends Remote, WorldChannelCommonOperations 
+{
     public Properties getDatabaseProperties() throws RemoteException;
 
     public Properties getGameProperties() throws RemoteException;
@@ -80,7 +81,11 @@ public interface WorldChannelInterface extends Remote, WorldChannelCommonOperati
     public WorldLocation getLocation(String name) throws RemoteException;
 
     public CharacterIdChannelPair[] multiBuddyFind(int charIdFrom, int[] characterIds) throws RemoteException;
+    
+    public void setFamily(MapleFamily family, int cid) throws RemoteException;
 
+    public MapleFamily getFamily(int id) throws RemoteException;
+    
     public MapleGuild getGuild(int id) throws RemoteException;
 
     public void clearGuilds() throws RemoteException;

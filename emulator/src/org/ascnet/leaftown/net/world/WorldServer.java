@@ -49,8 +49,10 @@ public class WorldServer {
     private final Properties dbProp = new Properties();
     private final Properties worldProp = new Properties();
 
-    private WorldServer() {
-        try {
+    private WorldServer() 
+    {
+        try 
+        {
             InputStreamReader is = new FileReader(System.getProperty("br.com.maplestorymania.db.properties"));
             dbProp.load(is);
             is.close();
@@ -59,41 +61,54 @@ public class WorldServer {
             is = new FileReader(System.getProperty("br.com.maplestorymania.world.properties"));
             worldProp.load(is);
             is.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) 
+        {
             log.error("Could not configuration", e);
         }
     }
 
-    public synchronized static WorldServer getInstance() {
+    public synchronized static WorldServer getInstance() 
+    {
         if (instance == null)
             instance = new WorldServer();
+        
         return instance;
     }
 
-    public int getWorldId() {
+    public int getWorldId() 
+    {
         return worldId;
     }
 
-    public Properties getDbProp() {
+    public Properties getDbProp() 
+    {
         return dbProp;
     }
 
-    public Properties getWorldProp() {
+    public Properties getWorldProp() 
+    {
         return worldProp;
     }
 
-    public static void main(String[] args) {
-        try {
+    public static void main(String[] args) 
+    {
+        try 
+        {
             Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
             registry.rebind("WorldRegistry", WorldRegistryImpl.getInstance());
             log.info("World server running.");
-        } catch (RemoteException ex) {
+        } 
+        catch (RemoteException ex) 
+        {
             log.error("Could not initialize RMI system", ex);
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() 
+        {
             @Override
-            public void run() {
+            public void run() 
+            {
                 log.info("Shutdown complete; exiting.");
             }
         }));

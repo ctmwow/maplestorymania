@@ -501,4 +501,9 @@ public class ChannelWorldInterfaceImpl extends UnicastRemoteObject implements Ch
     public boolean playerIsOnline(int id) {
         return server.getPlayerStorage().getCharacterById(id) != null;
     }
+    
+    public IPlayerStorage playerStorage() throws RemoteException
+    {
+    	return server.getPlayerStorage();
+    }
 }

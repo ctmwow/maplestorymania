@@ -100,8 +100,10 @@ public class CreateCharHandler extends AbstractMaplePacketHandler
             equip.addFromDB(eq_weapon);
 
             final MapleInventory etc = newchar.getInventory(MapleInventoryType.ETC);
+            
             if (job == 0x00) 
             {
+                newchar.setMap(130030000);
                 etc.addItem(new Item(4161047, (byte) 0x00, (short) 0x01));
                 newchar.updateQuest(new MapleQuestStatus(20022, MapleQuestStatus.Status.STARTED, "1"), false, false, true);
             }

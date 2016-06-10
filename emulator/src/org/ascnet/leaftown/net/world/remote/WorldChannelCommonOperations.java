@@ -30,8 +30,8 @@ package org.ascnet.leaftown.net.world.remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public interface WorldChannelCommonOperations {
-
+public interface WorldChannelCommonOperations 
+{
     public boolean isConnected(String charName, boolean removePlayer) throws RemoteException;
 
     public void broadcastMessage(String sender, final byte[] message, boolean smega) throws RemoteException;

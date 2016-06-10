@@ -31,11 +31,12 @@ import org.ascnet.leaftown.net.channel.handler.*;
 import org.ascnet.leaftown.net.handler.*;
 import org.ascnet.leaftown.net.login.handler.*;
 
-public final class PacketProcessor {
-
+public final class PacketProcessor 
+{
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PacketProcessor.class);
 
-    public enum Mode {
+    public enum Mode
+    {
         LOGINSERVER,
         CHANNELSERVER
     }
@@ -43,55 +44,66 @@ public final class PacketProcessor {
     private static volatile PacketProcessor instance;
     private MaplePacketHandler[] handlers;
 
-    private PacketProcessor() {
-        int maxRecvOp = 0;
-        for (RecvPacketOpcode op : RecvPacketOpcode.values()) {
-            if (op.getValue() > maxRecvOp) {
+    private PacketProcessor() 
+    {
+        int maxRecvOp = 0x00;
+        for (RecvPacketOpcode op : RecvPacketOpcode.values()) 
+        {
+            if (op.getValue() > maxRecvOp) 
                 maxRecvOp = op.getValue();
-            }
         }
-        handlers = new MaplePacketHandler[maxRecvOp + 1];
+        handlers = new MaplePacketHandler[maxRecvOp + 0x01];
     }
 
-    public MaplePacketHandler getHandler(short packetId) {
-        if (packetId > handlers.length) {
+    public MaplePacketHandler getHandler(short packetId) 
+    {
+        if (packetId > handlers.length) 
             return null;
-        }
+
         MaplePacketHandler handler = handlers[packetId];
-        if (handler != null) {
+        
+        if (handler != null) 
             return handler;
-        }
+        
         return null;
     }
 
-    public void registerHandler(RecvPacketOpcode code, MaplePacketHandler handler) {
-        try {
+    public void registerHandler(RecvPacketOpcode code, MaplePacketHandler handler) 
+    {
+        try 
+        {
             handlers[code.getValue()] = handler;
-        } catch (ArrayIndexOutOfBoundsException aiobe) {
+        }
+        catch (ArrayIndexOutOfBoundsException aiobe) 
+        {
             log.error("Check your Recv Packet Opcodes - Something is wrong. " + aiobe);
         }
     }
 
-    public static PacketProcessor getProcessor() {
-        if (instance == null) {
+    public static PacketProcessor getProcessor() 
+    {
+        if (instance == null)
             throw new IllegalStateException("PacketProcessor#getProcessor called before PacketProcessor#initialise.");
-        }
+
         return instance;
     }
 
-    public static void initialise(Mode mode) {
+    public static void initialise(Mode mode) 
+    {
         instance = new PacketProcessor();
         instance.reset(mode);
     }
 
-    public void reset(Mode mode) {
+    public void reset(Mode mode) 
+    {
         handlers = new MaplePacketHandler[handlers.length];
         registerHandler(RecvPacketOpcode.PONG, new KeepAliveHandler());
         registerHandler(RecvPacketOpcode.CLIENT_ERROR, NoOpHandler.getInstance());
         registerHandler(RecvPacketOpcode.STRANGE_DATA, NoOpHandler.getInstance());
         registerHandler(RecvPacketOpcode.MAP_CHANGED, NoOpHandler.getInstance());
         registerHandler(RecvPacketOpcode.PARTY_ACTION, NoOpHandler.getInstance());
-        if (mode == Mode.LOGINSERVER) {
+        if (mode == Mode.LOGINSERVER) 
+        {
             registerHandler(RecvPacketOpcode.LOGIN_PASSWORD, new LoginPasswordHandler());
             registerHandler(RecvPacketOpcode.GUEST_LOGIN, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.SERVERLIST_REREQUEST, new ServerlistRequestHandler());
@@ -117,7 +129,9 @@ public final class PacketProcessor {
             registerHandler(RecvPacketOpcode.VIEW_ALL_CHAR_CONNECT_CREATE_PIC, new ViewAllCharConnectRegisterPic());
             registerHandler(RecvPacketOpcode.VIEW_ALL_CHAR_CONNECT_PIC, new ViewAllCharConnectWithPic());
             registerHandler(RecvPacketOpcode.RELOG, new RelogRequestHandler());
-        } else if (mode == Mode.CHANNELSERVER) {
+        } 
+        else if (mode == Mode.CHANNELSERVER) 
+        {
             registerHandler(RecvPacketOpcode.SERVERLIST_REREQUEST, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.TO_WORLDLIST, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.CHAR_SELECT, NoOpHandler.getInstance());
@@ -204,9 +218,6 @@ public final class PacketProcessor {
             registerHandler(RecvPacketOpcode.USE_DOOR, new DoorHandler());
             registerHandler(RecvPacketOpcode.CHANGE_KEYMAP, new KeymapChangeHandler());
             registerHandler(RecvPacketOpcode.RING_ACTION, new RingActionHandler());
-            registerHandler(RecvPacketOpcode.VIEW_FAMILY_PEDIGREE, NoOpHandler.getInstance());
-            registerHandler(RecvPacketOpcode.VIEW_FAMILY, NoOpHandler.getInstance());
-            registerHandler(RecvPacketOpcode.FAMILY_ADD, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.HACK, new AutoBanHandler());
             registerHandler(RecvPacketOpcode.ALLIANCE_OPERATION, new AllianceOperationsHandler());
             registerHandler(RecvPacketOpcode.BBS_OPERATION, new BBSOperationHandler());
@@ -248,8 +259,12 @@ public final class PacketProcessor {
             registerHandler(RecvPacketOpcode.MTS_OP, new MTSHandler());
             registerHandler(RecvPacketOpcode.VICIOUS_HAMMER, new ViciousHammerHandler());
             registerHandler(RecvPacketOpcode.EIGHT_EFF, NoOpHandler.getInstance());
-        } else {
-            throw new RuntimeException("Unknown packet processor mode");
+            registerHandler(RecvPacketOpcode.ACCEPT_FAMILY, new AcceptFamilyHandler());
+            registerHandler(RecvPacketOpcode.ADD_FAMILY, new FamilyAddHandler());
+            registerHandler(RecvPacketOpcode.OPEN_FAMILY, new OpenFamilyHandler());
+            //registerHandler(RecvPacketOpcode.USE_FAMILY, new FamilyUseHandler());
         }
+        else 
+            throw new RuntimeException("Unknown packet processor mode");
     }
 }

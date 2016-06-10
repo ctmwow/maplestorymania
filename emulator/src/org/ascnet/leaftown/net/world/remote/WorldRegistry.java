@@ -36,8 +36,8 @@ import java.rmi.RemoteException;
 /**
  * @author Matze
  */
-public interface WorldRegistry extends Remote {
-
+public interface WorldRegistry extends Remote 
+{
     public WorldChannelInterface registerChannelServer(String authKey, ChannelWorldInterface cb) throws RemoteException;
 
     public void deregisterChannelServer(int channel) throws RemoteException;

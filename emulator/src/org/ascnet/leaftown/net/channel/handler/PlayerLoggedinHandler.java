@@ -31,108 +31,126 @@ import org.ascnet.leaftown.client.BuddylistEntry;
 import org.ascnet.leaftown.client.CharacterNameAndId;
 import org.ascnet.leaftown.client.MapleCharacter;
 import org.ascnet.leaftown.client.MapleClient;
-import org.ascnet.leaftown.client.MaplePet;
-import org.ascnet.leaftown.database.DatabaseConnection;
+import org.ascnet.leaftown.client.MapleFamily;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
 import org.ascnet.leaftown.net.channel.ChannelServer;
 import org.ascnet.leaftown.net.world.CharacterIdChannelPair;
 import org.ascnet.leaftown.net.world.MaplePartyCharacter;
 import org.ascnet.leaftown.net.world.PartyOperation;
-import org.ascnet.leaftown.net.world.PlayerBuffValueHolder;
 import org.ascnet.leaftown.net.world.guild.MapleAlliance;
 import org.ascnet.leaftown.net.world.remote.WorldChannelInterface;
-import org.ascnet.leaftown.server.MapleInventoryManipulator;
 import org.ascnet.leaftown.server.maps.MapleMap;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 import java.rmi.RemoteException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 
-public class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
-
+public class PlayerLoggedinHandler extends AbstractMaplePacketHandler 
+{
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PlayerLoggedinHandler.class);
 
     @Override
-    public boolean validateState(MapleClient c) {
+    public boolean validateState(MapleClient c) 
+    {
         return !c.isLoggedIn();
     }
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        if (c.getAccID() != 0) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
+    {
+        if (c.getAccID() != 0x00) 
+        {
             log.warn(MapleClient.getLogMessage(c.getPlayer(), c.getPlayer().getName() + " is attempting to remote hack."));
             c.disconnect();
             return;
         }
+        
         final int cid = slea.readInt();
         MapleCharacter player = null;
-        try {
+        
+        try 
+        {
             player = MapleCharacter.loadCharFromDB(cid, c, true);
             c.setPlayer(player);
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) 
+        {
             log.error("Loading the char failed", e);
         }
+        
         if (player == null)
             return;
+        
         c.setAccID(player.getAccountID());
         c.loadForumUserId();
-        int state = c.getLoginState();
+        
+        final int state = c.getLoginState();
         boolean allowLogin = true;
+        
         ChannelServer channelServer = c.getChannelServer();
-        synchronized (this) {
-            try {
+        
+        synchronized (this) 
+        {
+            try 
+            {
                 WorldChannelInterface worldInterface = channelServer.getWorldInterface();
-                if (state == MapleClient.LOGIN_SERVER_TRANSITION) {
-                    for (String charName : c.loadCharacterNames(c.getWorld())) {
-                        if (worldInterface.isConnected(charName, false)) {
+                if (state == MapleClient.LOGIN_SERVER_TRANSITION) 
+                {
+                    for (String charName : c.loadCharacterNames(c.getWorld())) 
+                    {
+                        if (worldInterface.isConnected(charName, false)) 
+                        {
                             log.warn(MapleClient.getLogMessage(player, "Attempting to double login with " + charName));
                             allowLogin = false;
                             break;
                         }
                     }
                 }
-            } catch (RemoteException e) {
+            } catch (RemoteException e) 
+            {
                 channelServer.reconnectWorld();
                 allowLogin = false;
             }
-            if (state != MapleClient.LOGIN_SERVER_TRANSITION || !allowLogin || !c.checkAccount(player.getAccountID())) {
+            
+            if (state != MapleClient.LOGIN_SERVER_TRANSITION || !allowLogin || !c.checkAccount(player.getAccountID())) 
+            {
                 c.setPlayer(null); // prevent char from getting deregistered
                 c.disconnect();
                 return;
             }
             c.updateLoginState(MapleClient.LOGIN_LOGGEDIN);
         }
+        
         ChannelServer cserv = c.getChannelServer();
         cserv.addPlayer(player);
-        if (player.getLastDeath() + 600000 > System.currentTimeMillis() && !player.isAlive()) {
+        if (player.getLastDeath() + 600000 > System.currentTimeMillis() && !player.isAlive()) 
+        {
             c.getPlayer().cancelAllBuffs();
             MapleMap to = c.getPlayer().getMap().getReturnMap();
-            player.setStance((byte) 0);
-            if (player.getMap().canExit() && to != null && to.canEnter() || player.isGM()) {
-                player.setHp(50);
+            player.setStance((byte) 0x00);
+            if (player.getMap().canExit() && to != null && to.canEnter() || player.isGM()) 
+            {
+                player.setHp(0x32);
                 player.changeMap(to, to.getRandomSpawnPoint());
-            } else {
+            }
+            else 
+            {
                 c.sendPacket(MaplePacketCreator.serverNotice(5, "You will remain dead."));
                 c.sendPacket(MaplePacketCreator.enableActions());
             }
         }
-        if (c.getPlayer().hasGMLevel(3))
+        if (c.getPlayer().hasGMLevel(0x03))
             player.setHidden(true);
         if (c.getPlayer().isPacketLogging())
             c.setPacketLog(true);
-        try {
-            WorldChannelInterface wci = c.getChannelServer().getWorldInterface();
-            List<PlayerBuffValueHolder> buffs = wci.getBuffsFromStorage(cid);
-            if (buffs != null) {
-                c.getPlayer().silentGiveBuffs(buffs);
-            }
-        } catch (RemoteException e) {
+        try 
+        {
+        	c.getPlayer().silentGiveBuffs(c.getChannelServer().getWorldInterface().getBuffsFromStorage(cid));
+        } 
+        catch (RemoteException e) 
+        {
             c.getChannelServer().reconnectWorld();
         }
 
@@ -141,68 +159,90 @@ public class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
         c.sendPacket(MaplePacketCreator.mountInfo(player));
         player.sendKeymap();
         c.sendPacket(MaplePacketCreator.sendAutoHpPot(c.getPlayer().getAutoHpPot()));
-        //
         c.getPlayer().sendMacros();
         c.sendPacket(MaplePacketCreator.sendAutoMpPot(c.getPlayer().getAutoMpPot()));
         c.sendPacket(MaplePacketCreator.alertGMStatus(true));
-        //c.sendPacket(MaplePacketCreator.unknownStatus());
         player.getMap().addPlayer(player);
         c.getPlayer().getClient().sendPacket(MaplePacketCreator.serverMessage(c.getChannelServer().getServerMessage()));
-        try {
+        
+        try 
+        {
             Collection<BuddylistEntry> buddies = player.getBuddylist().getBuddies();
             int[] buddyIds = player.getBuddylist().getBuddyIds();
 
             cserv.getWorldInterface().loggedOn(player.getName(), player.getId(), c.getChannel(), buddyIds);
-            if (player.getParty() != null) {
+            
+            if (player.getParty() != null) 
                 channelServer.getWorldInterface().updateParty(player.getParty().getId(), PartyOperation.LOG_ONOFF, new MaplePartyCharacter(player));
-            }
 
             CharacterIdChannelPair[] onlineBuddies = cserv.getWorldInterface().multiBuddyFind(player.getId(), buddyIds);
-            for (CharacterIdChannelPair onlineBuddy : onlineBuddies) {
+            
+            for (CharacterIdChannelPair onlineBuddy : onlineBuddies) 
+            {
                 BuddylistEntry ble = player.getBuddylist().get(onlineBuddy.getCharacterId());
                 ble.setChannel(onlineBuddy.getChannel());
                 player.getBuddylist().put(ble);
             }
+            
+            c.getPlayer().showNote();
             c.sendPacket(MaplePacketCreator.updateBuddylist(buddies));
-
-            try {
-                c.getPlayer().showNote();
-            } catch (SQLException e) {
-                log.error("LOADING NOTE", e);
+            c.sendPacket(MaplePacketCreator.loadFamily(player));
+            
+            if(player.getMapleFamilyId() > 0x00)
+            {
+            	MapleFamily family = channelServer.getWorldInterface().getFamily(player.getMapleFamilyId());
+            	
+            	if(family == null)
+            		log.error("Cannot load Family [{}]", player.getMapleFamilyId());
+            	else
+            	{
+            		player.setMapleFamily(family);
+            		c.sendPacket(MaplePacketCreator.getFamilyInfo(family.getMFC(player.getId())));
+            	}
             }
 
-            if (player.getGuildId() > 0) {
+            if (player.getGuildId() > 0x00) 
+            {
                 WorldChannelInterface wi = channelServer.getWorldInterface();
                 wi.setGuildMemberOnline(player.getMGC(), true, c.getChannel());
                 c.sendPacket(MaplePacketCreator.showGuildInfo(player));
                 int allianceId = player.getGuild().getAllianceId();
-                if (allianceId > 0) {
+                
+                if (allianceId > 0x00) 
+                {
                     MapleAlliance newAlliance = cserv.getWorldInterface().getAlliance(allianceId);
-                    if (newAlliance == null) {
+                    if (newAlliance == null) 
+                    {
                         newAlliance = MapleAlliance.loadAlliance(allianceId);
-                        if (newAlliance != null) {
+                        
+                        if (newAlliance != null) 
                             cserv.getWorldInterface().addAlliance(allianceId, newAlliance);
-                        } else {
-                            player.getGuild().setAllianceId(0);
-                        }
+                        else 
+                            player.getGuild().setAllianceId(0x00);
                     }
-                    if (newAlliance != null) {
+                    
+                    if (newAlliance != null) 
+                    {
                         c.sendPacket(MaplePacketCreator.getAllianceInfo(newAlliance));
                         c.sendPacket(MaplePacketCreator.getGuildAlliances(newAlliance, c));
-                        cserv.getWorldInterface().allianceMessage(allianceId, MaplePacketCreator.allianceMemberOnline(player, true), player.getId(), -1);
+                        cserv.getWorldInterface().allianceMessage(allianceId, MaplePacketCreator.allianceMemberOnline(player, true), player.getId(), -0x01);
                     }
                 }
             }
-        } catch (RemoteException e) {
+        }
+        catch (RemoteException e) 
+        {
             log.info("REMOTE THROW", e);
             channelServer.reconnectWorld();
         }
 
         player.updatePartyMemberHP();
 
-        CharacterNameAndId pendingBuddyRequest = player.getBuddylist().pollPendingRequest();
-        if (pendingBuddyRequest != null) {
-            player.getBuddylist().put(new BuddylistEntry(pendingBuddyRequest.getName(), pendingBuddyRequest.getId(), "Default Group", -1, false));
+        final CharacterNameAndId pendingBuddyRequest = player.getBuddylist().pollPendingRequest();
+        
+        if (pendingBuddyRequest != null) 
+        {
+            player.getBuddylist().put(new BuddylistEntry(pendingBuddyRequest.getName(), pendingBuddyRequest.getId(), "Default Group", -0x01, false));
             c.sendPacket(MaplePacketCreator.requestBuddylistAdd(pendingBuddyRequest.getId(), pendingBuddyRequest.getName()));
         }
 
