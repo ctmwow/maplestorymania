@@ -26,5 +26,4 @@
 function start(ms) 
 {
     ms.hideUI(true);
-    ms.dispose();
 }

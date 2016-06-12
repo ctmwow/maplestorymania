@@ -26,5 +26,4 @@ var status = -1;
 function start(ms) 
 {
     ms.environmentChange(13, "maplemap/enter/2000000");
-    ms.dispose();
 }

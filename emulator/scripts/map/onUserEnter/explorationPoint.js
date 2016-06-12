@@ -34,5 +34,4 @@ function start(ms)
         ms.environmentChange(13, "maplemap/enter/104000000");
         ms.hideUI(true);
     }
-    ms.dispose();
 }
