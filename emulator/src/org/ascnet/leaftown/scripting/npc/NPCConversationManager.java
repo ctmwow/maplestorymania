@@ -624,6 +624,11 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public int getBossDropRate() {
         return getClient().getChannelServer().getBossDropRate();
     }
+    
+    public int getLevel() 
+    {
+    	return getPlayer().getLevel();
+    }
 
     public int getMeso() 
     {
