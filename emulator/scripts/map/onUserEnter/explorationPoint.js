@@ -31,7 +31,7 @@ function start(ms)
 {
     if (ms.getMapId() == 104000000) 
     {
-        ms.environmentChange("maplemap/enter/104000000", 13);
+        ms.environmentChange(13, "maplemap/enter/104000000");
         ms.hideUI(true);
     }
     ms.dispose();
