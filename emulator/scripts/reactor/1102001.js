@@ -25,6 +25,7 @@
  * 1102001.js: Florina Beach Coconut - drops a coconut 
 */
 
-function act() {
+function act() 
+{
 	rm.dropItems();
 }

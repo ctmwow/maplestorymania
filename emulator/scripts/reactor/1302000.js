@@ -22,7 +22,7 @@
 
 /* @Author STK
  * 
- * 1302000.js:   
+ * 1302000.js: Forest of Beginning 5 - Trainment Quest
 */
 
 function act()
