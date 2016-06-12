@@ -1,8 +1,8 @@
 /*
- * This file is part of AscNet Leaftown.
- * Copyright (C) 2014 Ascension Network
+ * This file is part of Maple Story Mania Server
+ * Copyright (C) 2016
  *
- * AscNet Leaftown is a fork of the OdinMS MapleStory Server.
+ * Maple Story Mania is a fork of the OdinMS MapleStory Server.
  * The following is the original copyright notice:
  *
  *     This file is part of the OdinMS Maple Story Server
@@ -49,116 +49,132 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author Lerk
+ * @author Lerk, STK
+ * @version 1.1
  */
-public class ReactorActionManager extends AbstractPlayerInteraction {
 
+public class ReactorActionManager extends AbstractPlayerInteraction 
+{
     private final MapleReactor reactor;
     private final MapleClient c;
 
-    public ReactorActionManager(MapleClient c, MapleReactor reactor) {
+    public ReactorActionManager(final MapleClient c, final MapleReactor reactor) 
+    {
         super(c);
+        
         this.c = c;
         this.reactor = reactor;
     }
 
-    // only used for meso = false, really. No minItems because meso is used to fill the gap
-    public void dropItems() {
-        dropItems(false, 0, 0, 0, 0);
+    public void dropItems() 
+    {
+        dropItems(false, 0x00, 0x00, 0x00, 0x00);
     }
 
-    public void dropItems(boolean meso, int mesoChance, int minMeso, int maxMeso) {
-        dropItems(meso, mesoChance, minMeso, maxMeso, 0);
+    public void dropItems(final boolean meso, final int mesoChance, final int minMeso, final int maxMeso) 
+    {
+        dropItems(meso, mesoChance, minMeso, maxMeso, 0x00);
     }
 
-    public void dropItems(boolean meso, int mesoChance, int minMeso, int maxMeso, int minItems) {
-        List<DropEntry> chances = getDropChances();
-        List<DropEntry> items = new LinkedList<>();
+    public void dropItems(final boolean meso, final int mesoChance, final int minMeso, final int maxMeso, final int minItems) 
+    {
+        final List<DropEntry> chances = getDropChances();
+        final List<DropEntry> items = new LinkedList<>();
+        
         int numItems = 0;
 
-        if (meso && Math.random() < 1 / (double) mesoChance) {
+        if (meso && Math.random() < 0x01 / (double) mesoChance) 
             items.add(new DropEntry(0, mesoChance, 0));
-        }
 
-        // narrow list down by chances
-        for (DropEntry d : chances) {
-            if (c.getPlayer().canSeeItem(d.itemid) && Math.random() < 1 / (double) d.chance) {
+        for (final DropEntry d : chances) 
+        {
+            if (c.getPlayer().canSeeItem(d.itemid) && Math.random() < 1 / (double) d.chance) 
+            {
                 numItems++;
                 items.add(d);
             }
         }
 
-        // if a minimum number of drops is required, add meso
-        while (items.size() < minItems) {
-            items.add(new DropEntry(0, mesoChance));
+        while (items.size() < minItems) 
+        {
+            items.add(new DropEntry(0x00, mesoChance));
             numItems++;
         }
 
-        // randomize drop order
         java.util.Collections.shuffle(items);
 
         final Point dropPos = reactor.getPosition();
 
         dropPos.x -= 12 * numItems;
 
-        for (DropEntry d : items) {
-            if (d.itemid == 0) {
-                int range = maxMeso - minMeso;
-                int mesoDrop = (Randomizer.nextInt(range) + minMeso) * getClient().getChannelServer().getMesoRate();
-                reactor.getMap().spawnMesoDrop(mesoDrop, dropPos, reactor, getPlayer(), meso, (byte) 0);
-            } else {
+        for (final DropEntry d : items) 
+        {
+            if (d.itemid == 0x00) 
+            {
+                final int range = maxMeso - minMeso;
+                final int mesoDrop = (Randomizer.nextInt(range) + minMeso) * getClient().getChannelServer().getMesoRate();
+                
+                reactor.getMap().spawnMesoDrop(mesoDrop, dropPos, reactor, getPlayer(), meso, (byte) 0x00);
+            }
+            else 
+            {
                 IItem drop;
-                MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-                if (ii.getInventoryType(d.itemid) != MapleInventoryType.EQUIP) {
-                    drop = new Item(d.itemid, (byte) 0, (short) 1);
-                } else {
+                
+                final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+                
+                if (ii.getInventoryType(d.itemid) != MapleInventoryType.EQUIP) 
+                    drop = new Item(d.itemid, (byte) 0x00, (short) 0x01);
+                else 
                     drop = ii.randomizeStats((Equip) ii.getEquipById(d.itemid));
-                }
+                
                 reactor.getMap().spawnItemDrop(reactor, getPlayer(), drop, dropPos, false, true);
             }
+            
             dropPos.x += 25;
-
         }
     }
 
-    private List<DropEntry> getDropChances() {
+    private List<DropEntry> getDropChances() 
+    {
         return ReactorScriptManager.getInstance().getDrops(reactor.getId());
     }
 
-    // summon one monster on reactor location
-    public void spawnMonster(int id) {
-        spawnMonster(id, 1, getPosition());
+    public void spawnMonster(final int id) 
+    {
+        spawnMonster(id, 0x01, getPosition());
     }
 
-    // summon one monster, remote location
-    public void spawnMonster(int id, int x, int y) {
-        spawnMonster(id, 1, new Point(x, y));
+    public void spawnMonster(final int id, final int x, final int y) 
+    {
+        spawnMonster(id, 0x01, new Point(x, y));
     }
 
-    // multiple monsters, reactor location
-    public void spawnMonster(int id, int qty) {
+    public void spawnMonster(final int id, final int qty) 
+    {
         spawnMonster(id, qty, getPosition());
     }
 
-    // multiple monsters, remote location
-    public void spawnMonster(int id, int qty, int x, int y) {
+    public void spawnMonster(final int id, final int qty, final int x, final int y) 
+    {
         spawnMonster(id, qty, new Point(x, y));
     }
 
-    // handler for all spawnMonster
-    private void spawnMonster(int id, int qty, Point pos) {
-        for (int i = 0; i < qty; i++) {
-            MapleMonster mob = MapleLifeFactory.getMonster(id);
+    private void spawnMonster(final int id, final int qty, final Point pos) 
+    {
+        for (int i = 0x00; i < qty; i++) 
+        {
+            final MapleMonster mob = MapleLifeFactory.getMonster(id);
             reactor.getMap().spawnMonsterOnGroundBelow(mob, pos);
+            
             if (getPlayer().getEventInstance() != null)
                 getPlayer().getEventInstance().registerMonster(mob);
         }
     }
-
-    // returns slightly above the reactor's position for monster spawns
-    public Point getPosition() {
-        Point pos = reactor.getPosition();
-        pos.y -= 10;
+    
+    public final Point getPosition() 
+    {
+        final Point pos = reactor.getPosition();
+        pos.y -= 0x0A;
         return pos;
     }
 
@@ -167,11 +183,13 @@ public class ReactorActionManager extends AbstractPlayerInteraction {
      *
      * @param [Int] npcId
      */
-    public void spawnNpc(int npcId) {
+    public void spawnNpc(final int npcId) 
+    {
         spawnNpc(npcId, getPosition());
     }
 
-    public void spawnNpc(int npcId, MapleCharacter owner) {
+    public void spawnNpc(final int npcId, final MapleCharacter owner) 
+    {
         spawnNpc(npcId, getPosition(), owner);
     }
 
@@ -182,7 +200,8 @@ public class ReactorActionManager extends AbstractPlayerInteraction {
      * @param [Int] X
      * @param [Int] Y
      */
-    public void spawnNpc(int npcId, int x, int y) {
+    public void spawnNpc(final int npcId, final int x, final int y) 
+    {
         spawnNpc(npcId, new Point(x, y));
     }
 
@@ -192,23 +211,36 @@ public class ReactorActionManager extends AbstractPlayerInteraction {
      * @param [Int]   npcId
      * @param [Point] pos
      */
-    public void spawnNpc(int npcId, Point pos) {
-        MapleNPC npc = MapleLifeFactory.getNPC(npcId);
-        if (npc != null && !npc.getName().equals("MISSINGNO")) {
+    public void spawnNpc(final int npcId, final Point pos) 
+    {
+        final MapleNPC npc = MapleLifeFactory.getNPC(npcId);
+        
+        if (npc != null && !npc.getName().equals("MISSINGNO")) 
+        {
             npc.setPosition(pos);
             npc.setCy(pos.y);
             npc.setRx0(pos.x + 50);
             npc.setRx1(pos.x - 50);
             npc.setFh(reactor.getMap().getFootholds().findBelow(pos).getId());
             npc.setCustom(true);
+            
             reactor.getMap().addMapObject(npc);
             reactor.getMap().broadcastMessage(MaplePacketCreator.spawnNPC(npc));
         }
     }
 
-    public void spawnNpc(int npcId, Point pos, MapleCharacter owner) {
-        MapleNPC npc = MapleLifeFactory.getNPC(npcId);
-        if (npc != null && !npc.getName().equals("MISSINGNO")) {
+    /**
+     * Spawns an NPC at a Custom Position to a Custom Character
+     * @param [Int] npcId
+     * @param [Point] pos
+     * @param [MapleCharacter] owner
+     */
+    public void spawnNpc(final int npcId, final Point pos, final MapleCharacter owner) 
+    {
+        final MapleNPC npc = MapleLifeFactory.getNPC(npcId);
+        
+        if (npc != null && !npc.getName().equals("MISSINGNO")) 
+        {
             npc.setPosition(pos);
             npc.setCy(pos.y);
             npc.setRx0(pos.x + 50);
@@ -216,53 +248,58 @@ public class ReactorActionManager extends AbstractPlayerInteraction {
             npc.setFh(reactor.getMap().getFootholds().findBelow(pos).getId());
             npc.setCustom(true);
             npc.setOwner(owner);
+            
             reactor.getMap().addMapObject(npc);
             reactor.getMap().broadcastMessage(MaplePacketCreator.spawnNPC(npc));
         }
     }
 
-    public MapleReactor getReactor() {
+    public final MapleReactor getReactor() 
+    {
         return reactor;
     }
 
-    public void spawnFakeMonster(int id) {
-        spawnFakeMonster(id, 1, getPosition());
+    public void spawnFakeMonster(final int id) 
+    {
+        spawnFakeMonster(id, 0x01, getPosition());
     }
 
-    // summon one monster, remote location
-    public void spawnFakeMonster(int id, int x, int y) {
-        spawnFakeMonster(id, 1, new Point(x, y));
+    public void spawnFakeMonster(final int id, final int x, final int y) 
+    {
+        spawnFakeMonster(id, 0x01, new Point(x, y));
     }
 
-    // multiple monsters, reactor location
-    public void spawnFakeMonster(int id, int qty) {
+    public void spawnFakeMonster(final int id, final int qty) 
+    {
         spawnFakeMonster(id, qty, getPosition());
     }
 
-    // multiple monsters, remote location
-    public void spawnFakeMonster(int id, int qty, int x, int y) {
+    public void spawnFakeMonster(final int id, final int qty, final int x, final int y) 
+    {
         spawnFakeMonster(id, qty, new Point(x, y));
     }
 
-    // handler for all spawnFakeMonster
-    private void spawnFakeMonster(int id, int qty, Point pos) {
-        for (int i = 0; i < qty; i++) {
-            MapleMonster mob = MapleLifeFactory.getMonster(id);
-            reactor.getMap().spawnFakeMonsterOnGroundBelow(mob, pos);
-        }
+    private void spawnFakeMonster(final int id, final int qty, final Point pos) 
+    {
+        for (int i = 0x00; i < qty; i++) 
+            reactor.getMap().spawnFakeMonsterOnGroundBelow(MapleLifeFactory.getMonster(id), pos);
     }
 
-    public void killAll() {
+    public void killAll() 
+    {
         reactor.getMap().killAllMonsters(false);
     }
 
-    public void killMonster(int monsId) {
+    public void killMonster(final int monsId) 
+    {
         reactor.getMap().killMonster(monsId);
     }
 
-    public void warpMap(int mapId, int portal) {
-        for (MapleCharacter mch : getClient().getPlayer().getMap().getCharacters()) {
-            MapleMap target = getClient().getChannelServer().getMapFactory().getMap(mapId);
+    public void warpMap(final int mapId, final int portal) 
+    {
+        for (final MapleCharacter mch : getClient().getPlayer().getMap().getCharacters()) 
+        {
+            final MapleMap target = getClient().getChannelServer().getMapFactory().getMap(mapId);
             mch.changeMap(target, target.getPortal(portal));
         }
     }

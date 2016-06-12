@@ -50,23 +50,24 @@ public class MapleQuestStatus
 
         final int status;
 
-        private Status(int id) 
+        private Status(final int id) 
         {
             status = id;
         }
 
-        public int getId() 
+        public final int getId() 
         {
             return status;
         }
 
-        public static Status getById(int id) 
+        public static final Status getById(final int id) 
         {
-            for (Status l : Status.values()) 
+            for (final Status l : Status.values()) 
             {
                 if (l.status == id) 
                     return l;
             }
+            
             return null;
         }
     }

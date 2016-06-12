@@ -1315,9 +1315,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         ps.close();
     }
 
-    public MapleQuestStatus getQuest(int questId) {
+    public MapleQuestStatus getQuest(int questId) 
+    {
         if (!quests.containsKey(questId))
             return new MapleQuestStatus(questId, MapleQuestStatus.Status.NOT_STARTED, "");
+        
         return quests.get(questId);
     }
 

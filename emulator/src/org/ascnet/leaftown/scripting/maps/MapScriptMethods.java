@@ -61,4 +61,21 @@ public class MapScriptMethods extends AbstractPlayerInteraction
                 break;
         }
     }
+    
+    public void startExplorerExperience() 
+    {
+    	switch(getPlayer().getMapId())
+    	{
+    		case 1020100:
+    			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/swordman/Scene" + getPlayer().getGender()));
+    		case 1020200:
+    			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/magician/Scene" + getPlayer().getGender()));
+    		case 1020300:
+    			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/archer/Scene" + getPlayer().getGender()));
+    		case 1020400:
+    			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/rogue/Scene" + getPlayer().getGender()));
+    		case 1020500:
+    			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/pirate/Scene" + getPlayer().getGender()));
+    	}
+    }
 }
