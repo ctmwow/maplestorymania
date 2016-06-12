@@ -20,20 +20,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /* 
-	Map(s): 		Empress' Road : Crossroads of Ereve
+	Map(s): 			Empress' Road : Crossroads of Ereve
 	Description: 		Takes you to Training Forest I
 */
 
-function enter(pi) {
-	if(pi.isQuestStarted(20301) || pi.isQuestStarted(20302) || pi.isQuestStarted(20303) || pi.isQuestStarted(20304) || pi.isQuestStarted(20305)) {
-		if(pi.hasItem(4032179)) {
+function enter(pi) 
+{
+	if(pi.isQuestStarted(20301) || pi.isQuestStarted(20302) || pi.isQuestStarted(20303) || pi.isQuestStarted(20304) || pi.isQuestStarted(20305)) 
+	{
+		if(pi.hasItem(4032179)) 
+		{
 			pi.playPortalSound();
 			pi.warp(130010000, "east00");
-		} else {
-			pi.getPlayer().dropMessage(5, "Due to the lock down you can not enter without a permit.");
+		}
+		else 
+		{
+			pi.getPlayer().dropMessage(5, "Devido a um bloqueio, você não pode entrar sem autorização!");
 			return false;
 		}
-	} else {
+	}
+	 else 
+	{
 		pi.playPortalSound();
 		pi.warp(130010000, "east00");
 	}

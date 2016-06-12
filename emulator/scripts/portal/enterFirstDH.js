@@ -29,11 +29,11 @@ var map = 0;
 
 function enter(pi) 
 {
-    if (pi.getQuestStatus(20701) != null && pi.getQuestStatus(20701).getId() == 1) 
+    if (pi.isQuestStarted(20701)) 
     	map = 913000000;
-    if (pi.getQuestStatus(20702) != null && pi.getQuestStatus(20702).getId() == 1) 
+    if (pi.isQuestStarted(20702)) 
     	map = 913000100;
-    if (pi.getQuestStatus(20703) != null && pi.getQuestStatus(20703).getId() == 1) 
+    if (pi.isQuestStarted(20703)) 
     	map = 913000200;
     
     if (map > 0) 

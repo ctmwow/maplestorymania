@@ -20,15 +20,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /* 
-	Map(s): 		Empress' Road : Training Forest II
+	Map(s): 			Empress' Road : Training Forest II
 	Description: 		Takes you to Timu's Forest
 */
 
-function enter(pi) {
-	if(pi.isQuestStarted(20301) || pi.isQuestStarted(20302) || pi.isQuestStarted(20303) || pi.isQuestStarted(20304) || pi.isQuestStarted(20305)) {
+function enter(pi) 
+{
+	if(pi.isQuestStarted(20301) || pi.isQuestStarted(20302) || pi.isQuestStarted(20303) || pi.isQuestStarted(20304) || pi.isQuestStarted(20305)) 
 		pi.warp(108010620, "out00");
-	} else {
+	else 
 		pi.warp(130010110, "out00");
-	}
+
 	return true;
 }
