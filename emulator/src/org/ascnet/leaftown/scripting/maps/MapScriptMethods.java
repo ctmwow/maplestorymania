@@ -29,6 +29,7 @@ package org.ascnet.leaftown.scripting.maps;
 
 import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.scripting.AbstractPlayerInteraction;
+import org.ascnet.leaftown.server.TimerManager;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 
 public class MapScriptMethods extends AbstractPlayerInteraction 
@@ -82,5 +83,20 @@ public class MapScriptMethods extends AbstractPlayerInteraction
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/pirate/Scene" + getPlayer().getGender()));
     			break;
     	}
+    }
+    
+    public void goLith() 
+    {
+        lockUI();
+        TimerManager.getInstance().schedule(new Runnable() 
+        {
+            @Override
+            public void run() 
+            {
+                unlockUI();
+                warp(104000000);
+            }
+        }, 5000);
+        getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/goLith/Scene" + getClient().getPlayer().getGender()));
     }
 }
