@@ -25,5 +25,5 @@
 
 function start(ms) 
 {
-    ms.hideUI(true);
+    ms.hideUI(false);
 }
