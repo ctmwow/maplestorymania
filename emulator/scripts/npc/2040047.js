@@ -1,98 +1,60 @@
-/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * @author: Eric
+ * @npc: Sgt. Anderson
+ * @maps: Ludibrium PQ Maps
+ * @func: Ludi PQ (Warps you out)
 */
-/*
-@	Author : Raz
-@
-@	NPC = Sgt.Anderson
-@	Map =  Abandoned Tower <Stage 1>
-@	NPC MapId = 922010100
-@	NPC Exit-MapId = 221024500
-@
- */
-//4001022 - PASS OF DIMENSION
 
-var status = 0;
+var status = -1;
 
 function start() {
-    status = -1;
-    action(1, 0, 0);
+    if (cm.getMapId() != 922010000 && cm.getMapId() != 922010800) {
+		cm.sendYesNo("You'll have to start over from scratch if you want to take a crack at this quest after leaving this stage. Are you sure you want to leave this map?");
+    } else if (cm.getMapId() == 922010800) {
+		cm.sendSimple("Do you need some help?#b\r\n#L0#I need Platform Puppet.#l\r\n#L1#I want to get out of here.#l#k");
+	} else {
+		cm.removeAll(4001022); // pass of dimension
+	    cm.removeAll(4001023);
+		cm.removeAll(4001454); // platform puppet
+		cm.warp(221024500, 0);
+		cm.dispose();
+    }
 }
 
 function action(mode, type, selection) {
-
-         
-    if (mode == -1) {//ExitChat
-        cm.dispose();
-	
-    }else if (mode == 0){//No
-        cm.sendOk("OK, Talk to me again if you want to leave here.");
-        cm.dispose();
-
-    }else{		    //Regular Talk
-        if (mode == 1)
-            status++;
-        else
-            status--;
-	if(cm.getPlayer().getMap().getId() == 922010000){
-            if(status == 0){
-		cm.sendNext("Goodbye! see you next time");
-            }else if (status == 1){
-		cm.warp(221024500);
+	if (mode == 1)
+		status++;
+	else if (mode == 0 && (status == 0 || status == -1)) {
+		cm.sendNext("I see. Gather up the strength of your party members and try harder!");
 		cm.dispose();
-            }
-
-
-        }else{
-            if (status == 0) {
-		cm.sendYesNo("Are you sure you want to leave the Quest?");
-            }else if (status == 1) {
-		cm.sendNext("Ok, Bye!");
-            }else if (status == 2) {
-		var eim = cm.getPlayer().getEventInstance();  
-		if(eim == null){
-                    cm.sendOk("Wait, Hey! how'd you get here?\r\nOh well you can leave anyways");
-		}else{
-                    if(isLeader() == true){
-                        eim.disbandParty();
-                        cm.removeFromParty(4001008, eim.getPlayers());
-                    }else{
-                        eim.leftParty(cm.getPlayer());
-                        cm.removeAll(4001022);
-                    }
-                    cm.dispose();
+		return;
+	} else
+		status--;
+	if (status == 0) {
+		if (cm.getMapId() == 922010800) {
+			if (selection == 0) {
+				cm.sendNext("You have received a Platform Puppet. If you place it on the platform, it will have the same effect as someone standing there.\r\nRemember, though, this is an item that can only be used in here.");
+				cm.gainItem(4001454, 1);
+				cm.dispose();
+			} else {
+				cm.sendYesNo("You'll have to start over from scratch if you want to take a crack at this quest after leaving this stage. Are you sure you want to leave this map?");
+			}
+		} else {
+			var eim = cm.getPlayer().getEventInstance();
+			if(eim != null) {
+				eim.removePlayer(cm.getPlayer());
+			} else {
+				cm.warp(922010000, 0);
+			}
+			cm.dispose();
 		}
-	    }else if (status == 3){
-	    	cm.warp(221024500);
-		cm.removeAll(4001022);
+	} else if (status == 1) {
+		var eim = cm.getPlayer().getEventInstance();
+		if(eim != null) {
+			eim.removePlayer(cm.getPlayer());
+		} else {
+			cm.warp(922010000, 0);
+		}
 		cm.dispose();
-	    }
 	}
-    }
-}
-
-function isLeader(){
-    if(cm.getParty() == null){
-        return false;
-    }else{
-        return cm.isLeader();
-    }
 }

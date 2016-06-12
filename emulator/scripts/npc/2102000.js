@@ -19,41 +19,28 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/* Author: Xterminator
-	NPC Name: 		Asesson
-	Map(s): 		Ariant: Ariant Station Platform (260000100)
-	Description: 	Ariant Ticketing Usher
-*/
-
-//too lazy to shorten
-var status = 0;
 
 function start() {
-    cm.sendYesNo("It looks like there's plenty of room for this ride. Please have your ticket ready so I can let you in. The ride will be long but you'll get to your destination just fine. What do you think? Do you want to get on this ride?");
-}
-
-function action(mode, type, selection) {
-    if (mode == -1) {
-        cm.dispose();
-    } else {
-        if (status >= 0 && mode == 0) {
-            cm.sendNext("You must have some business to take care of here, right?");
+    if(cm.haveItem(4031045)){
+        var em = cm.getEventManager("Genie");
+        if (em.getProperty("entry") == "true") {
+            cm.sendYesNo("This will not be a short flight, so you need to take care of some things, I suggest you do that first before getting on board. Do you still wish to board the genie?");
+        } else {
+            cm.sendOk("This genie is getting ready for takeoff. I'm sorry, but you'll have to get on the next ride. The ride schedule is available through the guide at the ticketing booth.");
             cm.dispose();
-            return;
         }
-        if (mode == 1)
-            status++;
-        else
-            status--;
-        if (status == 1) {
-            if (cm.haveItem(4031045)) {
-                cm.gainItem(4031045, -1)
-                cm.warp(200000100, 0);
-                cm.dispose();
-            } else {
-                cm.sendNext("Oh no... I don't think you have the ticket with you. I can't let you in without it. Please buy the ticket at the ticketing booth.");
-                cm.dispose();
-            }
-        }
+    } else {
+        cm.sendOk("Make sure you got an Ariant ticket to travel in this genie. Check your inventory.");
+        cm.dispose();
     }
+}
+function action(mode, type, selection) {
+    if (mode <= 0) {
+	cm.sendOk("Okay, talk to me if you change your mind!");
+        cm.dispose();
+	return;
+    } 
+    cm.gainItem(4031045, -1);
+    cm.warp(260000110);
+    cm.dispose();
 }

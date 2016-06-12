@@ -29,6 +29,7 @@
 @
 */
 
+importPackage(Packages.org.ascnet.leaftown.tools);
 
 var status = 0;
 var party;
@@ -71,9 +72,11 @@ function action(mode, type, selection) {
                     }
                 }else{
                     if(gaveItems == null){
-                        if(cm.itemQuantity(4001022) >= 6){
+                        if(cm.getPlayer().getMap().getCharacters().size() != eim.getPlayers().size()) {
+							cm.sendOk("Please wait for all of your party members to get here.");
+							cm.dispose();
+                        } else if(cm.itemQuantity(4001022) >= 6){
                             cm.sendOk("Good job! you have collected all 6 #b#t4001022#'s#k");
-                            cm.removeAll(4001022);
                         }else{
                             cm.sendOk("Sorry you don't have all 6 #b#t4001022#'s#k");
                             cm.dispose();
@@ -86,9 +89,14 @@ function action(mode, type, selection) {
                 }
         }else if (status == 1){
             cm.sendOk("You may continue to the next stage!");
-            cm.gate();
-            cm.clear();
-            cm.givePartyExp(4800, eim.getPlayers());
+            
+			var map = eim.getMapInstance(cm.getPlayer().getMapId());
+			map.broadcastMessage(MaplePacketCreator.showEffect("quest/party/clear"));
+			map.broadcastMessage(MaplePacketCreator.playSound("Party1/Clear"));
+			map.broadcastMessage(MaplePacketCreator.environmentChange("gate", 2));
+	
+            cm.removeAll(4001022);
+            cm.givePartyExp("LudiPQ4th");
             eim.setProperty("4stageclear","true");
             eim.setProperty("leader" + nthtext + "gaveItems","done");
             cm.dispose();

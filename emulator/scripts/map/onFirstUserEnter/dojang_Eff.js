@@ -24,8 +24,8 @@
  *@Map(s):     All Dojo fighting maps
  *@Function:   Spawns dojo monsters and handles time
 */
-importPackage(Packages.server.life);
-importPackage(Packages.tools);
+importPackage(Packages.org.ascnet.leaftown.server.life);
+importPackage(Packages.org.ascnet.leaftown.tools);
 
 function start(ms) {
     try {

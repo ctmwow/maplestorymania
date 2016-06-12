@@ -30,7 +30,7 @@
 ---------------------------------------------------------------------------------------------------
 **/
 
-importPackage(Packages.tools);
+importPackage(Packages.org.ascnet.leaftown.tools);
 
 //Time Setting is in millisecond
 var closeTime = 240000; //The time to close the gate

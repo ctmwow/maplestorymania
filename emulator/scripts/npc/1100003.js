@@ -1,53 +1,68 @@
-/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
+/**
+----------------------------------------------------------------------------------
+	Skyferry Between Victoria Island, Ereve and Orbis.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
+	1100003 Kiriru (To Victoria Island From Ereve)
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+-------Credits:-------------------------------------------------------------------
+	*MapleSanta 
+----------------------------------------------------------------------------------
+**/
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/    
-/*
-        Author : XxOsirisxX (BubblesDev)
-        NPC Name: Shiny Stone
-*/
+var menu = new Array("Victoria Island");
+var method;
 
-status = -1;
-
-function start() {
-    cm.sendNext("Eh, Hello...again. Do you want to leave Ereve and go somewhere else? If so, you've come to the right place. I operate a ferry that goes from Ereve to #bEllinia#k.");
+function start() 
+{
+	status = -1;
+	action(1, 0, 0);
 }
 
-function action(mode, type, selection){
-    status++;
-    if (status == 2 && type == 1) {
-        cm.gainMeso(-1000);
-        cm.warp(130000000);
-        mode = -1;
-    }
-    if (mode != 1) {
-        cm.dispose();
-        return;
-    }
-    if (status == 0)
-        cm.sendYesNo("Ummm, are you trying to leave Ereve again? I can take you to #bEllinia#k if you want...\r\n\r\nYou'll have to pay a fee of #b1000#k Mesos.");
-    else if (status == 1)
-        if (cm.getMeso() > 1000)
-            cm.sendNext("I'll take you off of the ride. Talk to me back any time.");
-        else {
-            cm.sendNext("I don't think you have enough mesos, double check your inventory.");
-            cm.dispose();
-        }
+function action(mode, type, selection) 
+{
+	if(mode == -1) 
+	{
+		cm.dispose();
+		return;
+	}
+	else 
+	{
+		if(mode == 0 && status == 0) 
+		{
+			cm.dispose();
+			return;
+		}
+		else if(mode == 0) 
+		{
+			cm.sendNext("Se você não está interessado, tudo bem.");
+			cm.dispose();
+			return;
+		}
+		status++;
+		if (status == 0)
+		{
+			for(var i=0; i < menu.length; i++) 
+			{
+				var display = "\r\n#L"+i+"##b Victoria Island (100 mesos)#k";
+			}			
+			cm.sendSimple("Eh, Olá...novamente. Você deseja deixar Ereve e ir para outro lugar? Se sim, você veio ao lugar certo! Eu opero a balsa que vai de #bEreve#k à #bVictoria Island#k, eu posso leva-lo até #bVictoria Island#k se você quiser... Você vai ter que pagar uma taxa de #b100#k Mesos.\r\n"+display);
+			
+		} 
+		else if(status == 1) 
+		{
+			 if(cm.getMeso() < 100) 
+			 {
+				cm.sendNext("Hmm... Tem certeza que você possui #b100#k Mesos? Verifique o seu inventário e certifique-se que você possui o necessário. Você deve pagar a taxa ou eu não posso deixar você vir...");
+				cm.dispose();
+			} 
+			else
+		    {
+				cm.gainMeso(-100);
+				cm.getPlayer().setArrivalTime(120);
+				cm.warp(200090031);
+				cm.sendClock(cm.getClient(), 120);
+				cm.dispose();
+		    }
+		}
+	}
 }

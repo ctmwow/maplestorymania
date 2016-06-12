@@ -23,7 +23,6 @@
 /*
 Kerning PQ: 2nd stage to 3rd stage portal
 */
-importPackage(Packages.server.maps);
 
 function enter(pi) {
     var eim = pi.getPlayer().getEventInstance();
@@ -31,8 +30,6 @@ function enter(pi) {
     if (eim.getProperty("2stageclear") != null) {
         pi.getPlayer().changeMap(target, target.getPortal("st00"));
         return true;
-    } else {
-        pi.playerMessage("The warp is currently unavailable.");
-        return false;
     }
+    return false;
 }

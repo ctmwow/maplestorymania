@@ -41,8 +41,8 @@ function action(mode, type, selection) {
         if(status == 0) {
             cm.sendYesNo("Hello, I'm in charge of selling tickets for the ship ride to Orbis Station of Ossyria. The ride to Orbis takes off every 10 minutes, beginning on the hour, and it'll cost you #b"+cost+" mesos#k. Are you sure you want to purchase #b#t4031045##k?");
         } else if(status == 1) {
-            if(cm.getMeso() >= cost && cm.canHold(4031045)) {
-                cm.gainItem(4031045,1);
+            if(cm.getMeso() >= cost) {
+                cm.warp(200000100);
                 cm.gainMeso(-cost);
             } else {
                 cm.sendOk("Are you sure you have #b"+cost+" mesos#k? If so, then I urge you to check your etc. inventory, and see if it's full or not.");

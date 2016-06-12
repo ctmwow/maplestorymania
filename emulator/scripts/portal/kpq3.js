@@ -30,8 +30,6 @@ function enter(pi) {
     if (eim.getProperty("4stageclear") != null) {
         pi.getPlayer().changeMap(target, target.getPortal("st00"));
         return true;
-    } else {
-        pi.playerMessage("The warp is currently unavailable.");
-        return false;
     }
+    return false;
 }

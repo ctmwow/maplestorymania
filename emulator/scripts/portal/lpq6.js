@@ -25,7 +25,7 @@ LudiPQ - 1 - 2 Portal
 */
 
 function enter(pi) {
-	var nextMap = 922010600;
+	var nextMap = 922010700;
 	var eim = pi.getPlayer().getEventInstance()
 	var target = eim.getMapInstance(nextMap);
 	var targetPortal = target.getPortal("st00");
@@ -36,6 +36,10 @@ function enter(pi) {
 		pi.getPlayer().dropMessage(5, "Some seal is blocking this door.");
 		return false;	}
 	else {
+		if(eim.getProperty("6stageclear") == null) {
+			eim.setProperty("6stageclear", "done");
+			pi.givePartyExp("LudiPQ6th");
+		}
 		pi.getPlayer().changeMap(target, targetPortal);
 		return true;
 	}

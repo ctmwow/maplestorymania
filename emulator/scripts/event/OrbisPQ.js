@@ -28,11 +28,11 @@
  */
 
 importPackage(java.lang);
-importPackage(Packages.world);
-importPackage(Packages.client);
-importPackage(Packages.server.maps);
-importPackage(Packages.server.life);
-importPackage(Packages.scripting.npc);
+importPackage(Packages.org.ascnet.leaftown.world);
+importPackage(Packages.org.ascnet.leaftown.client);
+importPackage(Packages.org.ascnet.leaftown.server.maps);
+importPackage(Packages.org.ascnet.leaftown.server.life);
+importPackage(Packages.org.ascnet.leaftown.scripting.npc);
 
 var exitMap;
 var instanceId;

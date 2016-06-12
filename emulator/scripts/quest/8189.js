@@ -24,7 +24,7 @@
 	Map(s): 		New Leaf City : Town Center
 	Description: 		Quest - Pet Re-Evolution
 */
-importPackage(Packages.server);
+importPackage(Packages.org.ascnet.leaftown.server);
 
 var status = -1;
 

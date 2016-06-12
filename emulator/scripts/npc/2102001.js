@@ -19,19 +19,28 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 var status = 0;
 
 function start() {
-    cm.sendNext("I see Asesson has let you in, you must be worthy of entering! Let's go!");
+    action(1, 0, 0);
 }
 
 function action(mode, type, selection) {
-    status++;
-    if ((status == 1 && type == 1 && selection == -1 && mode == 0) || mode == -1) {
-        cm.dispose();
+    if (status == 0) {
+        cm.sendYesNo("Do you wish to go to leave the genie?");
+        status++;
     } else {
-        cm.warp(670010200, 0);
-        cm.dispose();
-        cm.changeMusic("Bgm14/Ariant");
+        if (mode < 1) {
+            cm.dispose();
+        } else {
+            if (status == 1) {
+                cm.sendNext ("Alright, see you next time. Take care.");
+                status++;
+            } else if (status == 2) {
+                cm.warp(260000100, 0);
+                cm.dispose();
+            }
+        }
     }
 }

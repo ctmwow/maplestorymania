@@ -46,7 +46,7 @@ function start(mode, type, selection) {
 	qm.forceStartQuest();
 	qm.sendNext("It just so happens that there are a lot of #rTutorial Murus #knear here. How about defeating just #r3 #kof them? It could help you remember a thing or two.");
     } else if (status == 4) { 
-	qm.sendNextPrev("Ah, you've also forgotten how to use your skills? #bPlace skills in the quick slots for easy acces. #kYou can also place consumable items in the slots, so use the slots to your advantage.") ;  
+	qm.sendNextPrev("Ah, you've also forgotten how to use your skills? #bPlace skills in the quick slots for easy access. #kYou can also place consumable items in the slots, so use the slots to your advantage.") ;  
     } else if (status == 5) { 
 	qm.guideHint(17); 
 	qm.dispose();

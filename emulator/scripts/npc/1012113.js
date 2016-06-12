@@ -24,33 +24,43 @@
  * @npc Tommy (HPQ)
  */
 var status = 0;
-
 function start() {
     status = -1;
     action(1, 0, 0);
 }
 
 function action(mode, type, selection) {
-    if (mode < 1)
+    if (mode < 1) {
         cm.dispose();
-    else {
+    } else {
         status++;
-        if (cm.getPlayer().getMap().getId() == 910010300) {
-            if (status == 0) {
-                cm.sendNext("Would you like to stop hunting and leave this place?\r\n#b#L0# Yes. I would like to leave this place.#l");
-            } else if (status == 1){
-                cm.warp(910010400);
-                cm.dispose();
-            }
-        } else if (cm.getPlayer().getMap().getId() == 910010100) {
+        if (cm.getPlayer().getMap().getId() == 910010100) { //Clear map
             if (status == 0) {
                 cm.sendNext("Hello, there! I'm Tommy. There's a Pig Town nearby where we're standing. The pigs there are rowdy and uncontrollable to the point where they have stolen numerous weapons from travelers. They were kicked out from their towns, and are currently hiding out at the Pig Town.");
             } else if (status == 1) {
-                cm.sendYesNo("What do you think about making your way there with your party members and teach those rowdy pigs a lesson?\r\n#b#L0# Yeah, that sounds good! Take me there!#l");
+                cm.sendYesNo("What do you think about making your way there with your party members and teach those rowdy pigs a lesson?");
             } else if (status == 2) {
-                cm.warpParty(910010300);
-                cm.dispose();
-            }
+				cm.warp(910010200);
+				cm.dispose();
+				return;
+            }  
+        } else if (cm.getPlayer().getMap().getId() == 910010200) { //Bonus map
+        	if (status == 0) {
+				cm.sendYesNo("Would you like to exit the bonus now?");
+        	} else {    				
+	        	cm.warp(910010400);  
+				cm.dispose();
+				return;
+			}
+        } else if (cm.getPlayer().getMap().getId() == 910010300) { //Exit map
+        		if (status == 0) {
+        			cm.sendOk("You will now be warped out, thank you for helping us!");
+        		} else {
+	        		cm.warp(100000200);  
+	    			cm.dispose();
+					return;
+    			}
+        	}
         }
-    }
-}	
+}
+	

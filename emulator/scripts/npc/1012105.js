@@ -24,6 +24,7 @@
 */
 var status = 0;
 var skin = Array(0, 1, 2, 3, 4);
+var price = 1000000;
 
 function start() {
     cm.sendSimple("Well, hello! Welcome to the Henesys Skin-Care! Would you like to have a firm, tight, healthy looking skin like mine?  With a #b#t5153000##k, you can let us take care of the rest and have the kind of skin you've always wanted~!\r\n#L1#I would like to buy a #b#t5153000##k for " + price + " mesos, please!#l\r\n\#L2#I already have a Coupon!#l");

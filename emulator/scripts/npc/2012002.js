@@ -40,7 +40,7 @@ if (mode == 0 && status == 1) {
     if (mode > 0)
         status++;
     else
-        cm.dipose();
+        cm.dispose();
     if (status == 1)
         cm.sendNext ("Alright, see you next time. Take care.");
     else if (status == 2)

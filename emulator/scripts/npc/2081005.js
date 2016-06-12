@@ -1,49 +1,48 @@
 /*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	Keroben - Leafre Cave of life - Entrance
 */
-//Fixed by Moogra
-//Fixed grammar, javascript syntax
-var status = 0;
-var price = 100000;
+
+var morph;
+var status = -1;
 
 function start() {
-    cm.sendSimple("Welcome to Cave of Life - Entrance ! Would you like to go inside and fight #rHorntail#k ? If you want to fight him, you may might need some #b#v2000005##k, so you can recover some HP if you have been hit by #rHorntail#k.\r\n#L1#I would like to buy 10 for 100,000 Mesos!#l\r\n\#L2#No thanks, let me in now!#l");
+    status = -1;
+    action(1, 0, 0);
 }
 
 function action(mode, type, selection) {
-    if (mode < 1)
-        cm.dispose();
-    else if (selection == 1) {
-        if(cm.getMeso() >= price && cm.canHold(2000005)) {
-            cm.gainMeso(-price);
-            cm.gainItem(2000005, 10);
-            cm.sendOk("Thank you for buying the potion. Use it as well!");
-        } else
-            cm.sendOk("Sorry, you don't have enough mesos to buy them!");
-        cm.dispose();
-    } else if (selection == 2) {
-        if (cm.getLevel() > 99)
-            cm.warp(240050000, 0);
-        else
-            cm.sendOk("I'm sorry. You need to be atleast level 100 or above to enter.");
-        cm.dispose();
+    if (mode == 1) {
+	status++;
+    } else {
+	status--;
+    }
+    if (status == 0) {
+	morph = cm.getMorphState();
+	if (morph == 2210003) {
+	    cm.sendNext("Oh, my Brother! Don't worry about human's invasion. I'll protect you all. Come in.");
+	} else {
+	    cm.sendNext("That's far enough, human! No one is allowed beyond this point. Get away from here!");
+	}
+    } else if (status == 1) {
+	if (morph == 2210003) {
+	    cm.cancelItem(2210003);
+	    cm.warp(240050000, 0);
+
+	    if (cm.haveItem(4031454)) { // Paladin
+		cm.gainItem(4031454, -1);
+		cm.gainItem(4031455, 1);
+	    }
+	    if (cm.getQuestStatus(6169) == 1) { // Temporary
+		cm.gainItem(4031461, 1);
+	    }
+	    if (cm.getQuestStatus(7302) == 1) { // Temporary
+		cm.gainItem(4001080, 1);
+		cm.gainItem(4001081, 1);
+		cm.gainItem(4001082, 1);
+	    }
+	} else {
+	    cm.warp(240040600, "st00");
+	}
+	cm.dispose();
     }
 }
