@@ -68,14 +68,19 @@ public class MapScriptMethods extends AbstractPlayerInteraction
     	{
     		case 1020100:
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/swordman/Scene" + getPlayer().getGender()));
+    			break;
     		case 1020200:
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/magician/Scene" + getPlayer().getGender()));
+    			break;
     		case 1020300:
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/archer/Scene" + getPlayer().getGender()));
+    			break;
     		case 1020400:
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/rogue/Scene" + getPlayer().getGender()));
+    			break;
     		case 1020500:
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/pirate/Scene" + getPlayer().getGender()));
+    			break;
     	}
     }
 }
