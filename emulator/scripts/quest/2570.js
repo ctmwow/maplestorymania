@@ -27,9 +27,9 @@ function end(mode, type, selection) {
 			qm.dispose();
 		} else {
 			if (!qm.isQuestCompleted(2570)) {
-				qm.gainItem(1532000);
-				qm.gainItem(1002610);
-				qm.gainItem(1052095);
+				qm.gainItem(1532000, 1);
+				qm.gainItem(1002610, 1);
+				qm.gainItem(1052095, 1);
 				qm.changeJobById(501);
 				qm.forceCompleteQuest();
 				qm.forceCompleteQuest(29900);

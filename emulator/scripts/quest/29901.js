@@ -49,7 +49,7 @@ function end(mode, type, selection)
         {
 			if (qm.canHold(1142108)) 
 			{
-				qm.gainItem(1142108);
+				qm.gainItem(1142108, 1);
 				qm.forceCompleteQuest();
 			}
 			else 

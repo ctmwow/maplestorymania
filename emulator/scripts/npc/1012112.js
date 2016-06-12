@@ -125,7 +125,7 @@ function action(mode, type, selection) {
             } else if (status == 2) {
                 if (chosen == 1) {
                     if (cm.canHold(1002798)) { // we will let them try again if they can't
-                        cm.gainItem(1002798);
+                        cm.gainItem(1002798, 1);
                         cm.setGottenRiceHat(true);
                         cm.sendNext("It will really go well with you. I promise.");
                     } else {

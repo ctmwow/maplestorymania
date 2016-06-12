@@ -42,9 +42,9 @@ function start(mode, type, selection) {
 				qm.dispose();
 				return;
 			}
-			qm.gainItem(1142129, true);
+			qm.gainItem(1142129, 1, true);
             qm.completeQuest();
-            qm.changeJobById(2100);
+            qm.changeJob(MapleJob.ARAN);
             qm.getPlayer().setStr(35);
             qm.getPlayer().setDex(4);
             qm.getPlayer().setRemainingAp((qm.getPlayer().getLevel() - 1) * 5 - 22);

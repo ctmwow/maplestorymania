@@ -47,7 +47,7 @@ function start(mode, type, selection)
     } 
     else if (status == 1) 
     {
-    	qm.sendNextPrev("     #i4001170#");//gms like
+    	qm.sendNextPrev("#i4001170#");//gms like
     } 
     else if (status == 2) 
     {
