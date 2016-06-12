@@ -30,8 +30,5 @@ var status = -1;
 function start(ms) 
 {
     if (ms.getMapId() == 104000000) 
-    {
         ms.environmentChange(13, "maplemap/enter/104000000");
-        ms.hideUI(true);
-    }
 }
