@@ -1,6 +1,6 @@
 /*
- * This file is part of AscNet Leaftown.
- * Copyright (C) 2014 Ascension Network
+ * This file is part of Maple Story Mania Server
+ * Copyright (C) 2016
  *
  * AscNet Leaftown is a fork of the OdinMS MapleStory Server.
  * The following is the original copyright notice:
