@@ -42,8 +42,10 @@ function action(mode, type, selection) {
 					cm.sendNext("Hmm... Are you sure you have #b800#k Mesos? Check your Inventory and make sure you have enough. You must pay the fee or I can't let you get on...");
 					cm.dispose();
 				} else {
-							cm.gainMeso(-800);
+							cm.gainMeso(-100);
+							cm.getPlayer().setArrivalTime(120);
 							cm.warp(200090070);
+							cm.sendClock(cm.getClient(), 120);
 							cm.dispose();
 					}
 				}
