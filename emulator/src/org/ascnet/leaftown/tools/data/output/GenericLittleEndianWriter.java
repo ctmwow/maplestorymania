@@ -39,7 +39,8 @@ import java.nio.charset.Charset;
  */
 public class GenericLittleEndianWriter implements LittleEndianWriter 
 {
-    private static final Charset ASCII = Charset.forName("US-ASCII");
+    @SuppressWarnings("unused")
+	private static final Charset ASCII = Charset.forName("US-ASCII");
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private ByteOutputStream bos;
 
@@ -137,7 +138,7 @@ public class GenericLittleEndianWriter implements LittleEndianWriter
     @Override
     public void writeAsciiString(String s)
     {
-        write(s.getBytes(ASCII));
+        write(s.getBytes(UTF8));
     }
 
     /**
