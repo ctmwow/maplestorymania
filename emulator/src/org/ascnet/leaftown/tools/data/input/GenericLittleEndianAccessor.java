@@ -28,6 +28,7 @@
 package org.ascnet.leaftown.tools.data.input;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
 
 /**
  * Provides a generic interface to a Little Endian stream of bytes.
@@ -36,8 +37,9 @@ import java.io.ByteArrayOutputStream;
  * @version 1.0
  * @since Revision 323
  */
-public class GenericLittleEndianAccessor implements LittleEndianAccessor {
-
+public class GenericLittleEndianAccessor implements LittleEndianAccessor 
+{
+	private static final Charset UTF8 = Charset.forName("UTF-8");
     private final ByteInputStream bs;
 
     /**
@@ -145,12 +147,14 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor {
      * @param n Number of characters to read.
      * @return The string read.
      */
-    public final String readAsciiString(int n) {
-        final char ret[] = new char[n];
-        for (int x = 0; x < n; x++) {
-            ret[x] = (char) readByte();
-        }
-        return String.valueOf(ret);
+    public final String readAsciiString(int n) 
+    {
+    	final byte ret[] = new byte[n];
+    	
+    	for (int x = 0x00; x < n; x++) 
+    		ret[x] = (byte) readByte();
+    	
+    	return new String(ret, UTF8);
     }
 
     /**

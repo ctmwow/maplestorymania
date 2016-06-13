@@ -149,7 +149,7 @@ public class GenericLittleEndianWriter implements LittleEndianWriter
     @Override
     public void writeMapleAsciiString(String s)
     {
-        writeShort((short) s.length());
+        writeShort((short) s.getBytes(UTF8).length);
         writeAsciiString(s);
     }
 
