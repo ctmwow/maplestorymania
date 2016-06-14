@@ -41,8 +41,7 @@ public class GenericLittleEndianWriter implements LittleEndianWriter
 {
     @SuppressWarnings("unused")
 	private static final Charset ASCII = Charset.forName("US-ASCII");
-    private static final Charset UTF8 = Charset.forName("UTF-8");//SKIS
-    private static final Charset SKIS = Charset.forName("SKIS");
+    private static final Charset UTF8 = Charset.forName("UTF-8");
     private ByteOutputStream bos;
 
     protected GenericLittleEndianWriter() 
@@ -139,7 +138,7 @@ public class GenericLittleEndianWriter implements LittleEndianWriter
     @Override
     public void writeAsciiString(String s)
     {
-        write(s.getBytes(SKIS));
+        write(s.getBytes(UTF8));
     }
 
     /**
@@ -150,7 +149,7 @@ public class GenericLittleEndianWriter implements LittleEndianWriter
     @Override
     public void writeMapleAsciiString(String s)
     {
-        writeShort((short) s.getBytes(SKIS).length);
+        writeShort((short) s.getBytes(UTF8).length);
         writeAsciiString(s);
     }
 
