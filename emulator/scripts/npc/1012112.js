@@ -25,7 +25,7 @@
  */
 var status = 0;
 var chosen = 0;
-var min = 3;
+var min = 1;
 var minLevel = 10;
 
 
@@ -48,7 +48,7 @@ function action(mode, type, selection) {
             status--;
         }
         if (cm.getPlayer().getMapId() == 100000200) {
-            if (cm.getParty() == null || !cm.isLeader()) {
+            if (cm.getParty() == null || !cm.isPartyLeader()) {
                 if (status == 0) {
                     cm.sendNext("Hi there! I'm Tory. This place is covered with mysterious aura of the full moon, and no one person can enter here by him/herself.");
                 } else if (status == 1) {
@@ -78,7 +78,7 @@ function action(mode, type, selection) {
                         cm.dispose();
                         return;
                     }
-                    if (cm.getClient().getChannelServer().getMapFactory().getMap(910010000).getAllPlayer().size() > 0) {
+                    if (cm.getClient().getChannelServer().getMapFactory().getMap(910010000).countCharsOnMap > 0) {
                         cm.sendOk("Someone is already attempting the PQ. Please wait for them to finish, or find another channel.");
                         cm.dispose();
                         return;
@@ -92,7 +92,7 @@ function action(mode, type, selection) {
 
                     var prop = em.getProperty("state");
                     if (prop == null || prop.equals("0")) { //Start the PQ
-					    cm.removeHPQItems();
+					    //cm.removeHPQItems(); *verificar*
                         em.setProperty("latestLeader", cm.getPlayer().getName());
                         em.startInstance(cm.getParty(), cm.getPlayer().getMap());
                     } else {
