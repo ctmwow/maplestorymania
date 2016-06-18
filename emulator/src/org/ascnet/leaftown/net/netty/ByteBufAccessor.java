@@ -26,7 +26,6 @@ import io.netty.buffer.Unpooled;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 
 public class ByteBufAccessor implements SeekableLittleEndianAccessor {
 
@@ -95,17 +94,12 @@ public class ByteBufAccessor implements SeekableLittleEndianAccessor {
 
     @Override
     public String readAsciiString(int n) {
-        byte[] string = new byte[n];
-        
+        char[] string = new char[n];
         for(int x = 0; x < n; ++x)
-            string[x] = readByte();
-        
-        return new String(string, Charset.forName("UTF-8")); 
+            string[x] = (char)readByte();
+        return String.valueOf(string);
     }
-    @Override
-    public byte[] readMapleAsciiStringByte() {
-        return read(readShort());
-    }
+
     @Override
     public String readNullTerminatedAsciiString() {
         ByteBuf buf = Unpooled.directBuffer().order(ByteOrder.LITTLE_ENDIAN);
