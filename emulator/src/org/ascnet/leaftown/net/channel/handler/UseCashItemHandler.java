@@ -632,7 +632,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                         final Rectangle bounds = new Rectangle((int) c.getPlayer().getPosition().getX(), (int) c.getPlayer().getPosition().getY(), 1, 1);
                         final MapleMist mist = new MapleMist(bounds, c.getPlayer(), null);
                         c.getPlayer().getMap().spawnMist(mist, 10000, true);
-                        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getChatText(c.getPlayer().getId(), "Oh no, I farted!", false, 1));
+                        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getChatText(c.getPlayer().getId(), "Oh no, I farted!", false, 1, "Oh no, I farted!".getBytes()));
                         MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
                         c.sendPacket(MaplePacketCreator.enableActions());
                     }
