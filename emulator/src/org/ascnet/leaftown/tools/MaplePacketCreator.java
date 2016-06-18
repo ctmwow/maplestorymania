@@ -1777,13 +1777,14 @@ public class MaplePacketCreator {
      * @param show
      * @return The general chat packet.
      */
-    public static MaplePacket getChatText(int cidfrom, String text, boolean whiteBG, int show) {
+    public static MaplePacket getChatText(int cidfrom, String text, boolean whiteBG, int show, byte[] rawChat) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CHATTEXT.getValue());
         mplew.writeInt(cidfrom);
         mplew.write(whiteBG ? 1 : 0);
-        mplew.writeMapleAsciiString(text);
+        mplew.writeShort((short) rawChat.length);
+        mplew.write(rawChat);
         mplew.write(show);
 
         return mplew.getPacket();

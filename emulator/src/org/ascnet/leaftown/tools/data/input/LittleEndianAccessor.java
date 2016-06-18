@@ -113,7 +113,8 @@ public interface LittleEndianAccessor {
      * @return The string read.
      */
     String readNullTerminatedAsciiString();
-
+    //blabablça
+    byte[] readMapleAsciiStringByte();
     /**
      * Reads a MapleStory convention lengthed ASCII string.
      *

@@ -199,7 +199,10 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
     public String readMapleAsciiString() {
         return readAsciiString(readShort());
     }
-
+    @Override
+    public byte[] readMapleAsciiStringByte() {
+        return read(readShort());
+    }
     /**
      * Reads <code>num</code> bytes off the stream.
      *
