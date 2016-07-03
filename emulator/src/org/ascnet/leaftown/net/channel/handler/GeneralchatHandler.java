@@ -31,13 +31,16 @@ import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.client.messages.CommandProcessor;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
+import org.ascnet.leaftown.tools.data.input.GenericLittleEndianAccessor;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 public class GeneralchatHandler extends AbstractMaplePacketHandler {
 
     @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        final String text = slea.readMapleAsciiString();
+        final byte[] textByte = slea.readMapleAsciiStringByte();
+        final String text = new String(textByte);
+        
         final int show = slea.readByte();
 
         if (show != 1 && c.getPlayer().getCheatTracker().textSpam(text) && !c.getPlayer().isGM()) {
@@ -52,7 +55,7 @@ public class GeneralchatHandler extends AbstractMaplePacketHandler {
                 return;
             }
             c.getPlayer().resetAfkTimer();
-            c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getChatText(c.getPlayer().getId(), text, c.getPlayer().isGM() && c.getChannelServer().allowGmWhiteText() && c.getPlayer().getWhiteText(), show));
+            c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getChatText(c.getPlayer().getId(), text, c.getPlayer().isGM() && c.getChannelServer().allowGmWhiteText() && c.getPlayer().getWhiteText(), show, textByte));
             if (text.equalsIgnoreCase("cc plz")) {
                 c.getPlayer().finishAchievement(14);
             }

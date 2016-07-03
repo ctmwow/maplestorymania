@@ -99,4 +99,9 @@ public class MapScriptMethods extends AbstractPlayerInteraction
         }, 5000);
         getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/goLith/Scene" + getClient().getPlayer().getGender()));
     }
+    
+    public void goAdventuregoAdventure()
+    {
+    	showIntro("Effect/Direction3.img/goAdventure/Scene" + (getClient().getPlayer().getGender() == 0 ? "0" : "1"));
+    }
 }

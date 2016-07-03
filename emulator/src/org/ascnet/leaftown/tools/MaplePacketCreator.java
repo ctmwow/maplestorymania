@@ -1777,13 +1777,14 @@ public class MaplePacketCreator {
      * @param show
      * @return The general chat packet.
      */
-    public static MaplePacket getChatText(int cidfrom, String text, boolean whiteBG, int show) {
+    public static MaplePacket getChatText(int cidfrom, String text, boolean whiteBG, int show, byte[] rawChat) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CHATTEXT.getValue());
         mplew.writeInt(cidfrom);
         mplew.write(whiteBG ? 1 : 0);
-        mplew.writeMapleAsciiString(text);
+        mplew.writeShort((short) rawChat.length);
+        mplew.write(rawChat);
         mplew.write(show);
 
         return mplew.getPacket();
@@ -4212,14 +4213,16 @@ public class MaplePacketCreator {
         return mplew.getPacket();
     }
 
-    public static MaplePacket partyCreated(int partyId) {
+    public static MaplePacket partyCreated(int partyId) 
+    {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.PARTY_OPERATION.getValue());
         mplew.write(8);
-        mplew.writeInt(partyId);
-        mplew.writeInt(999999999);
-        mplew.writeInt(999999999);
+        mplew.writeShort(0x8B);
+        mplew.writeShort(0x01);
+        mplew.write(new byte[] {(byte) 0xff, (byte) 0xc9, (byte) 0x9a, 0x3b});
+        mplew.write(new byte[] {(byte) 0xff, (byte) 0xc9, (byte) 0x9a, 0x3b});
         mplew.writeInt(0);
 
         return mplew.getPacket();
@@ -4275,102 +4278,96 @@ public class MaplePacketCreator {
     }
 
     private static void addPartyStatus(int forchannel, MapleParty party, LittleEndianWriter lew, boolean leaving) {
-        List<MaplePartyCharacter> partymembers = new ArrayList<>(party.getMembers());
-        while (partymembers.size() < 6) {
-            partymembers.add(new MaplePartyCharacter());
-        }
-        for (MaplePartyCharacter partychar : partymembers) {
-            lew.writeInt(partychar.getId());
-        }
-        for (MaplePartyCharacter partychar : partymembers) {
-            lew.writeAsciiString(StringUtil.getRightPaddedStr(partychar.getName(), '\0', 13));
-        }
-        for (MaplePartyCharacter partychar : partymembers) {
-            lew.writeInt(partychar.getJobId());
-        }
-        for (MaplePartyCharacter partychar : partymembers) {
-            lew.writeInt(partychar.getLevel());
-        }
-        for (MaplePartyCharacter partychar : partymembers) {
-            if (partychar.isOnline()) {
-                lew.writeInt(partychar.getChannel() - 1);
-            } else {
-                lew.writeInt(-2);
-            }
-        }
-        lew.writeInt(party.getLeader().getId());
-        for (MaplePartyCharacter partychar : partymembers) {
-            if (partychar.getChannel() == forchannel) {
-                lew.writeInt(partychar.getMapId());
-            } else {
-                lew.writeInt(999999999);
-            }
-        }
-        for (MaplePartyCharacter partychar : partymembers) {
-            if (partychar.getChannel() == forchannel && !leaving) {
-                lew.writeInt(partychar.getDoorTown());
-                lew.writeInt(partychar.getDoorTarget());
-                lew.writeInt(partychar.getDoorPosition().x);
-                lew.writeInt(partychar.getDoorPosition().y);
-            } else {
-                lew.writeInt(999999999);
-                lew.writeInt(999999999);
-                lew.writeInt(-1);
-                lew.writeInt(-1);
-            }
-        }
+		List<MaplePartyCharacter> partymembers = new ArrayList<MaplePartyCharacter>(party.getMembers());
+		while (partymembers.size() < 6) {
+			partymembers.add(new MaplePartyCharacter());
+		}
+		for (MaplePartyCharacter partychar : partymembers) {
+			lew.writeInt(partychar.getId());
+		}
+		for (MaplePartyCharacter partychar : partymembers) {
+			lew.writeAsciiString(StringUtil.getRightPaddedStr(partychar.getName(), '\0', 13));
+		}
+		for (MaplePartyCharacter partychar : partymembers) {
+			lew.writeInt(partychar.getJobId());
+		}
+		for (MaplePartyCharacter partychar : partymembers) {
+			lew.writeInt(partychar.getLevel());
+		}
+		for (MaplePartyCharacter partychar : partymembers) {
+			if (partychar.isOnline()) {
+				lew.writeInt(partychar.getChannel() - 1);
+			} else {
+				lew.writeInt(-2);
+			}
+		}
+		lew.writeInt(party.getLeader().getId());
+		for (MaplePartyCharacter partychar : partymembers) {
+			if (partychar.getChannel() == forchannel) {
+				lew.writeInt(partychar.getMapId());
+			} else {
+				lew.writeInt(0);
+			}
+		}
+		for (MaplePartyCharacter partychar : partymembers) {
+			if (partychar.getChannel() == forchannel && !leaving) {
+				lew.writeInt(partychar.getDoorTown());
+				lew.writeInt(partychar.getDoorTarget());
+				lew.writeInt(partychar.getDoorPosition().x);
+				lew.writeInt(partychar.getDoorPosition().y);
+			} else {
+				lew.writeInt(999999999);
+				lew.writeInt(999999999);
+				lew.writeInt(0);
+				lew.writeInt(0);
+			}
+}
     }
 
-    public static MaplePacket updateParty(int forChannel, MapleParty party, PartyOperation op, MaplePartyCharacter target) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.writeShort(SendPacketOpcode.PARTY_OPERATION.getValue());
-        switch (op) {
-            case DISBAND:
-            case EXPEL:
-            case LEAVE:
-                mplew.write(12);
-                mplew.writeInt(party.getId());
-                mplew.writeInt(target.getId());
-
-                if (op == PartyOperation.DISBAND) {
-                    mplew.write(0);
-                    mplew.writeInt(party.getId());
-                } else {
-                    mplew.write(1);
-                    if (op == PartyOperation.EXPEL) {
-                        mplew.write(1);
-                    } else {
-                        mplew.write(0);
-                    }
-                    mplew.writeMapleAsciiString(target.getName());
-                    addPartyStatus(forChannel, party, mplew, false);
-                    // addLeavePartyTail(mplew);
-                }
-
-                break;
-            case JOIN:
-                mplew.write(15);
-                mplew.writeInt(party.getId());
-                mplew.writeMapleAsciiString(target.getName());
-                addPartyStatus(forChannel, party, mplew, false);
-                // addJoinPartyTail(mplew);
-                break;
-            case SILENT_UPDATE:
-            case LOG_ONOFF:
-                mplew.write(7);
-                mplew.writeInt(party.getId());
-                addPartyStatus(forChannel, party, mplew, false);
-                break;
-            case CHANGE_LEADER:
-                mplew.write(27);
-                mplew.writeInt(target.getId());
-                mplew.write(0);
-                break;
-
-        }
-
-        return mplew.getPacket();
+    public static MaplePacket updateParty(int forChannel, MapleParty party, PartyOperation op, MaplePartyCharacter target) 
+    {
+		MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+		mplew.writeShort(SendPacketOpcode.PARTY_OPERATION.getValue());
+		switch (op) {
+			case DISBAND:
+			case EXPEL:
+			case LEAVE:
+				mplew.write(0x0C);
+				mplew.writeInt(40546);
+				mplew.writeInt(target.getId());
+				if (op == PartyOperation.DISBAND) {
+					mplew.write(0);
+					mplew.writeInt(party.getId());
+				} else {
+					mplew.write(1);
+					if (op == PartyOperation.EXPEL) {
+						mplew.write(1);
+					} else {
+						mplew.write(0);
+					}
+					mplew.writeMapleAsciiString(target.getName());
+					addPartyStatus(forChannel, party, mplew, false);
+				}
+				break;
+			case JOIN:
+				mplew.write(0xF);
+				mplew.writeInt(40546);
+				mplew.writeMapleAsciiString(target.getName());
+				addPartyStatus(forChannel, party, mplew, false);
+				break;
+			case SILENT_UPDATE:
+			case LOG_ONOFF:
+				mplew.write(0x7);
+				mplew.writeInt(party.getId());
+				addPartyStatus(forChannel, party, mplew, false);
+				break;
+			case CHANGE_LEADER:
+				mplew.write(0x1B);
+				mplew.writeInt(target.getId());
+				mplew.write(0);
+				break;
+		}
+		return mplew.getPacket();
     }
 
     public static MaplePacket partyPortal(int townId, int targetId, Point position) {

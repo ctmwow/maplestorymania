@@ -670,7 +670,7 @@ public class ChannelServer implements Runnable, ChannelServerMBean
         }
     }
 
-    public static void main(String args[]) throws IOException, NotBoundException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException 
+    public static void main(String[] args) throws IOException, NotBoundException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException 
     {
         try 
         {

@@ -40,53 +40,68 @@ import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 import java.rmi.RemoteException;
 
-public class PartyOperationHandler extends AbstractMaplePacketHandler {
-
+public class PartyOperationHandler extends AbstractMaplePacketHandler 
+{
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        int operation = slea.readByte();
-        MapleCharacter player = c.getPlayer();
-        WorldChannelInterface wci = c.getChannelServer().getWorldInterface();
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
+    {
+        final int operation = slea.readByte();
+        final MapleCharacter player = c.getPlayer();
+        final WorldChannelInterface wci = c.getChannelServer().getWorldInterface();
         MapleParty party = player.getParty();
         MaplePartyCharacter partyplayer = new MaplePartyCharacter(player);
 
-        switch (operation) {
-            case 1: { // create
-                if (c.getPlayer().getParty() == null) {
-                    try {
+        switch (operation) 
+        {
+            case 0x01: 
+            {
+                if (c.getPlayer().getParty() == null) 
+                {
+                    try 
+                    {
                         party = wci.createParty(partyplayer);
                         player.setParty(party);
-                    } catch (RemoteException e) {
+                    }
+                    catch (RemoteException e) 
+                    {
                         c.getChannelServer().reconnectWorld();
                     }
                     c.sendPacket(MaplePacketCreator.partyCreated(c.getPlayer().getPartyId()));
-                } else {
+                } 
+                else 
                     c.sendPacket(MaplePacketCreator.serverNotice(5, "You can't create a party as you are already in one"));
-                }
                 break;
             }
-            case 2: { // leave
-                if (party != null) {
-                    try {
-                        if (partyplayer.equals(party.getLeader())) { // disband
+            case 2: // LEAVE PARTY 
+            {
+                if (party != null) 
+                {
+                    try 
+                    {
+                        if (partyplayer.equals(party.getLeader())) // DISBAND 
+                        {
                             wci.updateParty(party.getId(), PartyOperation.DISBAND, partyplayer);
-                            if (player.getEventInstance() != null) {
+                            
+                            if (player.getEventInstance() != null) 
                                 player.getEventInstance().disbandParty();
-                            }
-                        } else {
+                        } 
+                        else 
+                        {
                             wci.updateParty(party.getId(), PartyOperation.LEAVE, partyplayer);
-                            if (player.getEventInstance() != null) {
+                            
+                            if (player.getEventInstance() != null) 
                                 player.getEventInstance().leftParty(player);
-                            }
                         }
-                    } catch (RemoteException e) {
+                    } catch (RemoteException e) 
+                    {
                         c.getChannelServer().reconnectWorld();
                     }
                     player.setParty(null);
                 }
                 break;
             }
-            case 3: { // accept invitation
+            case 0x03: 
+            { // accept invitation
                 int partyid = slea.readInt();
                 if (!c.getPlayer().getPartyInvited())
                     return;
@@ -113,22 +128,41 @@ public class PartyOperationHandler extends AbstractMaplePacketHandler {
                 }
                 break;
             }
-            case 4: { // invite
-                //TODO store pending invitations and check against them
-                String name = slea.readMapleAsciiString();
-                MapleCharacter invited = c.getChannelServer().getPlayerStorage().getCharacterByName(name);
-                if (invited != null) {
-                    if (invited.getParty() == null) {
-                        if (party != null && party.getMembers().size() < 6) {
+            case 0x04: // PARTY INVITE 
+            {
+            	if (party == null) 
+            	{
+                    try 
+                    {
+						party = wci.createParty(partyplayer);
+					}
+                    catch (RemoteException e) 
+                    {
+						e.printStackTrace();
+					}
+                    player.setParty(party);
+                    c.sendPacket(MaplePacketCreator.partyCreated(c.getPlayer().getPartyId()));
+            	}
+            	
+                final MapleCharacter invited = c.getChannelServer().getPlayerStorage().getCharacterByName(slea.readMapleAsciiString());
+                
+                if (invited != null) 
+                {
+                    if (invited.getParty() == null) 
+                    {
+                        if (party.getMembers().size() < 6) 
+                        {
                             invited.setPartyInvited(true);
                             invited.getClient().sendPacket(MaplePacketCreator.partyInvite(player));
                         }
-                    } else {
-                        c.sendPacket(MaplePacketCreator.partyStatusMessage(16));
+                        else
+                        	c.sendPacket(MaplePacketCreator.partyStatusMessage(17));
                     }
-                } else {
-                    c.sendPacket(MaplePacketCreator.partyStatusMessage(18));
+                    else 
+                        c.sendPacket(MaplePacketCreator.partyStatusMessage(16));
                 }
+                else 
+                    c.sendPacket(MaplePacketCreator.partyStatusMessage(18));
                 break;
             }
             case 5: { // expel

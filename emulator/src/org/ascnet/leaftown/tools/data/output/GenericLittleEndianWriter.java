@@ -140,7 +140,21 @@ public class GenericLittleEndianWriter implements LittleEndianWriter
     {
         write(s.getBytes(UTF8));
     }
-
+    public static void printBytes(byte[] array, String name) {
+        for (int k = 0; k < array.length; k++) {
+            System.out.println(name + "[" + k + "] = " + "0x" +
+                byteToHex(array[k])); //acho q tem pra pr
+        }
+    }
+    static public String byteToHex(byte b) {
+        // Returns hex String representation of byte b
+        char hexDigit[] = {
+           '0', '1', '2', '3', '4', '5', '6', '7',
+           '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+        };
+        char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
+        return new String(array);
+     }
     /**
      * Writes a maple-convention ASCII string to the stream.
      *
@@ -150,6 +164,7 @@ public class GenericLittleEndianWriter implements LittleEndianWriter
     public void writeMapleAsciiString(String s)
     {
         writeShort((short) s.getBytes(UTF8).length);
+        printBytes(s.getBytes(UTF8), "debug");//compila e roda
         writeAsciiString(s);
     }
 

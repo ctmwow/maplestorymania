@@ -923,6 +923,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
             con.setAutoCommit(false);
             
+        	if(inventoryPersistence == null)
+        		inventoryPersistence = new MapleItemStorePersistence(client.getAccID());
+            
             PreparedStatement ps;
             
             if (update)
