@@ -34,27 +34,33 @@ import org.ascnet.leaftown.client.messages.CommandDefinition;
 import org.ascnet.leaftown.client.messages.MessageCallback;
 import org.ascnet.leaftown.tools.ReadableMillisecondFormat;
 
-public class CharInfoCommands implements Command {
-
+public class CharInfoCommands implements Command 
+{
     @Override
-    public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
-        if (splitted[0].equalsIgnoreCase("!charinfo")) {
-            if (splitted.length < 2) {
+    public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception 
+    {
+        if (splitted[0].equalsIgnoreCase("!charinfo")) 
+        {
+            if (splitted.length < 2) 
                 mc.dropMessage("!charinfo <Character Name>");
-            } else {
+            else 
+            {
                 MapleCharacter other = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
-                if (other == null) {
+                if (other == null) 
+                {
                     mc.dropMessage("The character does not exist or is not online.");
                     return;
                 }
                 mc.dropMessage(MapleClient.getLogMessage(other, "") + " Pos: " + other.getPosition().x + "," + other.getPosition().y + " Map ID: " + other.getMapId() + " Map Name: " + other.getMap().getMapName() + " HP: " + other.getHp() + "/" + other.getCurrentMaxHp() + " MP: " + other.getMp() + "/" + other.getCurrentMaxMp() + " EXP: " + other.getExp() + " Job: " + other.getJob().name() + " Guild Id: " + other.getGuildId() + " Event Status: " + (other.getEventInstance() != null) + " Party Status: " + (other.getParty() != null) + " Trade Status: " + (other.getTrade() != null) + " IP: " + other.getClient().getIP() + " Online Time: " + new ReadableMillisecondFormat(other.getLoggedInTimer()).toString());
             }
-        } else if (splitted[0].equalsIgnoreCase("!selfinfo")) {
+        } 
+        else if (splitted[0].equalsIgnoreCase("!selfinfo")) 
+        {
             MapleCharacter self = c.getPlayer();
             mc.dropMessage(MapleClient.getLogMessage(self, "") + " Pos: " + self.getPosition().x + "," + self.getPosition().y + " Map ID: " + self.getMapId() + " Map Name: " + self.getMap().getMapName() + " HP: " + self.getHp() + "/" + self.getCurrentMaxHp() + " MP: " + self.getMp() + "/" + self.getCurrentMaxMp() + " EXP: " + self.getExp() + " Job: " + self.getJob().name() + " Guild Id: " + self.getGuildId() + " Event Status: " + (self.getEventInstance() != null) + " Party Status: " + (self.getParty() != null) + " Trade Status: " + (self.getTrade() != null) + " IP: " + c.getIP() + " Online Time: " + new ReadableMillisecondFormat(self.getLoggedInTimer()).toString());
-        } else if (splitted[0].equalsIgnoreCase("!position")) {
+        } 
+        else if (splitted[0].equalsIgnoreCase("!position"))
             mc.dropMessage("Your current co-ordinates are: " + c.getPlayer().getPosition().x + " x and " + c.getPlayer().getPosition().y + " y.");
-        }
     }
 
     @Override

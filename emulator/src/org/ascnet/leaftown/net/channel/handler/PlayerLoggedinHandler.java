@@ -188,17 +188,14 @@ public class PlayerLoggedinHandler extends AbstractMaplePacketHandler
             c.sendPacket(MaplePacketCreator.updateBuddylist(buddies));
             c.sendPacket(MaplePacketCreator.loadFamily(player));
             
-            if(player.getMapleFamilyId() > 0x00)
+            if(player.getMapleFamily() != null && player.getMapleFamily().getId() > 0x000000)
             {
-            	MapleFamily family = channelServer.getWorldInterface().getFamily(player.getMapleFamilyId());
-            	
-            	if(family == null)
-            		log.error("Cannot load Family [{}]", player.getMapleFamilyId());
-            	else
-            	{
-            		player.setMapleFamily(family);
-            		c.sendPacket(MaplePacketCreator.getFamilyInfo(family.getMFC(player.getId())));
-            	}
+            	final MapleFamily family = channelServer.getWorldInterface().getFamily(player.getMapleFamily().getId());
+        		family.setOnline(cid, true, channelServer.getChannel());
+        		
+        		cserv.getPlayerStorage().getCharacterById(cid).setMapleFamily(family);
+        		cserv.getWorldInterface().updateFamily(family);
+        		c.sendPacket(MaplePacketCreator.getFamilyInfo(family.getMFC(player.getId())));
             }
 
             if (player.getGuildId() > 0x00) 

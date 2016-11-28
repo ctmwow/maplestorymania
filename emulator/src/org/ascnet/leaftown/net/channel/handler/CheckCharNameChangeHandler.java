@@ -27,22 +27,24 @@
 
 package org.ascnet.leaftown.net.channel.handler;
 
+import org.ascnet.leaftown.client.MapleCharacterUtil;
 import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
+import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
-/**
- * @author Matze
- */
-public class ChangeChannelHandler extends AbstractMaplePacketHandler 
-{
+public class CheckCharNameChangeHandler extends AbstractMaplePacketHandler {
+
+    @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
     {
-        final int channel = slea.readByte() + 1;
-        
-        MapleClient.changeChannel(c, channel, c.getPlayer().hasGMLevel(2));
-        
-	    if (c.getPlayer().isGM() || c.isGM())
-		    c.getChannelServer().reloadGMList();
+        if (c.getTotalChars() >= 6) 
+        {
+            c.disconnect();
+            return;
+        }
+        final String name = slea.readMapleAsciiString();
+
+        c.sendPacket(MaplePacketCreator.charNameChangeResponse(name, !MapleCharacterUtil.canCreateChar(name, c.getWorld())));
     }
 }

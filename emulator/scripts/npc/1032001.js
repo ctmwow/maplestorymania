@@ -48,13 +48,13 @@ function start() {
             cm.dispose();
         } else
             cm.sendNext("The progress you have made is astonishing.");
-    } else if (actionx["3thJobI"] || (cm.getPlayer().gotPartyQuestItem("JB3") && cm.getLevel() >= 70 && cm.getJobId() % 10 == 0 && parseInt(cm.getJobId() / 100) == 2 && !cm.getPlayer().gotPartyQuestItem("JBP"))){
+    } else if (actionx["3thJobI"] || (cm.getPlayer().gotPartQuestItem("JB3") && cm.getLevel() >= 70 && cm.getJobId() % 10 == 0 && parseInt(cm.getJobId() / 100) == 2 && !cm.getPlayer().gotPartQuestItem("JBP"))){
         actionx["3thJobI"] = true;
         cm.sendNext("There you are. A few days ago, #b#p2020009##k of Ossyria talked to me about you. I see that you are interested in making the leap to the enlightened of the third job advancement for magicians. To archieve that goal, I will have to test your strength in order to see whether you are worthy of the advancement. There is an opening in the middle of a deep forest of evil in Victoria Island, where it'll lead you to a secret passage. Once inside, you'll face a clone of myself. Your task is to defeat him and bring #b#t4031059##k back with you.");
-    } else if (cm.getPlayer().gotPartyQuestItem("JBP") && !cm.haveItem(4031059)){
+    } else if (cm.getPlayer().gotPartQuestItem("JBP") && !cm.haveItem(4031059)){
         cm.sendNext("Please, bring me the #b#t4031059##k from my clone. You can find him inside a hole in space which is deep in a forest of evil.");
         cm.dispose();
-    } else if (cm.haveItem(4031059) && cm.getPlayer().gotPartyQuestItem("JBP")){
+    } else if (cm.haveItem(4031059) && cm.getPlayer().gotPartQuestItem("JBP")){
         actionx["3thJobC"] = true;
         cm.sendNext("Nice work. You have defeated my clone and brought #b#t4031059##k back safely. You have now proven yourself worthy of the 3rd job advancement from the physical standpoint. Now you should give this necklace to #b#p2020011##k in Ossyria to take on the second part of the test. Good luck. You'll need it.");
     } else {
@@ -143,15 +143,15 @@ function action(mode, type, selection) {
             cm.sendNextPrev((job == 210 ? "Wizard (Fire / Poison)" : job == 220 ? "Wizard (Ice / Lighting)" : "Cleric") + " need to be strong. But remember that you can't abuse that power and use it on a weaking. Please use your enormous power the right way, because... for you to use that the right way, that is much harden than just getting stronger. Please find me after you have advanced much further. I'll be waiting for you.");
     } else if (actionx["3thJobI"]){
         if (status == 0){
-            if (cm.getPlayer().gotPartyQuestItem("JB3")){
-                cm.getPlayer().removePartyQuestItem("JB3");
-                cm.getPlayer().removePartyQuestItem("JB3");
-                cm.getPlayer().setPartyQuestItemObtained("JBP");
+            if (cm.getPlayer().gotPartQuestItem("JB3")){
+                cm.getPlayer().removePartQuestItem("JB3");
+                cm.getPlayer().removePartQuestItem("JB3");
+                cm.getPlayer().setPartQuestItemObtained("JBP");
             }
             cm.sendNextPrev("Since he is a clone of myself, you can expect a tough battle ahead. He uses a number of special attacking skills unlike any you have ever seen, and it is your task to successfully take him one on one. There is a time limit in the secret passage, so it is crucial that you defeat him within the time limit. I wish you the best of luck, and I hope you bring the #b#t4031059##k with you.");
         }
     } else if (actionx["3thJobC"]){
-        cm.getPlayer().removePartyQuestItem("JBP");
+        cm.getPlayer().removePartQuestItem("JBP");
         cm.gainItem(4031059, -1);
         cm.gainItem(4031057, 1);
         cm.dispose();

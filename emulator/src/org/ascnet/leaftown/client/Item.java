@@ -95,6 +95,21 @@ public class Item implements IItem
         ret.log = new LinkedList<>(log);
         return ret;
     }
+    
+    public boolean isFromOwner(final String owner)
+    {
+    	if(owner == null && this.owner == null)
+    		return true;
+    	if(owner == null && this.owner.equals(""))
+    		return true;
+    	
+    	if(this.owner == null)
+    		return false;
+    	if(owner == null)
+    		return false;
+    	
+    	return this.owner.equals(owner);
+    }
 
     public void setPosition(short position) 
     {
@@ -154,6 +169,9 @@ public class Item implements IItem
     @Override
     public String getOwner()
     {
+    	if(owner != null && owner.trim().length() == 0x00)
+    		owner = null;
+    	
         return owner;
     }
 

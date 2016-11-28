@@ -27,38 +27,42 @@
 
 package org.ascnet.leaftown.net.channel.handler;
 
+import java.nio.charset.Charset;
+
 import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.client.messages.CommandProcessor;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
-import org.ascnet.leaftown.tools.data.input.GenericLittleEndianAccessor;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
-public class GeneralchatHandler extends AbstractMaplePacketHandler {
-
+public class GeneralchatHandler extends AbstractMaplePacketHandler 
+{
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        final byte[] textByte = slea.readMapleAsciiStringByte();
-        final String text = new String(textByte);
-        
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
+    {
+        final String text = slea.readMapleAsciiString();
         final int show = slea.readByte();
 
-        if (show != 1 && c.getPlayer().getCheatTracker().textSpam(text) && !c.getPlayer().isGM()) {
-            c.sendPacket(MaplePacketCreator.serverNotice(5, "Too much chatting"));
+        if (show != 0x00000001 && c.getPlayer().getCheatTracker().textSpam(text) && !c.getPlayer().isGM()) 
+        {
+            c.sendPacket(MaplePacketCreator.serverNotice(0x00000005, "Você está escrevendo muito rápido. Se acalme um pouco!"));
             return;
         }
-        if (text.length() > 70 && !c.getPlayer().isGM())
+        if (text.length() > 0x00000046 && !c.getPlayer().isGM())
             return;
-        if (!CommandProcessor.getInstance().processCommand(c, text)) {
-            if (c.getPlayer().isMuted() || c.getPlayer().getMap().getMuted() && !c.getPlayer().isGM()) {
-                c.getPlayer().dropMessage(5, c.getPlayer().isMuted() ? "You are " : "The map is " + "muted, therefore you are unable to talk.");
+        if (!CommandProcessor.getInstance().processCommand(c, text)) 
+        {
+            if (c.getPlayer().isMuted() || c.getPlayer().getMap().getMuted() && !c.getPlayer().isGM()) 
+            {
+                c.getPlayer().dropMessage(0x00000005, c.getPlayer().isMuted() ? "Você está " : "O mapa está " + "silênciado, portanto, você é incapaz de falar");
                 return;
             }
-            c.getPlayer().resetAfkTimer();
-            c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getChatText(c.getPlayer().getId(), text, c.getPlayer().isGM() && c.getChannelServer().allowGmWhiteText() && c.getPlayer().getWhiteText(), show, textByte));
-            if (text.equalsIgnoreCase("cc plz")) {
-                c.getPlayer().finishAchievement(14);
-            }
+            
+            c.getPlayer().resetAfkTimer(); 
+            c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getChatText(c.getPlayer().getId(), text, c.getPlayer().isGM() && c.getChannelServer().allowGmWhiteText() && c.getPlayer().getWhiteText(), show));
+            
+            if (text.equalsIgnoreCase("cc plz")) 
+                c.getPlayer().finishAchievement(0x0000000E);
         }
     }
 }

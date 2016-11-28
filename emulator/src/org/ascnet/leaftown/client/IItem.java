@@ -56,6 +56,8 @@ public interface IItem extends Comparable<IItem>
     int getPetId();
 
     IItem copy();
+    
+    boolean isFromOwner(final String owner);
 
     void setOwner(String owner);
 

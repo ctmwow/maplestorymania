@@ -44,29 +44,37 @@ import org.ascnet.leaftown.server.playerinteractions.MapleShopFactory;
 
 import java.rmi.RemoteException;
 
-public class ReloadingCommands implements Command {
-
+public class ReloadingCommands implements Command 
+{
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ReloadingCommands.class);
 
     @Override
-    public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
+    public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception 
+    {
         ChannelServer cserv = c.getChannelServer();
-        switch (splitted[0]) {
+        switch (splitted[0]) 
+        {
             case "!reloadguilds":
-                try {
+                try 
+                {
                     mc.dropMessage("Attempting to reload all guilds... this may take a while...");
                     cserv.getWorldInterface().clearGuilds();
                     mc.dropMessage("Guilds reloaded.");
-                } catch (RemoteException re) {
+                } 
+                catch (RemoteException re) 
+                {
                     mc.dropMessage("RemoteException occurred while attempting to reload guilds.");
                     log.error("RemoteException occurred while attempting to reload guilds.", re);
                     cserv.reconnectWorld();
                 }
                 break;
             case "!reloadops":
-                try {
+                try 
+                {
                     ExternalCodeTableGetter.populateValues(SendPacketOpcode.getDefaultProperties(), SendPacketOpcode.values());
-                } catch (Exception e) {
+                } 
+                catch (Exception e) 
+                {
                     log.error("Failed to reload props", e);
                 }
                 PacketProcessor.getProcessor().reset(PacketProcessor.Mode.CHANNELSERVER);
@@ -90,13 +98,12 @@ public class ReloadingCommands implements Command {
                 break;
             case "!reloadevents":
                 for (ChannelServer instance : ChannelServer.getAllInstances()) 
-                {
                     if (instance != null)
                         instance.reloadEvents();
-                }
+                
                 mc.dropMessage("Events reloaded.");
                 break;
-            case "!reloadMapScript":
+            case "!reloadmapscript":
                 MapScriptManager.getInstance().clearCompiledScripts();
                 mc.dropMessage("Map Scripts reloaded.");
                 break;
@@ -108,11 +115,14 @@ public class ReloadingCommands implements Command {
     }
 
     @Override
-    public CommandDefinition[] getDefinition() {
-        return new CommandDefinition[] {
+    public CommandDefinition[] getDefinition() 
+    {
+        return new CommandDefinition[] 
+        {
                 new CommandDefinition("reloadguilds", "", "", 4),
                 new CommandDefinition("reloadops", "", "", 4),
                 new CommandDefinition("reloadportals", "", "", 4),
+                new CommandDefinition("reloadmapscript", "", "", 4),
                 new CommandDefinition("reloaddrops", "", "", 4),
                 new CommandDefinition("reloadreactors", "", "", 4),
                 new CommandDefinition("reloadshops", "", "", 4),

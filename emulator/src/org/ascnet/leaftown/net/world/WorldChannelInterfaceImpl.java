@@ -66,12 +66,15 @@ public class WorldChannelInterfaceImpl extends UnicastRemoteObject implements Wo
     private int dbId;
     private boolean ready = false;
 
-    public WorldChannelInterfaceImpl() throws RemoteException {
+    public WorldChannelInterfaceImpl() throws RemoteException 
+    {
         super(0, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
     }
 
-    public WorldChannelInterfaceImpl(ChannelWorldInterface cb, int dbId) throws RemoteException {
+    public WorldChannelInterfaceImpl(ChannelWorldInterface cb, int dbId) throws RemoteException 
+    {
         super(0, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
+        
         this.cb = cb;
         this.dbId = dbId;
     }
@@ -80,60 +83,87 @@ public class WorldChannelInterfaceImpl extends UnicastRemoteObject implements Wo
         return WorldServer.getInstance().getDbProp();
     }
 
-    public Properties getGameProperties() throws RemoteException {
-        Properties ret = new Properties(WorldServer.getInstance().getWorldProp());
-        try {
+    public Properties getGameProperties() throws RemoteException 
+    {
+        final Properties ret = new Properties(WorldServer.getInstance().getWorldProp());
+        
+        try 
+        {
             Connection con = DatabaseConnection.getConnection();
             PreparedStatement ps = con.prepareStatement("SELECT * FROM channelconfig WHERE channelid = ?");
             ps.setInt(1, dbId);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            
+            while (rs.next()) 
                 ret.setProperty(rs.getString("name"), rs.getString("value"));
-            }
+            
             rs.close();
             ps.close();
-        } catch (SQLException ex) {
+        }
+        catch (SQLException ex) 
+        {
             log.error("Could not retrieve channel configuration", ex);
         }
         return ret;
     }
 
-    public void serverReady() throws RemoteException {
+    public void serverReady() throws RemoteException 
+    {
         ready = true;
-        for (LoginWorldInterface wli : WorldRegistryImpl.getInstance().getLoginServer()) {
-            try {
+        
+        if(WorldRegistryImpl.getInstance().getLoginServer().size() < 0x00000001)
+        	throw new RemoteException("No LoginServer registered to up Channel.");
+        
+        for (LoginWorldInterface wli : WorldRegistryImpl.getInstance().getLoginServer()) 
+        {
+            try 
+            {
                 wli.channelOnline(cb.getChannelId(), cb.getIP());
-            } catch (RemoteException e) {
+            }
+            catch (RemoteException e) 
+            {
                 WorldRegistryImpl.getInstance().deregisterLoginServer(wli);
             }
         }
         log.info("Channel {} is online.", cb.getChannelId());
     }
 
-    public boolean isReady() {
+    public boolean isReady() 
+    {
         return ready;
     }
 
-    public String getIP(int channel) throws RemoteException {
+    public String getIP(int channel) throws RemoteException 
+    {
         ChannelWorldInterface cwi = WorldRegistryImpl.getInstance().getChannel(channel);
-        if (cwi == null) {
+        if (cwi == null)
             return "0.0.0.0:0";
-        } else {
-            try {
+        else 
+        {
+            try 
+            {
                 return cwi.getIP();
-            } catch (RemoteException e) {
+            } 
+            catch (RemoteException e)
+            {
                 WorldRegistryImpl.getInstance().deregisterChannelServer(channel);
                 return "0.0.0.0:0";
             }
         }
     }
 
-    public void whisper(String sender, String target, int channel, String message) throws RemoteException {
-        for (int i : WorldRegistryImpl.getInstance().getChannelServer()) {
-            ChannelWorldInterface cwi = WorldRegistryImpl.getInstance().getChannel(i);
-            try {
+    public void whisper(String sender, String target, int channel, String message) throws RemoteException 
+    {
+        for (int i : WorldRegistryImpl.getInstance().getChannelServer()) 
+        {
+            final ChannelWorldInterface cwi = WorldRegistryImpl.getInstance().getChannel(i);
+            
+            try 
+            {
                 cwi.whisper(sender, target, channel, message);
-            } catch (RemoteException e) {
+            }
+            catch (RemoteException e) 
+            {
                 WorldRegistryImpl.getInstance().deregisterChannelServer(i);
             }
         }
@@ -371,6 +401,12 @@ public class WorldChannelInterfaceImpl extends UnicastRemoteObject implements Wo
             }
         }
         return foundsChars.toArray(new CharacterIdChannelPair[foundsChars.size()]);
+    }
+    
+    @Override
+    public void updateFamily(final MapleFamily family) throws RemoteException 
+    {
+        WorldRegistryImpl.getInstance().updateFamily(family);
     }
     
     @Override

@@ -34,6 +34,7 @@ import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
 import org.ascnet.leaftown.server.MapleInventoryManipulator;
 import org.ascnet.leaftown.server.MaplePortal;
 import org.ascnet.leaftown.server.maps.MapleMap;
+import org.ascnet.leaftown.server.maps.MapleMapUID;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
@@ -148,14 +149,25 @@ public class ChangeMapHandler extends AbstractMaplePacketHandler
                 
                 boolean warp = false;
                 
-                if (divi == 9140900) // Aran Introduction //TODO really necessary?
+                if (divi == 0x00000000)
+                {
+                	if(targetid == 10000)
+                		warp = true;
+                }
+                else if (divi == 9140900) // Aran Introduction //TODO really necessary?
                 { 
                     if (targetid == 914090011 || targetid == 914090012 || targetid == 914090013 || targetid == 140090000) 
                         warp = true;
                 }
+                else if (player.getMapId() == MapleMapUID.BOWMAN_EXPERIENCE || player.getMapId() == MapleMapUID.MAGICIAN_EXPERIENCE || player.getMapId() == MapleMapUID.PIRATE_EXPERIENCE ||
+                		player.getMapId() == MapleMapUID.THIEF_EXPERIENCE || player.getMapId() == MapleMapUID.WARRIOR_EXPERIENCE)
+                {
+                	if(targetid == MapleMapUID.SPLIT_ROAD_OF_DESTINY)
+                		warp = true;
+                }
                 
                 if(!warp)
-                	log.warn("Player {} attempted Map jumping without being a GM", player.getName());
+                	log.warn("Player {} attempted Map {} to Map {} jumping without being a GM", player.getName(), player.getMapId(), targetid);
                 else
                 {
                 	final MapleMap to = c.getChannelServer().getMapFactory().getMap(targetid);

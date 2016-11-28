@@ -54,6 +54,7 @@ import org.ascnet.leaftown.client.MapleSkinColor;
 import org.ascnet.leaftown.client.MapleStat;
 import org.ascnet.leaftown.client.SkillFactory;
 import org.ascnet.leaftown.database.DatabaseConnection;
+import org.ascnet.leaftown.net.MaplePacket;
 import org.ascnet.leaftown.net.channel.ChannelServer;
 import org.ascnet.leaftown.net.channel.handler.DueyActionHandler;
 import org.ascnet.leaftown.net.world.MapleParty;
@@ -254,8 +255,14 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     {
         return getPlayer().getJob().getId();
     }
-
-    public void changeJob(MapleJob job) {
+    
+    public void changeJobById(int jobId) 
+    {
+        getPlayer().changeJob(MapleJob.getById(jobId));
+    }
+    
+    public void changeJob(MapleJob job) 
+    {
         getPlayer().changeJob(job);
     }
 
@@ -724,37 +731,20 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             e.printStackTrace();
         }
     }
-
-    public long getHiredMerchantMesos() {
-        Connection con = DatabaseConnection.getConnection();
-        long mesos;
-        try {
-            PreparedStatement ps = con.prepareStatement("SELECT MerchantMesos FROM characters WHERE id = ?");
-            ps.setInt(1, getPlayer().getId());
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            mesos = rs.getLong("MerchantMesos");
-            rs.close();
-            ps.close();
-        } catch (SQLException se) {
-            return 0;
-        }
-        if (mesos > Integer.MAX_VALUE)
-            mesos = Integer.MAX_VALUE;
-        return mesos;
+    
+    public final boolean hasMerchant()
+    {
+    	return getPlayer().hasMerchant();
     }
 
-    public void setHiredMerchantMesos(long set) {
-        Connection con = DatabaseConnection.getConnection();
-        try {
-            PreparedStatement ps = con.prepareStatement("UPDATE characters SET MerchantMesos = ? WHERE id = ?");
-            ps.setLong(1, set);
-            ps.setInt(2, getPlayer().getId());
-            ps.executeUpdate();
-            ps.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public final long getHiredMerchantMesos() 
+    {
+        return (long) getPlayer().getMerchantMesos();
+    }
+
+    public void setHiredMerchantMesos(long set) 
+    {
+        getPlayer().setMerchantMeso((int) set);
     }
 
     public List<Pair<Integer, IItem>> getStoredMerchantItems() {
@@ -1104,19 +1094,21 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         }
     }
 
-    public void processGachapon(int[] id, boolean remote) {
+    public void processGachapon(int[] id, boolean remote) 
+    {
         int itemId = id[Randomizer.nextInt(id.length - 1)];
         int[] items = {5220000, -1, itemId, 1};
-        if (remote) {
+        
+        if (remote) 
             items[0] = 5451000;
-        }
         exchange(0, items, true);
-        sendNext("You have obtained a #b#t" + itemId + "##k.");
+        
+        sendNext("Você ganhou #b#t" + itemId + "##k.");
     }
 
     public void makeRandGachaponItem(int itemId, int town) {
         int randItem = GachaponItems.makeRandGachaponItem(c, itemId, town);
-        sendNext("You have obtained a #b#t" + randItem + "##k.");
+        sendNext("Você ganhou #b#t" + randItem + "##k.");
     }
 
     public void disbandAlliance(MapleClient c, int allianceId) {
@@ -1189,7 +1181,8 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     	getPlayer().resetStats();
     }
 
-    public void gainDonorItem(int itemid, String charName) { 
+    public void gainDonorItem(int itemid, String charName) 
+    {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         IItem item = ii.getEquipById(itemid);
         Equip eqp = (Equip) item;
@@ -1204,5 +1197,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         item.setExpiration(new Timestamp(System.currentTimeMillis() + 30 * 86400000L));
         item.setOwner(charName);
         c.sendPacket(MaplePacketCreator.modifyInventory(true, MapleInventoryManipulator.addByItem(c, item, "Donator item created for " + charName, false)));
+    }
+    
+    public void showFredrick()
+    {
+    	c.sendPacket(MaplePacketCreator.getFredrick(c.getPlayer()));
     }
 }

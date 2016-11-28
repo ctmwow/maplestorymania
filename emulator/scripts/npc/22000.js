@@ -28,7 +28,7 @@ var status = 0;
 
 function start() 
 {
-    cm.sendYesNo("Take this ship and you'll head off to a bigger continent. For #e150 mesos#n, I'll take you to #bVictoria Island#k. The thing is, once you leave this place, you can't ever come back. What do you think? Do you want to go to Victoria Island?");
+    cm.sendYesNo("Pegue ese navil e você irá para um continente maior!. Por #e150 mesos#n, eu irei te levar para #bVictoria Island#k. A coisa é, uma vez que você deixar este lugar, você não pode nunca voltar. O que você acha? Você quer ir para Victoria Island?");
 }
 
 function action(mode, type, selection) 
@@ -41,7 +41,7 @@ function action(mode, type, selection)
         else if(type == 1 || (mode == -1 && type != 1))
         {
             if(mode == 0)
-                cm.sendOk("Hmm... I guess you still have things to do here?");
+                cm.sendOk("Hmm ... Eu acho que você ainda tem coisas para fazer aqui?");
                 
             cm.dispose();
             return;
@@ -50,28 +50,28 @@ function action(mode, type, selection)
     if (status == 1) 
     {
         if (cm.haveItem(4031801))
-            cm.sendNext("Okay, now give me 150 mesos... Hey, what's that? Is that the recommendation letter from Lucas, the chief of Amherst? Hey, you should have told me you had this. I, Shanks, recognize greatness when I see one, and since you have been recommended by Lucas, I see that you have a great, great potential as an adventurer. No way would I charge you for this trip!");
+            cm.sendNext("Ok, agora dá-me 150 mesos ... Ei, o que é isso? É que uma carta de recomendação do Lucas, o chefe de Amherst? Ei, você deveria ter me dito que tinha isso. Eu, Shanks, reconheço a grandeza quando a vejo, e desde que você tenha sido recomendado por Lucas, eu vejo que você tem um grande, grande potencial como um aventureiro. De jeito nenhum eu iria carregá-lo para esta viagem!");
         else
-            cm.sendNext("Bored of this place? Here... Give me #e150 mesos#n first...");
+            cm.sendNext("Entediado deste lugar? Aqui... Dê-me #e150 mesos#n primeiro...");
     }
      else if (status == 2) 
      {
         if (cm.haveItem(4031801))
-            cm.sendNextPrev("Since you have the recommendation letter, I won't charge you for this. Alright, buckle up, because we're going to head to Victoria Island right now, and it might get a bit turbulent!!");
+            cm.sendNextPrev("Desde que você tenha a carta de recomendação, não vou cobrar-lhe por isso. Tudo bem, apertem os cintos, porque vamos para Victoria Island, e pode ser um pouco turbulento!!");
         else
         if (cm.getLevel() > 6) 
         {
             if (cm.getMeso() < 150) 
             {
-                cm.sendOk("What? You're telling me you wanted to go without any money? You're one weirdo...");
+                cm.sendOk("O que? Você está me dizendo que queria ir sem nenhum dinheiro? Você é uma pessoa estranha...");
                 cm.dispose();
             }
              else
-                cm.sendNext("Awesome! #e150#n mesos accepted! Alright, off to Victoria Island!");
+                cm.sendNext("Perfeito! #e150#n mesos aceitos! Tudo bem, vamos para Victoria Island!");
         } 
         else 
         {
-            cm.sendOk("Let's see... I don't think you are strong enough. You'll have to be at least Level 7 to go to Victoria Island.");
+            cm.sendOk("Vamos ver ... Eu não acho que você é forte o suficiente. Você vai ter que ser, pelo menos, Level 7 para ir à Victoria Island.");
             cm.dispose();
         }
     }

@@ -27,6 +27,15 @@
 
 package org.ascnet.leaftown.net.channel.handler;
 
+import java.awt.Rectangle;
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
+
+import org.apache.log4j.Logger;
 import org.ascnet.leaftown.client.Equip;
 import org.ascnet.leaftown.client.ExpTable;
 import org.ascnet.leaftown.client.IItem;
@@ -51,52 +60,52 @@ import org.ascnet.leaftown.server.maps.MapleMist;
 import org.ascnet.leaftown.server.maps.MapleTVEffect;
 import org.ascnet.leaftown.server.playerinteractions.HiredMerchant;
 import org.ascnet.leaftown.server.playerinteractions.MaplePlayerShopItem;
+import org.ascnet.leaftown.server.playerinteractions.MapleShop;
+import org.ascnet.leaftown.server.playerinteractions.MapleShopFactory;
 import org.ascnet.leaftown.tools.FileTimeUtil;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.Pair;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
-import java.awt.Rectangle;
-import java.rmi.RemoteException;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
-
-public class UseCashItemHandler extends AbstractMaplePacketHandler {
-
+public class UseCashItemHandler extends AbstractMaplePacketHandler 
+{
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UseCashItemHandler.class);
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
+    {
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         final short slot = slea.readShort();
         final int itemId = slea.readInt();
         final int itemType = itemId / 10000;
         c.getPlayer().resetAfkTimer();
         final IItem toUse = c.getPlayer().getInventory(ii.getInventoryType(itemId)).getItem(slot);
-        if (toUse == null || toUse.getItemId() != itemId || toUse.getQuantity() < 1) {
+        
+        if (toUse == null || toUse.getItemId() != itemId || toUse.getQuantity() < 1)
             return;
-        }
-        try {
-            switch (itemType) {
+        
+        try 
+        {
+            switch (itemType) 
+            {
                 case 504: //teleport rock
                     final byte rocktype = slea.readByte();
                     MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
-                    if (rocktype == 0) {
+                    if (rocktype == 0) 
+                    {
                         final int mapId = slea.readInt();
                         final MapleMap target = c.getChannelServer().getMapFactory().getMap(mapId);
                         final MaplePortal targetPortal = target.getPortal(0);
-                        if (target.getForcedReturnId() == 999999999 && target.canVipRock() && c.getPlayer().getMap().canExit() && target.canEnter()) { //Makes sure this map doesn't have a forced return map
+                        if (target.getForcedReturnId() == 999999999 && target.canVipRock() && c.getPlayer().getMap().canExit() && target.canEnter())
                             c.getPlayer().changeMap(target, targetPortal);
-                        } else {
+                        else 
+                        {
                             MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Not found)");
-                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Either the player could not be found or you were trying to teleport to an illegal location.");
+                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Ou o player não pôde ser encontrado ou você estava tentando se teletransportar para um local ilegal.");
                             c.sendPacket(MaplePacketCreator.enableActions());
                         }
-                    } else {
+                    } 
+                    else {
                         final String name = slea.readMapleAsciiString();
                         final MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(name);
                         if (victim != null) {
@@ -112,33 +121,34 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                                             c.getPlayer().changeMap(target, target.findClosestSpawnPoint(victim.getPosition()));
                                         } else {
                                             MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Not found)");
-                                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Either the player could not be found or you were trying to teleport to an illegal location.");
+                                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Ou o player não pôde ser encontrado ou você estava tentando se teletransportar para um local ilegal.");
                                             c.sendPacket(MaplePacketCreator.enableActions());
                                         }
                                     } else {
                                         MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Not found)");
-                                        new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Either the player could not be found or you were trying to teleport to an illegal location.");
+                                        new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Ou o player não pôde ser encontrado ou você estava tentando se teletransportar para um local ilegal.");
                                         c.sendPacket(MaplePacketCreator.enableActions());
                                     }
                                 } else {
                                     MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Can't Teleport)");
-                                    new ServernoticeMapleClientMessageCallback(1, c).dropMessage("You cannot teleport to this map.");
+                                    new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Você não pode teleportar para esse mapa.");
                                     c.sendPacket(MaplePacketCreator.enableActions());
                                 }
                             } else {
                                 MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Can't Teleport)");
-                                c.getPlayer().dropMessage("The player you are trying to warp to is in a disallowed map.");
+                                c.getPlayer().dropMessage("O jogador que você está tentando teleportar está em um mapa não permitido.");
                                 c.sendPacket(MaplePacketCreator.enableActions());
                             }
                         } else {
                             MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Not found)");
-                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Player could not be found in this channel.");
+                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("O jogador não foi encontrado nesse canal.");
                             c.sendPacket(MaplePacketCreator.enableActions());
                         }
                     }
                     break;
                 case 505: // AP/SP reset
-                    if (itemId > 5050000) {
+                    if (itemId > 5050000) 
+                    {
                         final MapleCharacter player = c.getPlayer();
 
                         final int SPTo = slea.readInt();
@@ -150,11 +160,15 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                         final int maxlevel = skillSPTo.isFourthJob() ? player.getMasterLevel(skillSPTo) : skillSPTo.getMaxLevel();
                         final int curLevel = player.getSkillLevel(skillSPTo);
                         final int curLevelSPFrom = player.getSkillLevel(skillSPFrom);
-                        if (curLevel + 1 <= maxlevel && curLevelSPFrom > 0) {
+                        if (curLevel + 1 <= maxlevel && curLevelSPFrom > 0) 
+                        {
                             player.changeSkillLevel(skillSPFrom, curLevelSPFrom - 1, skillSPFrom.isFourthJob() ? player.getMasterLevel(skillSPFrom) : 0);
-                            if (skillSPTo.hasRequirements()) {
-                                for (Entry<Integer, Integer> reqLevel : skillSPTo.getRequirements().entrySet()) {
-                                    if (player.getSkillLevel(SkillFactory.getSkill(reqLevel.getKey())) < reqLevel.getValue()) {
+                            if (skillSPTo.hasRequirements()) 
+                            {
+                                for (Entry<Integer, Integer> reqLevel : skillSPTo.getRequirements().entrySet()) 
+                                {
+                                    if (player.getSkillLevel(SkillFactory.getSkill(reqLevel.getKey())) < reqLevel.getValue()) 
+                                    {
                                         player.changeSkillLevel(skillSPFrom, curLevelSPFrom + 1, skillSPFrom.isFourthJob() ? player.getMasterLevel(skillSPFrom) : 0);
                                         c.disconnect();
                                         return;
@@ -163,79 +177,91 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                             }
                             player.changeSkillLevel(skillSPTo, curLevel + 1, skillSPTo.isFourthJob() ? maxlevel : 0);
                         }
-                    } else {
-                        if (!c.getPlayer().canUseApReset()) {
-                            c.getPlayer().dropMessage(1, "Your AP does not confirm to your level.");
+                    } 
+                    else 
+                    {
+                        if (!c.getPlayer().canUseApReset()) 
+                        {
+                        	c.sendPacket(MaplePacketCreator.boxMessage("Seus pontos de habilidade não conferem com o seu nível. Por favor, contate os Administradores."));
                             c.sendPacket(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true));
                             return;
                         }
+                        
                         final List<Pair<MapleStat, Integer>> statupdate = new ArrayList<>(2);
                         final int APTo = slea.readInt();
                         final int APFrom = slea.readInt();
                         final MapleJob job = c.getPlayer().getJob();
                         ISkill improvingMaxHP;
                         ISkill improvingMaxMP;
-                        switch (APFrom) {
+                        switch (APFrom) 
+                        {
                             case 64: // str
-                                if (c.getPlayer().getStr() <= 4) {
+                                if (c.getPlayer().getStr() <= 4)
                                     return;
-                                }
+                                
                                 c.getPlayer().setStr(c.getPlayer().getStr() - 1);
                                 statupdate.add(new Pair<>(MapleStat.STR, c.getPlayer().getStr()));
                                 break;
                             case 128: // dex
-                                if (c.getPlayer().getDex() <= 4) {
+                                if (c.getPlayer().getDex() <= 4)
                                     return;
-                                }
+
                                 c.getPlayer().setDex(c.getPlayer().getDex() - 1);
                                 statupdate.add(new Pair<>(MapleStat.DEX, c.getPlayer().getDex()));
                                 break;
                             case 256: // int
-                                if (c.getPlayer().getInt() <= 4) {
+                                if (c.getPlayer().getInt() <= 4)
                                     return;
-                                }
+
                                 c.getPlayer().setInt(c.getPlayer().getInt() - 1);
                                 statupdate.add(new Pair<>(MapleStat.INT, c.getPlayer().getInt()));
                                 break;
                             case 512: // luk
-                                if (c.getPlayer().getLuk() <= 4) {
+                                if (c.getPlayer().getLuk() <= 4)
                                     return;
-                                }
+
                                 c.getPlayer().setLuk(c.getPlayer().getLuk() - 1);
                                 statupdate.add(new Pair<>(MapleStat.LUK, c.getPlayer().getLuk()));
                                 break;
                             case 2048: // HP
-                                if (!isValidStats(c.getPlayer(), true)) {
+                                if (!isValidStats(c.getPlayer(), true))
+                                {
                                     c.sendPacket(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true));
                                     return;
                                 }
+                                
                                 int maxHP = c.getPlayer().getMaxHp();
-                                if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) {
+                                
+                                if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) 
                                     maxHP -= 12;
-                                } else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) {
+                                else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) 
+                                {
                                     if (job.isA(MapleJob.WARRIOR))
                                         improvingMaxHP = SkillFactory.getSkill(1000001);
                                     else
                                         improvingMaxHP = SkillFactory.getSkill(11000000);
                                     final int improvingMaxHPLevel = c.getPlayer().getSkillLevel(improvingMaxHP);
                                     maxHP -= 24;
-                                    if (improvingMaxHPLevel >= 1) {
+                                    if (improvingMaxHPLevel >= 1)
                                         maxHP -= improvingMaxHP.getEffect(improvingMaxHPLevel).getY();
-                                    }
-                                } else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1)) {
+                                }
+                                else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1))
                                     maxHP -= 10;
-                                } else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1)) {
+                                else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1))
                                     maxHP -= 20;
-                                } else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1)) {
+                                else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1)) 
+                                {
                                     if (job.isA(MapleJob.PIRATE))
                                         improvingMaxHP = SkillFactory.getSkill(5100000);
                                     else
                                         improvingMaxHP = SkillFactory.getSkill(15100000);
+                                    
                                     final int improvingMaxHPLevel = c.getPlayer().getSkillLevel(improvingMaxHP);
+                                    
                                     maxHP -= 22;
-                                    if (improvingMaxHPLevel >= 1) {
+                                    
+                                    if (improvingMaxHPLevel >= 1)
                                         maxHP -= improvingMaxHP.getEffect(improvingMaxHPLevel).getY();
-                                    }
                                 }
                                 c.getPlayer().setHpApUsed(c.getPlayer().getHpApUsed() - 1);
                                 c.getPlayer().setMaxHp(maxHP);
@@ -244,30 +270,34 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                                 statupdate.add(new Pair<>(MapleStat.MAXHP, c.getPlayer().getMaxHp()));
                                 break;
                             case 8192: // MP
-                                if (!isValidStats(c.getPlayer(), false)) {
+                                if (!isValidStats(c.getPlayer(), false)) 
+                                {
                                     c.sendPacket(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true));
                                     return;
                                 }
                                 int maxMP = c.getPlayer().getMaxMp();
-                                if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) {
+                                if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE)
                                     maxMP -= 8;
-                                } else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) {
+                                else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1))
                                     maxMP -= 4;
-                                } else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1)) {
+                                else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1))
+                                {
                                     if (job.isA(MapleJob.MAGICIAN))
                                         improvingMaxMP = SkillFactory.getSkill(2000001);
                                     else
                                         improvingMaxMP = SkillFactory.getSkill(12000000);
+                                
                                     final int improvingMaxMPLevel = c.getPlayer().getSkillLevel(improvingMaxMP);
                                     maxMP -= 21;
-                                    if (improvingMaxMPLevel >= 1) {
+                                    
+                                    if (improvingMaxMPLevel >= 1) 
                                         maxMP -= improvingMaxMP.getEffect(improvingMaxMPLevel).getY();
-                                    }
-                                } else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1)) {
-                                    maxMP -= 12;
-                                } else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1)) {
-                                    maxMP -= 16;
                                 }
+                        		else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1))
+                                    maxMP -= 12;
+                                else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1))
+                                    maxMP -= 16;
+                        
                                 c.getPlayer().setMpApUsed(c.getPlayer().getMpApUsed() - 1);
                                 c.getPlayer().setMaxMp(maxMP);
                                 c.getPlayer().setMp(maxMP);
@@ -278,52 +308,56 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                                 c.sendPacket(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true));
                                 return;
                         }
-                        switch (APTo) {
+                        switch (APTo) 
+                        {
                             case 64: // str
-                                if (c.getPlayer().getStr() >= 999) {
+                                if (c.getPlayer().getStr() >= 999)
                                     return;
-                                }
+                                
                                 c.getPlayer().setStr(c.getPlayer().getStr() + 1);
                                 statupdate.add(new Pair<>(MapleStat.STR, c.getPlayer().getStr()));
                                 break;
                             case 128: // dex
-                                if (c.getPlayer().getDex() >= 999) {
+                                if (c.getPlayer().getDex() >= 999) 
                                     return;
-                                }
+                                
                                 c.getPlayer().setDex(c.getPlayer().getDex() + 1);
                                 statupdate.add(new Pair<>(MapleStat.DEX, c.getPlayer().getDex()));
                                 break;
                             case 256: // int
-                                if (c.getPlayer().getInt() >= 999) {
+                                if (c.getPlayer().getInt() >= 999) 
                                     return;
-                                }
+                                
                                 c.getPlayer().setInt(c.getPlayer().getInt() + 1);
                                 statupdate.add(new Pair<>(MapleStat.INT, c.getPlayer().getInt()));
                                 break;
                             case 512: // luk
-                                if (c.getPlayer().getLuk() >= 999) {
+                                if (c.getPlayer().getLuk() >= 999) 
                                     return;
-                                }
+                                
                                 c.getPlayer().setLuk(c.getPlayer().getLuk() + 1);
                                 statupdate.add(new Pair<>(MapleStat.LUK, c.getPlayer().getLuk()));
                                 break;
                             case 2048: // hp
                                 int maxHP = c.getPlayer().getMaxHp();
-                                if (c.getPlayer().getHpApUsed() == 10000 || maxHP >= 30000) {
+                                
+                                if (c.getPlayer().getHpApUsed() == 10000 || maxHP >= 30000) 
+                                {
                                     c.sendPacket(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true));
                                     return;
                                 }
-                                if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) {
+                                
+                                if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) 
                                     maxHP += 8;
-                                } else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) {
+                                else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) 
                                     maxHP += 20;
-                                } else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1)) {
+                                else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1))
                                     maxHP += 6;
-                                } else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1)) {
+                                else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1))
                                     maxHP += 16;
-                                } else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1)) {
+                                else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1))
                                     maxHP += 18;
-                                }
+
                                 maxHP = Math.min(30000, maxHP);
                                 c.getPlayer().setHpApUsed(c.getPlayer().getHpApUsed() + 1);
                                 c.getPlayer().setMaxHp(maxHP);
@@ -331,21 +365,23 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                                 break;
                             case 8192: // mp
                                 int maxMP = c.getPlayer().getMaxMp();
-                                if (c.getPlayer().getMpApUsed() == 10000 || maxMP >= 30000) {
+                                if (c.getPlayer().getMpApUsed() == 10000 || maxMP >= 30000) 
+                                {
                                     c.sendPacket(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true));
                                     return;
                                 }
-                                if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) {
+                                
+                                if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) 
                                     maxMP += 6;
-                                } else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) {
+                                else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) 
                                     maxMP += 2;
-                                } else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1)) {
+                                else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1)) 
                                     maxMP += 18;
-                                } else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1)) {
+                                else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1))
                                     maxMP += 10;
-                                } else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1)) {
+                                else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1)) 
                                     maxMP += 14;
-                                }
+
                                 maxMP = Math.min(30000, maxMP);
                                 c.getPlayer().setMpApUsed(c.getPlayer().getMpApUsed() + 1);
                                 c.getPlayer().setMaxMp(maxMP);
@@ -359,37 +395,53 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                     }
                     MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
                     break;
-                case 506: {
+                case 506: 
+                {
                     final int itemChangeType = itemId % 10;
                     IItem item = null;
                     int action;
-                    switch (itemId / 1000 % 10) {
+                    
+                    switch (itemId / 1000 % 10) 
+                    {
                         case 0:
-                            if (itemChangeType == 0) { // Item tag.
+                            if (itemChangeType == 0) // Item tag.
+                            { 
                                 final short equipSlot = slea.readShort();
                                 action = slea.readInt();
-                                if (action <= c.getLastAction() || equipSlot == 0) {
+                                
+                                if (action <= c.getLastAction() || equipSlot == 0) 
+                                {
                                     c.sendPacket(MaplePacketCreator.enableActions());
                                     return;
                                 }
+                                
                                 c.setLastAction(action);
                                 item = c.getPlayer().getInventory(MapleInventoryType.EQUIPPED).getItem(equipSlot);
                                 item.setOwner(c.getPlayer().getName());
-                            } else if (itemChangeType == 1) { // Sealing lock
+                            } 
+                            else if (itemChangeType == 1)  // Sealing lock
+                            {
                                 final byte type = (byte) slea.readInt();
                                 final short slot_ = (short) slea.readInt();
                                 action = slea.readInt();
-                                if (action <= c.getLastAction()) {
+                                
+                                if (action <= c.getLastAction()) 
+                                {
                                     c.sendPacket(MaplePacketCreator.enableActions());
                                     return;
                                 }
                                 c.setLastAction(action);
                                 item = c.getPlayer().getInventory(MapleInventoryType.getByType(type)).getItem(slot_);
-                                if (!ii.isCashItem(item.getItemId())) {
+                                if (!ii.isCashItem(item.getItemId())) 
+                                {
                                     item.setFlag((short) (item.getFlag() | ItemFlag.LOCK.getValue()));
                                     item.setExpiration(FileTimeUtil.getDefaultTimestamp());
                                 }
-                            } else if (itemChangeType == 2) { // Incubator, what does this do?
+                            }
+                            else if (itemChangeType == 2) 
+                            {
+                            	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
+                            	log.info("Incubator func has been requested!!!");
                                 return;
                             }
                             break;
@@ -397,23 +449,28 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                             final byte type = (byte) slea.readInt();
                             final short slot_ = (short) slea.readInt();
                             action = slea.readInt();
-                            if (action <= c.getLastAction()) {
+                            
+                            if (action <= c.getLastAction()) 
+                            {
                                 c.sendPacket(MaplePacketCreator.enableActions());
                                 return;
                             }
                             c.setLastAction(action);
                             item = c.getPlayer().getInventory(MapleInventoryType.getByType(type)).getItem(slot_);
-                            if (!ii.isCashItem(item.getItemId())) {
-                                if ((item.getFlag() & ItemFlag.LOCK.getValue()) != 1) {
+                            if (!ii.isCashItem(item.getItemId())) 
+                            {
+                                if ((item.getFlag() & ItemFlag.LOCK.getValue()) != 1) 
+                                {
                                     item.setFlag((short) (item.getFlag() | ItemFlag.LOCK.getValue()));
                                     item.setExpiration(new Timestamp(System.currentTimeMillis() + ii.getProtectionTime(itemId) * 86400000L));
-                                } else {
-                                    item.setExpiration(new Timestamp(item.getExpiration().getTime() + ii.getProtectionTime(itemId) * 86400000L));
                                 }
+                                else
+                                    item.setExpiration(new Timestamp(item.getExpiration().getTime() + ii.getProtectionTime(itemId) * 86400000L));
                             }
                             break;
                     }
-                    if (item != null) {
+                    if (item != null) 
+                    {
                         final List<Pair<Short, IItem>> equipUpdate = new ArrayList<>(2);
                         equipUpdate.add(new Pair<>((short) 3, item));
                         equipUpdate.add(new Pair<>((short) 0, item));
@@ -434,26 +491,38 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                     String medalName = "";
                     if (medal != null)
                         medalName = "<" + ii.getName(medal.getItemId()) + "> ";
-                    switch (itemId / 1000 % 10) {
+                    switch (itemId / 1000 % 10) 
+                    {
                         case 1: // Megaphone
                             text = slea.readMapleAsciiString();
-                            if (text.length() > 60) {
+                            if (text.length() > 60)
+                            {
+                            	c.sendPacket(MaplePacketCreator.boxMessage("O texto pode conter no máximo 60 caracteres!"));
                                 return;
                             }
-                            if (player.getLevel() >= 10) {
+   
+                            if (player.getLevel() >= 10) 
+                            {
                                 player.getMap().broadcastMessage(MaplePacketCreator.serverNotice(2, player.getName() + " : " + text));
-                            } else { // Client does it but ehh..
-                                player.dropMessage("You may not use this until you're level 10.");
+                            } 
+                            else 
+                            {
+                            	c.sendPacket(MaplePacketCreator.boxMessage("Você só pode utilizar essa função após o level 10!"));
                             }
                             break;
                         case 2: // Super megaphone
                             text = slea.readMapleAsciiString();
-                            if (text.length() > 60) {
+                            
+                            if (text.length() > 60) 
+                            {
+                            	c.sendPacket(MaplePacketCreator.boxMessage("O texto pode conter no máximo 60 caracteres!"));
                                 return;
                             }
                             whisper = slea.readByte() == 1;
                             action = slea.readInt();
-                            if (action <= c.getLastAction()) {
+                            
+                            if (action <= c.getLastAction()) 
+                            {
                                 c.sendPacket(MaplePacketCreator.enableActions());
                                 return;
                             }
@@ -461,10 +530,12 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                             c.getChannelServer().getWorldInterface().broadcastMessage(null, MaplePacketCreator.serverNotice(3, c.getChannel(), medalName + c.getPlayer().getName() + " : " + text, whisper).getBytes(), true);
                             break;
                         case 3: // Heart megaphone
+                        	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
                             log.info("Unhandled Megaphone Packet : " + slea.toString());
                             log.info("Megaphone ID: " + itemId);
                             break;
                         case 4: // Skull megaphone
+                        	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
                             log.info("Unhandled Megaphone Packet : " + slea.toString());
                             log.info("Megaphone ID: " + itemId);
                             break;
@@ -474,42 +545,45 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                             boolean ear = false;
                             MapleCharacter victim = null;
 
-                            if (tvType != 1) { // 1 is the odd one out since it doesnt allow 2 players.
-                                if (tvType >= 3) {
+                            if (tvType != 1) 
+                            { // 1 is the odd one out since it doesnt allow 2 players.
+                                if (tvType >= 3) 
+                                {
                                     megassenger = true;
-                                    if (tvType == 3) {
-                                        slea.readByte();
-                                    }
+                                    if (tvType == 3) 
+                                    	slea.readByte();
                                     ear = 1 == slea.readByte();
-                                } else if (tvType != 2) {
+                                }
+                                else if (tvType != 2)
                                     slea.readByte();
-                                }
-                                if (tvType != 4) {
+
+                                if (tvType != 4)
                                     victim = c.getChannelServer().getPlayerStorage().getCharacterByName(slea.readMapleAsciiString());
-                                }
                             }
+                            
                             final List<String> messages = new LinkedList<>();
                             final StringBuilder builder = new StringBuilder();
-                            for (int i = 0; i < 5; i++) {
+                            for (int i = 0; i < 5; i++) 
+                            {
                                 final String message = slea.readMapleAsciiString();
-                                if (megassenger) {
+                                if (megassenger) 
+                                {
                                     builder.append(" ");
                                     builder.append(message);
                                 }
                                 messages.add(message);
                             }
                             slea.readInt();
-                            if (megassenger) {
+                            if (megassenger) 
+                            {
                                 text = builder.toString();
-                                if (text.length() <= 60) {
+                                if (text.length() <= 60) 
                                     c.getChannelServer().getWorldInterface().broadcastMessage(null, MaplePacketCreator.serverNotice(3, c.getChannel(), player.getName() + " : " + builder.toString(), ear).getBytes(), true);
-                                }
                             }
-                            if (!MapleTVEffect.isActive()) {
+                            if (!MapleTVEffect.isActive())
                                 new MapleTVEffect(player, victim, messages, tvType);
-                            } else {
-                                player.dropMessage("MapleTV is already in use.");
-                            }
+                            else
+                            	c.sendPacket(MaplePacketCreator.boxMessage("MapleTV já está em uso."));
                             break;
                         case 6: // Item Megaphone
                             int itemSmegaItemType = 0;
@@ -556,9 +630,11 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                 }
                 case 509: //some note sending shit TODO
                     // 49 00 04 00 D0 AA 4D 00 | 05 00 46 65 65 74 79 04 00 74 65 73 74 DA C6 C9 1D
+                	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
+                	Logger.getRootLogger().warn("Player " + c.getPlayer().getName() + " trying to use cash item 509 that is not coded");
                     final String sendTo = slea.readMapleAsciiString();
                     final String msg = slea.readMapleAsciiString();
-				MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
+                    //MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
                     break;
                 case 510: //something that plays music?
                     c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.musicChange("Jukebox/Congratulation"));
@@ -585,6 +661,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                     MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
                     break;
                 case 519:
+                	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
                 	log.info("update pets right now!");
                 case 520:
                     c.getPlayer().gainMeso(ii.getMeso(itemId), true, false, true);
@@ -628,11 +705,12 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                     }
                     break;
                 case 528:
-                    if (itemId == 5281000) {
+                    if (itemId == 5281000) 
+                    {
                         final Rectangle bounds = new Rectangle((int) c.getPlayer().getPosition().getX(), (int) c.getPlayer().getPosition().getY(), 1, 1);
                         final MapleMist mist = new MapleMist(bounds, c.getPlayer(), null);
                         c.getPlayer().getMap().spawnMist(mist, 10000, true);
-                        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getChatText(c.getPlayer().getId(), "Oh no, I farted!", false, 1, "Oh no, I farted!".getBytes()));
+                        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getChatText(c.getPlayer().getId(), "Oh não, soltei um pum!", false, 1));
                         MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
                         c.sendPacket(MaplePacketCreator.enableActions());
                     }
@@ -645,8 +723,9 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                     c.sendPacket(MaplePacketCreator.sendDuey((byte) 8, DueyActionHandler.loadItems(c.getPlayer())));
                     break;
                 case 537:
-                    if (c.getPlayer().isMuted() || c.getPlayer().getMap().getMuted()) {
-                        c.getPlayer().dropMessage(5, c.getPlayer().isMuted() ? "You are " : "The map is " + "muted, therefore you are unable to talk.");
+                    if (c.getPlayer().isMuted() || c.getPlayer().getMap().getMuted()) 
+                    {
+                    	c.sendPacket(MaplePacketCreator.boxMessage(c.getPlayer().isMuted() ? "Você está " : "O mapa está " + "silênciado, conseqüentemente você é incapaz de falar."));
                         return;
                     }
                     final String text = slea.readMapleAsciiString();
@@ -655,30 +734,50 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                     c.getPlayer().getClient().sendPacket(MaplePacketCreator.enableActions());
                     break;
                 case 539:
-                    if (c.getPlayer().isMuted() || c.getPlayer().getMap().getMuted()) {
+                    if (c.getPlayer().isMuted() || c.getPlayer().getMap().getMuted()) 
+                    {
+                    	c.sendPacket(MaplePacketCreator.boxMessage(c.getPlayer().isMuted() ? "Você está " : "O mapa está " + "silênciado, conseqüentemente você é incapaz de falar."));
                         return;
                     }
                     final List<String> lines = new LinkedList<>();
-                    for (int i = 0; i < 4; i++) {
+                    for (int i = 0; i < 4; i++) 
                         lines.add(slea.readMapleAsciiString());
-                    }
+                    
                     c.getChannelServer().getWorldInterface().broadcastMessage(null, MaplePacketCreator.getAvatarMega(c.getPlayer(), c.getChannel(), itemId, lines, (slea.readByte() != 0)).getBytes(), true);
                     MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
-                    break;
-                case 552: {
+                    break; 
+                case 545:
+        			if (c.getPlayer().getShop() == null) 
+        			{
+        				MapleShop shop = MapleShopFactory.getInstance().getShop(1138);
+        				if (shop != null) 
+        				{
+        					shop.sendShop(c);
+                            MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
+        				}
+        				else
+        					c.sendPacket(MaplePacketCreator.enableActions());
+        			} 
+        			else 
+        				c.sendPacket(MaplePacketCreator.enableActions());
+        			break;
+                case 552: 
+                {
                     final int invType = slea.readInt();
                     if (invType != 1)
                         return;
                     final short slotApplied = (short) slea.readInt();
                     final int action = slea.readInt();
-                    if (action <= c.getLastAction()) {
+                    if (action <= c.getLastAction()) 
+                    {
                         c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
                     c.setLastAction(action);
                     final IItem equip = c.getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(slotApplied);
-                    if (equip.isSSOneOfAKind()) {
-                        c.getPlayer().dropMessage(1, "You cannot use the Scissors of Karma on this item.");
+                    if (equip.isSSOneOfAKind()) 
+                    {
+                    	c.sendPacket(MaplePacketCreator.boxMessage("Você não pode usar as Tesouras de Karma neste item."));
                         c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
@@ -713,10 +812,13 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
                     MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
                     break;
                 default:
+                	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
                     log.info("Unhandeled cash item; type = " + itemType);
                     break;
             }
-        } catch (RemoteException e) {
+        } 
+        catch (RemoteException e) 
+        {
             c.getChannelServer().reconnectWorld();
             log.error("REMOTE ERROR", e);
         }

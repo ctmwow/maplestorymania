@@ -95,9 +95,9 @@ public enum SendPacketOpcode implements MutableValueHolder<Integer> {
     MONSTERBOOK_ADD,
     MONSTERBOOK_CHANGE_COVER,
     MULUNGENERGY,
-    FAMILY_CHART_RESULT,
-    FAMILY_INFO_RESULT,
-    FAMILY_RESULT,
+    FAMILY_PEDIGREE,
+    FAMILY_OPEN,
+    FAMILY_MESSAGE,
     FAMILY_JOIN_REQUEST,
     FAMILY_JOIN_REQUEST_RESULT,
     FAMILY_JOIN_ACCEPTED,
@@ -108,6 +108,7 @@ public enum SendPacketOpcode implements MutableValueHolder<Integer> {
     FAMILY_SUMMON_REQUEST,
     FAMILY_MEMBER_LEVELUP,
     AVATAR_MEGA,
+    NAME_CHANGE_STATUS,
     GM_POLICE,
     TOP_MSG,
     SKILL_MACRO,
@@ -224,12 +225,16 @@ public enum SendPacketOpcode implements MutableValueHolder<Integer> {
     OPEN_NPC_SHOP,
     CONFIRM_SHOP_TRANSACTION,
     OPEN_STORAGE,
+    FREDRICK_MESSAGE,
+    FREDRICK,
     MESSENGER,
     PLAYER_INTERACTION,
     DUEY,
     CS_UPDATE,
     CS_OPERATION,
     CS_OPERATION_COMPLETED,
+    NAME_CHANGE_CHECK_RESULT,
+    NAME_CHANGE_OPERATION,
     KEYMAP,
     AUTO_HP_POT,
     AUTO_MP_POT,
@@ -238,20 +243,24 @@ public enum SendPacketOpcode implements MutableValueHolder<Integer> {
     ENABLE_TV,
     MTS_OPERATION2,
     MTS_OPERATION,
-    VICIOUS_HAMMER;
+    VICIOUS_HAMMER,
+    OPEN_UI;
 
     private int code = -2;
 
-    public void setValue(Integer code) {
+    public void setValue(Integer code) 
+    {
         this.code = code;
     }
 
     @Override
-    public Integer getValue() {
+    public Integer getValue() 
+    {
         return code;
     }
 
-    public static Properties getDefaultProperties() throws IOException {
+    public static Properties getDefaultProperties() throws IOException 
+    {
         final Properties props = new Properties();
         final FileInputStream fileInputStream = new FileInputStream(System.getProperty("org.ascnet.leaftown.sendops"));
         props.load(fileInputStream);
@@ -259,10 +268,14 @@ public enum SendPacketOpcode implements MutableValueHolder<Integer> {
         return props;
     }
 
-    static {
-        try {
+    static 
+    {
+        try 
+        {
             ExternalCodeTableGetter.populateValues(getDefaultProperties(), values());
-        } catch (IOException e) {
+        }
+        catch (IOException e) 
+        {
             throw new RuntimeException("Failed to load sendops", e);
         }
     }

@@ -32,13 +32,13 @@ package org.ascnet.leaftown.client;
  */
 public enum MapleInventoryType 
 {
-    UNDEFINED(0x00),
-    EQUIP(0x01),
-    USE(0x02),
-    SETUP(0x03),
-    ETC(0x04),
-    CASH(0x05),
-    EQUIPPED(-0x01);
+    UNDEFINED(0x00000000),
+    EQUIP(0x00000001),
+    USE(0x00000002),
+    SETUP(0x00000003),
+    ETC(0x00000004),
+    CASH(0x00000005),
+    EQUIPPED(-0x00000001);
 
     final byte type;
 

@@ -21,22 +21,28 @@
 */
 var status = -1;
 
-function start() {
-    cm.sendNext("Thieves are a perfect blend of luck, dexterity, and power that are adept at the surprise attacks against helpless enemies. A high level of avoidability and speed allows Thieves to attack enemies from various angles.");
+function start() 
+{
+    cm.sendNext("Ladrões são uma mistura perfeita de sorte, habilidade e poder que estão vocacionadas para os ataques de surpresa contra os inimigos indefesos. Um alto nível de evitabilidade e velocidade permite que ladrões para atacar os inimigos de vários ângulos.");
 }
 
-function action(mode, type, selection) {
+function action(mode, type, selection) 
+{
     status++;
-    if (mode != 1){
+    if (mode != 1)
+    {
         if(mode == 0)
-           cm.sendNext("If you wish to experience what it's like to be a Thief, come see me again.");
+           cm.sendNext("Se você deseja experimentar o que é ser um Ladrão, venha me ver novamente.");
         cm.dispose();
         return;
     }
-    if (status == 0) {
-        cm.sendYesNo("Would you like to experience what it's like to be a Thief?");
-    } else if (status == 1){
-	cm.lockUI();
+    if (status == 0) 
+    {
+        cm.sendYesNo("Gostaria de experimentar o que é ser um Ladrão?");
+    }
+     else if (status == 1)
+    {
+		cm.lockUI();
         cm.warp(1020400, 0);
         cm.dispose();
     }

@@ -63,6 +63,7 @@ public class StorageHandler extends AbstractMaplePacketHandler
                 {
                     storage.takeOut(slot);
                     storage.sendTakenOut(c, ii.getInventoryType(item.getItemId()));
+                    c.getPlayer().gainMeso(-1000, false, true, false);
                     c.sendPacket(MaplePacketCreator.modifyInventory(true, MapleInventoryManipulator.addByItem(c, item, "Taken out from storage by " + c.getPlayer().getName(), false)));
                 } 
                 else if (ii.canHaveOnlyOne(item.getItemId()) && c.getPlayer().haveItem(item.getItemId(), 1, true, false)) 
@@ -89,10 +90,10 @@ public class StorageHandler extends AbstractMaplePacketHandler
                 c.sendPacket(MaplePacketCreator.getStorageFull());
                 return;
             }
-            if (c.getPlayer().getMeso() < 100) 
-                c.sendPacket(MaplePacketCreator.serverNotice(1, "You don't have enough mesos to store the item"));
+            if (c.getPlayer().getMeso() < 500) 
+                c.sendPacket(MaplePacketCreator.serverNotice(1, "Você não tem mesos o sulficiênte para guardar esse item"));
             else if (itemId == 4001168) 
-                c.sendPacket(MaplePacketCreator.serverNotice(1, "You cannot store this item."));
+                c.sendPacket(MaplePacketCreator.serverNotice(1, "Esse item não pode ser guardado."));
             else 
             {
                 final MapleInventoryType type = ii.getInventoryType(itemId);
@@ -106,7 +107,7 @@ public class StorageHandler extends AbstractMaplePacketHandler
                         return;
                     
                     item.log("Stored by " + c.getPlayer().getName(), false);
-                    c.getPlayer().gainMeso(-100, false, true, false);
+                    c.getPlayer().gainMeso(-500, false, true, false);
                     MapleInventoryManipulator.removeFromSlot(c, type, slot, quantity, false);
                     item.setQuantity(quantity);
                     storage.store(item);

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,9 +53,9 @@ public class MapleItemStorePersistence
             {
             	itemList.add(buildEquip(resultSet));
             	
-            	int RingId = resultSet.getInt("RingID");
+            	final int RingId = resultSet.getInt("RingID");
             	
-                if (RingId != -0x01)
+                if (!resultSet.wasNull() && RingId > 0x00)
                 {
                 	int ItemId = resultSet.getInt("ItemID");
                 	
@@ -82,7 +83,7 @@ public class MapleItemStorePersistence
     	{
     		PreparedStatement preparedStatment = con.prepareStatement("SELECT * FROM inventory_eqp WHERE CharacterID = ? AND Position > 0");
             preparedStatment.setInt(0x01, character.getId());
-            
+             
             ResultSet resultSet = preparedStatment.executeQuery();
             
             while(resultSet.next())
@@ -91,12 +92,12 @@ public class MapleItemStorePersistence
             	
             	int RingId = resultSet.getInt("RingID");
             	
-                if (RingId != -0x01)
+                if (!resultSet.wasNull() && RingId > 0x00)
                 {
                 	int ItemId = resultSet.getInt("ItemID");
                 	
                     MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-                    MapleRing ring = MapleRing.loadFromDb(RingId);
+                    MapleRing ring = MapleRing.loadFromDb(RingId); 
                     if (ii.isCrushRing(ItemId)) 
                     {
                         if (ring != null)
@@ -168,7 +169,7 @@ public class MapleItemStorePersistence
             	itemList.add(tmpItem);
             }
     	}
-
+    	
     	return itemList;
     }
     
@@ -379,6 +380,7 @@ public class MapleItemStorePersistence
             	
             	if(ii.isPet(item.getItemId())) 
             		preparedStatement.setInt(0x09, item.getPetId() == 0x00 ? -0x01 : item.getPetId());
+            	else preparedStatement.setInt(0x09, -0x01); // TODO REPLACE TO NULL <INTEGER>
             	
             	preparedStatement.addBatch();
             }    		
@@ -592,7 +594,12 @@ public class MapleItemStorePersistence
         preparedStatement.setTimestamp(firstIndex + 0x14, item.getExpiration());
         preparedStatement.setString(firstIndex + 0x15, item.getOwner());
         preparedStatement.setByte(firstIndex + 0x16, (byte) item.getFlag());
-        preparedStatement.setInt(firstIndex + 0x17, equip.getRingId());
+        
+        if(equip.getRingId() == null || equip.getRingId() <= 0)
+        	preparedStatement.setNull(firstIndex + 0x17, Types.INTEGER);
+        else
+        	preparedStatement.setInt(firstIndex + 0x17, equip.getRingId());
+        
         preparedStatement.setByte(firstIndex + 0x18, (byte) (equip.isByGM() ? 0x01 : 0x00));
     }
     
@@ -643,6 +650,11 @@ public class MapleItemStorePersistence
         equip.setExpiration(resultSet.getTimestamp("ExpireDate"));
         equip.setOwner(resultSet.getString("Owner"));
         equip.setFlag(resultSet.getByte("Flag"));
+        
+    	final int RingId = resultSet.getInt("RingID");
+    	
+        if (!resultSet.wasNull() && RingId > 0x00)
+        	equip.setRingId(RingId);
         
         if (resultSet.getByte("IsGM") == 0x01)
             equip.setGMFlag();

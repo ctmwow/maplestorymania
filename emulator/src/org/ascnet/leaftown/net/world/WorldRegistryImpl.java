@@ -281,6 +281,14 @@ public class WorldRegistryImpl extends UnicastRemoteObject implements WorldRegis
 		}
     }
     
+    public final void updateFamily(final MapleFamily family)
+    {
+    	synchronized (familys)
+    	{
+    		familys.put(family.getId(), family);
+    	}
+    }
+    
     public final MapleFamily getFamily(final int id)
     {
     	synchronized (familys)

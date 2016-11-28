@@ -33,17 +33,20 @@ import org.ascnet.leaftown.net.login.LoginServer;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
-public class ServerlistRequestHandler extends AbstractMaplePacketHandler {
-
+public class ServerlistRequestHandler extends AbstractMaplePacketHandler 
+{
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        if (c.getLoginState() == MapleClient.PIN_CORRECT || c.getLoginState() == MapleClient.VIEW_ALL_CHAR) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
+    {
+        if (c.getLoginState() == MapleClient.PIN_CORRECT || c.getLoginState() == MapleClient.VIEW_ALL_CHAR) 
+        {
             c.updateLoginState(MapleClient.LOGIN_LOGGEDIN);
+            
             c.sendPacket(MaplePacketCreator.sendLoginMethod());
             c.sendPacket(MaplePacketCreator.getServerList(0, LoginServer.getInstance().getServerName(), LoginServer.getInstance().getLoad()));
             c.sendPacket(MaplePacketCreator.getEndOfServerList());
             c.sendPacket(MaplePacketCreator.getRecommendedServer(0));
-            c.sendPacket(MaplePacketCreator.getEndOfServerList(true, 0, "Welcome to Leaftown!"));
+            c.sendPacket(MaplePacketCreator.getEndOfServerList(true, 0, "Bem vindo ao MapleStory Mania!"));
         }
     }
 }

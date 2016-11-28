@@ -24,7 +24,7 @@
 */
 
 function start() {
-    if (cm.getPlayer().gotPartyQuestItem("JBP") && !cm.haveItem(4031059)) {
+    if (cm.getPlayer().gotPartQuestItem("JBP") && !cm.haveItem(4031059)) {
         if (cm.getPlayer().getMapId() == 105070001 && (cm.getJobId() >= 110 && cm.getJobId() <= 130))
             cm.warp(108010300);
         else if (cm.getPlayer().getMapId() == 105040305 && (cm.getJobId() >= 310 && cm.getJobId() <= 320))

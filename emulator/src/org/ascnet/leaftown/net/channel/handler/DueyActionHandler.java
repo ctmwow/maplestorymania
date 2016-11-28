@@ -48,6 +48,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -273,7 +274,9 @@ public class DueyActionHandler extends AbstractMaplePacketHandler {
                     ps2.setInt(19, eq.getSpeed());
                     ps2.setInt(20, eq.getJump());
                     ps2.setString(21, eq.getOwner());
-                } else {
+                } 
+                else 
+                {
                     ps2 = con.prepareStatement("INSERT INTO dueyitems (packageid, itemid, quantity, owner) VALUES (?, ?, ?, ?)");
                     ps2.setInt(2, item.getItemId());
                     ps2.setInt(3, quantity);

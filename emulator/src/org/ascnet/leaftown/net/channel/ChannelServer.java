@@ -129,12 +129,14 @@ public class ChannelServer implements Runnable, ChannelServerMBean
     private MapleMapTimer shutdownTimer = null;
     private final Map<Integer, Integer> flagMaps = new HashMap<>();
 
-    private ChannelServer(String key) {
+    private ChannelServer(String key) 
+    {
         mapFactory = new MapleMapFactory(MapleDataProviderFactory.getDataProvider("Map"), MapleDataProviderFactory.getDataProvider("String"));
         this.key = key;
     }
 
-    public static WorldRegistry getWorldRegistry() {
+    public static WorldRegistry getWorldRegistry() 
+    {
         return worldRegistry;
     }
 
@@ -238,6 +240,7 @@ public class ChannelServer implements Runnable, ChannelServerMBean
 
         int port = Integer.parseInt(props.getProperty("org.ascnet.leaftown.channel.net.port").trim());
         ip = props.getProperty("org.ascnet.leaftown.channel.net.interface") + ":" + port;
+        
         PacketProcessor.initialise(PacketProcessor.Mode.CHANNELSERVER);
 
         TimerManager tMan = TimerManager.getInstance();
@@ -689,8 +692,7 @@ public class ChannelServer implements Runnable, ChannelServerMBean
         initialProp = new Properties();
         initialProp.load(new FileReader(System.getProperty("org.ascnet.leaftown.channel.config")));
         
-        Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("org.ascnet.leaftown.world.host"), Registry.REGISTRY_PORT, new SslRMIClientSocketFactory());
-        worldRegistry = (WorldRegistry) registry.lookup("WorldRegistry");
+        worldRegistry = (WorldRegistry) LocateRegistry.getRegistry(initialProp.getProperty("org.ascnet.leaftown.world.host"), Registry.REGISTRY_PORT, new SslRMIClientSocketFactory()).lookup("WorldRegistry");
         
         for (int i = 0x00; i < Integer.parseInt(initialProp.getProperty("org.ascnet.leaftown.channel.count", "0")); i++)
             newInstance(initialProp.getProperty("org.ascnet.leaftown.channel." + i + ".key")).run();
@@ -713,27 +715,31 @@ public class ChannelServer implements Runnable, ChannelServerMBean
         }));
     }
 
-    public MapleSquad getMapleSquad(MapleSquadType type) {
-        if (mapleSquads.containsKey(type)) {
+    public MapleSquad getMapleSquad(MapleSquadType type) 
+    {
+        if (mapleSquads.containsKey(type)) 
             return mapleSquads.get(type);
-        } else {
+        else 
             return null;
-        }
     }
 
-    public boolean addMapleSquad(MapleSquad squad, MapleSquadType type) {
-        if (mapleSquads.get(type) == null) {
-            mapleSquads.remove(type);
+    public boolean addMapleSquad(MapleSquad squad, MapleSquadType type) 
+    {
+        if (mapleSquads.get(type) == null) 
+        {
             mapleSquads.put(type, squad);
             return true;
-        } else {
+        } 
+        else 
             return false;
-        }
     }
 
-    public boolean removeMapleSquad(MapleSquad squad, MapleSquadType type) {
-        if (mapleSquads.containsKey(type)) {
-            if (mapleSquads.get(type) == squad) {
+    public boolean removeMapleSquad(MapleSquad squad, MapleSquadType type) 
+    {
+        if (mapleSquads.containsKey(type)) 
+        {
+            if (mapleSquads.get(type) == squad) 
+            {
                 mapleSquads.remove(type);
                 return true;
             }
@@ -741,38 +747,46 @@ public class ChannelServer implements Runnable, ChannelServerMBean
         return false;
     }
 
-    public int getInstanceId() {
+    public int getInstanceId() 
+    {
         return instanceId;
     }
 
-    public void setInstanceId(int k) {
+    public void setInstanceId(int k) 
+    {
         instanceId = k;
     }
 
-    public void addInstanceId() {
+    public void addInstanceId() 
+    {
         instanceId++;
     }
 
-    public void addMapMonitor(int mapId, MapMonitor monitor) {
-        if (mapMonitors.containsKey(mapId)) {
+    public void addMapMonitor(int mapId, MapMonitor monitor) 
+    {
+        if (mapMonitors.containsKey(mapId)) 
+        {
             log.info("ERROR! Trying to add a map monitor to a map that already has it!");
             return;
         }
         mapMonitors.put(mapId, monitor);
     }
 
-    public void removeMapMonitor(int mapId) {
-        if (mapMonitors.containsKey(mapId)) {
+    public void removeMapMonitor(int mapId) 
+    {
+        if (mapMonitors.containsKey(mapId)) 
             mapMonitors.remove(mapId);
-        } else {
+        else 
             log.info("ERROR! Trying to remove a map monitor that doesn't exist!");
-        }
     }
 
-    public List<MapleCharacter> getPartyMembers(MapleParty party) {
+    public List<MapleCharacter> getPartyMembers(MapleParty party) 
+    {
         List<MapleCharacter> partym = new LinkedList<>();
-        for (org.ascnet.leaftown.net.world.MaplePartyCharacter partychar : party.getMembers()) {
-            if (partychar.getChannel() == channel) { // Make sure the thing doesn't get duplicate plays due to ccing bug.
+        for (org.ascnet.leaftown.net.world.MaplePartyCharacter partychar : party.getMembers()) 
+        {
+            if (partychar.getChannel() == channel)
+            { // Make sure the thing doesn't get duplicate plays due to ccing bug.
                 MapleCharacter chr = getPlayerStorage().getCharacterByName(partychar.getName());
                 if (chr != null)
                     partym.add(chr);
@@ -781,33 +795,40 @@ public class ChannelServer implements Runnable, ChannelServerMBean
         return partym;
     }
     
-    public void unloadMap(int mapid) {
+    public void unloadMap(int mapid) 
+    {
         mapFactory.destroyMap(mapid);
     }
 
-    public void loadMap(int mapid) {
+    public void loadMap(int mapid) 
+    {
         mapFactory.getMap(mapid);
     }
 
-    public void startEvent(int minlevel, int maxlevel, int map) {
+    public void startEvent(int minlevel, int maxlevel, int map) 
+    {
         level[0] = minlevel;
         level[1] = maxlevel;
         eventmap = map;
     }
 
-    public long getLastEvent() {
+    public long getLastEvent() 
+    {
         return lastEvent;
     }
 
-    public void setLastEvent(long time) {
+    public void setLastEvent(long time) 
+    {
         lastEvent = time;
     }
 
-    public int getFlagMap(int charId) {
+    public int getFlagMap(int charId) 
+    {
         return flagMaps.get(charId);
     }
 
-    public void setFlagMap(int charId, int mapId) {
+    public void setFlagMap(int charId, int mapId) 
+    {
         flagMaps.put(charId, mapId);
     }
 }

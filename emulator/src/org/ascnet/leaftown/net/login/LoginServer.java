@@ -81,37 +81,47 @@ public class LoginServer implements Runnable, LoginServerMBean {
     private int loginInterval;
     private static final LoginServer instance = new LoginServer();
 
-    static {
+    static 
+    {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
+        try 
+        {
             mBeanServer.registerMBean(instance, new ObjectName("org.ascnet.leaftown.net.login:type=LoginServer,name=LoginServer"));
-        } catch (Exception e) {
+        }
+        catch (Exception e) 
+        {
             log.error("MBEAN ERROR", e);
         }
     }
 
-    private LoginServer() {
+    private LoginServer() 
+    {
     }
 
-    public static LoginServer getInstance() {
+    public static LoginServer getInstance() 
+    {
         return instance;
     }
 
-    public Set<Integer> getChannels() {
+    public Set<Integer> getChannels() 
+    {
         return channelServer.keySet();
     }
 
-    public void addChannel(int channel, String ip) {
+    public void addChannel(int channel, String ip) 
+    {
         channelServer.put(channel, ip);
         load.put(channel, 0);
     }
 
-    public void removeChannel(int channel) {
+    public void removeChannel(int channel) 
+    {
         channelServer.remove(channel);
         load.remove(channel);
     }
 
-    public String getIP(int channel) {
+    public String getIP(int channel) 
+    {
         return channelServer.get(channel);
     }
 
@@ -190,8 +200,10 @@ public class LoginServer implements Runnable, LoginServerMBean {
     }
 
     @Override
-    public void run() {
-        try {
+    public void run() 
+    {
+        try 
+        {
             FileReader fileReader = new FileReader(System.getProperty("org.ascnet.leaftown.login.config"));
             initialProp.load(fileReader);
             fileReader.close();
@@ -211,14 +223,20 @@ public class LoginServer implements Runnable, LoginServerMBean {
             eventMessage = prop.getProperty("org.ascnet.leaftown.login.eventMessage");
             flag = Integer.parseInt(prop.getProperty("org.ascnet.leaftown.login.flag"));
             maxCharacters = Integer.parseInt(prop.getProperty("org.ascnet.leaftown.login.maxCharacters"));
-            try {
+            
+            try 
+            {
                 fileReader = new FileReader("subnet.properties");
                 subnetInfo.load(fileReader);
                 fileReader.close();
-            } catch (Exception e) {
+            } 
+            catch (Exception e) 
+            {
                 log.trace("Could not load subnet configuration, falling back to world defaults", e);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) 
+        {
             throw new RuntimeException("Could not connect to world server.", e);
         }
 
@@ -226,40 +244,50 @@ public class LoginServer implements Runnable, LoginServerMBean {
         TimerManager tMan = TimerManager.getInstance();
         tMan.start();
         loginInterval = Integer.parseInt(prop.getProperty("org.ascnet.leaftown.login.interval"));
-        //tMan.register(LoginWorker.getInstance(), loginInterval);
         CharCreationInformationProvider.getInstance().loadValidValues();
         MapleCharacterUtil.isBanned("");
 
         server = new Server(new InetSocketAddress(PORT));
         server.run();
-        log.info("Listening on port {}", PORT);
+        log.info("Login Server Listening on port {}", PORT);
     }
 
-    public void shutdown() {
+    public void shutdown() 
+    {
         log.info("Shutting down server...");
-        try {
+        try 
+        {
             worldRegistry.deregisterLoginServer(lwi);
-        } catch (RemoteException e) {
+        }
+        catch (RemoteException e) 
+        {
             log.info("RemoteException encountered when shutting down server... but it shouldn't matter.");
         }
         TimerManager.getInstance().stop();
     }
 
-    public WorldLoginInterface getWorldInterface() {
-        synchronized (worldReady) {
-            while (!worldReady) {
-                try {
+    public WorldLoginInterface getWorldInterface() 
+    {
+        synchronized (worldReady) 
+        {
+            while (!worldReady) 
+            {
+                try 
+                {
                     worldReady.wait();
-                } catch (InterruptedException e) {
+                } catch (InterruptedException e) 
+                {
                 }
             }
         }
         return wli;
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) 
+    {
         FileReader fileReader = null;
-        try {
+        try 
+        {
         	ServerMessages.getInstance().load(new Locale("ptBR", "BR"));
         	
             Properties dbProp = new Properties();
@@ -283,25 +311,36 @@ public class LoginServer implements Runnable, LoginServerMBean {
             ps = c.prepareStatement("TRUNCATE TABLE cooldowns");
             ps.executeUpdate();
             ps.close();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) 
+        {
             log.error("Could not reset databases", ex);
-        } finally {
-            try {
+        } finally 
+        {
+            try 
+            {
                 fileReader.close();
-            } catch (IOException ex) {
+            }
+            catch (IOException ex) 
+            {
                 Logger.getLogger(LoginServer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
-        try {
+        try 
+        {
             LoginServer.getInstance().run();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) 
+        {
             log.error("Error initializing loginserver", ex);
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() 
+        {
             @Override
-            public void run() {
+            public void run() 
+            {
                 log.info("Shutting down.");
                 LoginServer.getInstance().shutdown();
                 log.info("Shutdown complete; exiting.");
@@ -309,41 +348,50 @@ public class LoginServer implements Runnable, LoginServerMBean {
         }));
     }
 
-    public int getLoginInterval() {
+    public int getLoginInterval() 
+    {
         return loginInterval;
     }
 
-    public Properties getSubnetInfo() {
+    public Properties getSubnetInfo() 
+    {
         return subnetInfo;
     }
 
-    public int getUserLimit() {
+    public int getUserLimit() 
+    {
         return userLimit;
     }
 
-    public String getServerName() {
+    public String getServerName() 
+    {
         return serverName;
     }
 
     @Override
-    public String getEventMessage() {
+    public String getEventMessage() 
+    {
         return eventMessage;
     }
 
     @Override
-    public int getFlag() {
+    public int getFlag() 
+    {
         return flag;
     }
 
-    public int getMaxCharacters() {
+    public int getMaxCharacters() 
+    {
         return maxCharacters;
     }
 
-    public Map<Integer, Integer> getLoad() {
+    public Map<Integer, Integer> getLoad() 
+    {
         return load;
     }
 
-    public void setLoad(Map<Integer, Integer> load) {
+    public void setLoad(Map<Integer, Integer> load) 
+    {
         this.load = load;
     }
 

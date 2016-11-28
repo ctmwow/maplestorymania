@@ -83,6 +83,8 @@ public interface WorldChannelInterface extends Remote, WorldChannelCommonOperati
     public CharacterIdChannelPair[] multiBuddyFind(int charIdFrom, int[] characterIds) throws RemoteException;
     
     public void setFamily(MapleFamily family, int cid) throws RemoteException;
+    
+    public void updateFamily(final MapleFamily family) throws RemoteException;
 
     public MapleFamily getFamily(int id) throws RemoteException;
     

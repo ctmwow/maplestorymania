@@ -35,15 +35,25 @@ import org.ascnet.leaftown.client.MaplePet;
 import org.ascnet.leaftown.client.PetDataFactory;
 import org.ascnet.leaftown.client.SkillFactory;
 import org.ascnet.leaftown.client.messages.ServernoticeMapleClientMessageCallback;
+import org.ascnet.leaftown.database.DatabaseConnection;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
+import org.ascnet.leaftown.provider.DataUtil;
+import org.ascnet.leaftown.provider.MapleDataProvider;
+import org.ascnet.leaftown.provider.MapleDataProviderFactory;
+import org.ascnet.leaftown.server.MapleInventoryManipulator;
 import org.ascnet.leaftown.server.maps.MapleFoothold;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 import java.awt.Point;
+import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-public class SpawnPetHandler extends AbstractMaplePacketHandler {
-
+public class SpawnPetHandler extends AbstractMaplePacketHandler 
+{
+    private final static MapleDataProvider dataRoot = MapleDataProviderFactory.getDataProvider("Item");
+	
     @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
     {
@@ -56,23 +66,50 @@ public class SpawnPetHandler extends AbstractMaplePacketHandler {
         if (item == null)
             return;
         
-        // Handle Dragons
-        if (item.getItemId() == 5000028) 
-        {
-            new ServernoticeMapleClientMessageCallback(5, c).dropMessage("Dragon eggs currently cannot be hatched.");
-            c.sendPacket(MaplePacketCreator.enableActions());
-            return;
-        }
-        
-        // Handle Robo Pets
-        if (item.getItemId() == 5000047)
-        {
-            new ServernoticeMapleClientMessageCallback(5, c).dropMessage("Robo eggs currently cannot be hatched.");
-            c.sendPacket(MaplePacketCreator.enableActions());
-            return;
-        }
-
         final MaplePet pet = item.getPet();
+        
+        int petid = pet.getItemId();
+        
+		if (petid == 5000028 || petid == 5000047) // Handles Dragon AND Robos
+		{
+			if (player.haveItem(petid + 1, 1, false, false)) 
+			{
+				player.dropMessage(5, "Você não pode chocar o seu " + (petid == 5000028 ? "Dragon egg" : "Robo egg") + " se você já tem um Baby " + (petid == 5000028 ? "Dragon." : "Robo."));
+				c.sendPacket(MaplePacketCreator.enableActions());
+				return;
+			} 
+			else 
+			{
+				int evolveid = DataUtil.toInt(dataRoot.getData("Pet/" + petid + ".img").resolve("info/evol1"), -0x01);
+				
+				if(evolveid == -0x01)
+					return;
+				
+				MaplePet mPet = MaplePet.createPet(player.getId(), evolveid);
+				
+				if (mPet.getUniqueId() == -1) 
+					return;
+
+				try 
+				{
+					PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("DELETE FROM pets WHERE `petid` = ?");
+					ps.setInt(1, pet.getUniqueId());
+					ps.executeUpdate();
+					ps.close();
+				} 
+				catch (SQLException ex) 
+				{
+				}
+				
+				//long expiration = player.getInventory(MapleInventoryType.CASH).getItem(slot).getExpiration().getTime();
+				MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, petid, (short) 1, false, false);
+				MapleInventoryManipulator.addById(c, evolveid, (short) 1, null, player.getName(), mPet);
+				c.sendPacket(MaplePacketCreator.enableActions());
+				return;
+			}
+		}
+
+
         if (player.getPets().contains(pet))
             player.unequipPet(pet, false);
         else 

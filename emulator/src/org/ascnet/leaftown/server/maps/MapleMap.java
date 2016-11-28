@@ -27,6 +27,34 @@
 
 package org.ascnet.leaftown.server.maps;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.rmi.RemoteException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.ascnet.leaftown.client.Equip;
 import org.ascnet.leaftown.client.IItem;
 import org.ascnet.leaftown.client.Item;
@@ -60,38 +88,11 @@ import org.ascnet.leaftown.server.life.MobSkillFactory;
 import org.ascnet.leaftown.server.life.SpawnPoint;
 import org.ascnet.leaftown.server.playerinteractions.IMaplePlayerShop;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
-import org.ascnet.leaftown.tools.Pair;
 import org.ascnet.leaftown.tools.Randomizer;
 import org.ascnet.leaftown.tools.StringUtil;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.rmi.RemoteException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-public class MapleMap {
-
+public class MapleMap 
+{
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MapleMap.class);
     private static final int MAX_OID = 20000;
     private static final List<MapleMapObjectType> rangedMapobjectTypes = Arrays.asList(MapleMapObjectType.NPC, MapleMapObjectType.ITEM, MapleMapObjectType.MONSTER, MapleMapObjectType.DOOR, MapleMapObjectType.SUMMON, MapleMapObjectType.REACTOR);
@@ -1299,38 +1300,7 @@ public class MapleMap {
 
         activateItemReactors(drop);
     }
-
-	/*private class TimerDestroyWorker implements Runnable {
-
-		@Override
-		public void run() {
-			if (mapTimer != null) {
-				int warpMap = mapTimer.warpToMap();
-				int minWarp = mapTimer.minLevelToWarp();
-				int maxWarp = mapTimer.maxLevelToWarp();
-				mapTimer = null;
-				if (warpMap != -1) {
-					MapleMap map2wa2 = ChannelServer.getInstance(channel).getMapFactory().getMap(warpMap);
-					String warpmsg = "You will now be warped to " + map2wa2.getStreetName() + " : " + map2wa2.getMapName();
-					broadcastMessage(MaplePacketCreator.serverNotice(6, warpmsg));
-					Collection<MapleCharacter> cmc = new LinkedHashSet<MapleCharacter>(getCharacters());
-					for (MapleCharacter chr : cmc) {
-						try {
-							if (chr.getLevel() >= minWarp && chr.getLevel() <= maxWarp) {
-								chr.changeMap(map2wa2, map2wa2.getRandomSpawnPoint());
-							} else {
-								chr.getClient().sendPacket(MaplePacketCreator.serverNotice(5, "You are not at least level " + minWarp + " or you are higher than level " + maxWarp + "."));
-							}
-						} catch (Exception ex) {
-							String errormsg = "There was a problem warping you. Please contact a GM";
-							chr.getClient().sendPacket(MaplePacketCreator.serverNotice(5, errormsg));
-						}
-					}
-				}
-			}
-		}
-	 }*/
-
+    
     public void addMapTimer(int durationmin, int durationmax) {
         addMapTimer(durationmin, durationmax, new String[0], false, true, null);
     }
@@ -1461,7 +1431,7 @@ public class MapleMap {
      *
      * @param chr
      */
-    public void addPlayer(MapleCharacter chr) 
+    public void addPlayer(final MapleCharacter chr) 
     {
         objectLock.lock();
         
@@ -1475,117 +1445,113 @@ public class MapleMap {
             objectLock.unlock();
         }
         
-        for (MaplePlayerNPC pnpc : playerNPCs) 
+        for (final MaplePlayerNPC pnpc : playerNPCs) 
             chr.getClient().sendPacket(MaplePacketCreator.getPlayerNPC(pnpc));
-        
+
         if (!chr.isHidden()) 
         {
             broadcastMessage(chr, MaplePacketCreator.spawnPlayerMapobject(chr, false), true);
             broadcastMessage(chr, MaplePacketCreator.playerGuildName(chr), false);
             broadcastMessage(chr, MaplePacketCreator.playerGuildInfo(chr), false);
             
-            for (MapleCharacter c : getCharacters()) 
+            for (final MapleCharacter c : getCharacters()) 
             {
-                if (c.hasGMLevel(0x05) && !c.isHidden()) 
+                if (c.hasGMLevel(0x00000005) && !c.isHidden()) 
                 { 
-                    chr.finishAchievement(0x0B);
+                    chr.finishAchievement(0x0000000B);
                     break;
                 }
             }
         } 
         else 
-        {
         	chr.getClient().sendPacket(MaplePacketCreator.giveGMHide(true));
-            broadcastGMMessage(chr, MaplePacketCreator.giveForeignBuff(chr, Collections.singletonList(new Pair<MapleBuffStat, Integer>(MapleBuffStat.DARKSIGHT, 0x00)), null), false);
-        }
         
         sendObjectPlacement(chr);
         
-        if (mapId >= 914000200 && mapId <= 914000220) {
+        if (mapId >= 914000200 && mapId <= 914000220) 
             chr.getClient().sendPacket(MaplePacketCreator.tempStatsUpdate());
-        } else {
+        else 
             chr.getClient().sendPacket(MaplePacketCreator.resetStats());
-        }
-        if (chr.isUILocked() && onUserEnter.length() == 0) {
+        
+        if (chr.isUILocked() && onUserEnter.length() == 0x00000000) 
+        {
             chr.getClient().sendPacket(MaplePacketCreator.hideUI(false));
             chr.getClient().sendPacket(MaplePacketCreator.lockWindows(false));
         }
-        if (mapId == 1 || mapId == 2 || mapId == 809000101 || mapId == 809000201) {
+        
+        if (mapId == 0x00000001 || mapId == 0x00000002 || mapId == 809000101 || mapId == 809000201)
             chr.getClient().sendPacket(MaplePacketCreator.showEquipEffect());
-        }
-        if (decHP > 0) {
+
+        if (decHP > 0x00000000)
             chr.startDecHPSchedule();
-        }
-        if (onUserEnter.length() != 0) {
+
+        if (onUserEnter.length() != 0x00000000) 
             MapScriptManager.getInstance().getMapScript(chr.getClient(), onUserEnter, false);
-        }
-        if (onFirstUserEnter.length() != 0) {
-            if (getCharacters().size() == 1) {
+
+        if (onFirstUserEnter.length() != 0x00000000)
+            if (getCharacters().size() == 0x00000001)
                 MapScriptManager.getInstance().getMapScript(chr.getClient(), onFirstUserEnter, true);
-            }
-        }
+        
         final List<MaplePet> pets = chr.getPets();
-        for (MaplePet pet : pets) 
+        
+        for (final MaplePet pet : pets) 
         {
         	pet.setPos(getGroundBelow(chr.getPosition()));
             chr.getClient().sendPacket(MaplePacketCreator.showPet(chr, pet, false, false, true));
         } 
-        chr.updatePetPositions(0, null);
+        
+        chr.updatePetPositions(0x00000000, null);
 
-        MapleStatEffect summonStat = chr.getStatForBuff(MapleBuffStat.SUMMON);
+        final MapleStatEffect summonStat = chr.getStatForBuff(MapleBuffStat.SUMMON);
+        
         if (summonStat != null) 
         {
-            MapleSummon summon = chr.getSummons().get(summonStat.getSourceId());
+            final MapleSummon summon = chr.getSummons().get(summonStat.getSourceId());
             summon.setPosition(chr.getPosition());
             summon.sendSpawnData(chr.getClient());
             chr.addVisibleMapObject(summon);
             addMapObject(summon);
         }
-        if (mapEffect != null) {
+        
+        if (mapEffect != null)
             mapEffect.sendStartData(chr.getClient());
-        }
-        if (timeLimit > 0 && getForcedReturnMap() != null) {
+
+        if (timeLimit > 0x00000000 && getForcedReturnMap() != null) 
+        {
             chr.getClient().sendPacket(MaplePacketCreator.getClock(timeLimit));
             chr.startMapTimeLimitTask(this, getForcedReturnMap());
         }
-        if (chr.getBuffedValue(MapleBuffStat.MONSTER_RIDING) != null) {
-            if (FieldLimit.CANNOTUSEMOUNTS.check(fieldLimit)) {
+        
+        if (chr.getBuffedValue(MapleBuffStat.MONSTER_RIDING) != null)
+            if (FieldLimit.CANNOTUSEMOUNTS.check(fieldLimit))
                 chr.cancelBuffStats(MapleBuffStat.MONSTER_RIDING);
-            }
-        }
-        if (mapTimer != null) {
+      
+        if (mapTimer != null) 
             mapTimer.sendSpawnData(chr.getClient());
-        }
-        if (chr.getEventInstance() != null && chr.getEventInstance().isTimerStarted()) {
-            chr.getClient().sendPacket(MaplePacketCreator.getClock((int) (chr.getEventInstance().getTimeLeft() / 1000)));
-        }
-        if (hasClock()) {
-            Calendar cal = Calendar.getInstance();
-            int hour = cal.get(Calendar.HOUR_OF_DAY);
-            int min = cal.get(Calendar.MINUTE);
-            int second = cal.get(Calendar.SECOND);
-            chr.getClient().sendPacket(MaplePacketCreator.getClockTime(hour, min, second));
+        
+        if (chr.getEventInstance() != null && chr.getEventInstance().isTimerStarted()) 
+            chr.getClient().sendPacket(MaplePacketCreator.getClock((int) (chr.getEventInstance().getTimeLeft() / 0x000003E8)));
+        
+        if (hasClock()) 
+        {
+            final Calendar cal = Calendar.getInstance();
+            chr.getClient().sendPacket(MaplePacketCreator.getClockTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND)));
         }
 
-        if (hasBoat() == 2) {
-            chr.getClient().sendPacket(MaplePacketCreator.boatPacket(1548));
-        } else if (hasBoat() == 1 && (chr.getMapId() != 200090000 || chr.getMapId() != 200090010)) {
-            chr.getClient().sendPacket(MaplePacketCreator.boatPacket(520));
-        }
+        if (hasBoat() == 0x00000002) 
+            chr.getClient().sendPacket(MaplePacketCreator.boatPacket(0x0000060C));
+        else if (hasBoat() == 0x00000001 && (chr.getMapId() != 200090000 || chr.getMapId() != 200090010)) 
+            chr.getClient().sendPacket(MaplePacketCreator.boatPacket(0x00000208));
 
-        if (chr.hasGMLevel(5) && !chr.isHidden()) {
-            for (MapleCharacter c : getCharacters()) {
-                c.finishAchievement(11);
-            }
-        }
         chr.receivePartyMemberHP();
-        if (!canMovement && !chr.isGM()) {
+        
+        if (!canMovement && !chr.isGM()) 
             chr.giveDebuff(MapleDisease.GM_DISABLE_MOVEMENT, MobSkillFactory.getMobSkill(123, 1), true);
-        }
-        if (!allowSkills && !chr.isGM()) {
+        if (!allowSkills && !chr.isGM()) 
             chr.giveDebuff(MapleDisease.GM_DISABLE_SKILL, MobSkillFactory.getMobSkill(120, 1), true);
-        }
-        if (mapId == 677000005 && countMobOnMap(9400609) == 0) {
+        
+        if (mapId == 677000005 && countMobOnMap(9400609) == 0) 
+        {
             broadcastMessage(MaplePacketCreator.serverNotice(6, "Andras has appeared."));
             spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(9400609), new Point(389, 96));
         }

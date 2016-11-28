@@ -1,7 +1,7 @@
 package org.ascnet.leaftown.client;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,58 +9,28 @@ import java.util.List;
 import org.ascnet.leaftown.database.DatabaseConnection;
 import org.ascnet.leaftown.net.channel.ChannelServer;
 
-public class MapleFamilyCharacterInfo 
+public class MapleFamilyCharacterInfo implements Serializable
 {
-    private MapleFamily family;
-    private int characterId;
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MapleFamilyCharacterInfo.class);
+    
+	private static final long serialVersionUID = 2582617925553587955L;
+	private MapleFamily family;
+    private int characterId, characterLevel, characterJob, characterChannel;
+    private String characterName;
     private int totalJuniors = 0x02;
     private int reputation, totalReputation, todayReputation, senior, junior1, junior2;
     private final List<Integer> pedigree = new ArrayList<>();
     private int descendants = 0x00;
     private boolean online = false;
-    
-    public MapleFamilyCharacterInfo(MapleCharacter c) 
-    {
-    	try
-    	{
-    		PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT idFamily, currentReputation, totalReputation, todayEarnedReputation, seniorId, junior1, junior2 FROM characterFamilyInfo WHERE idCharacter = ?", ResultSet.CONCUR_UPDATABLE);
-            ps.setInt(0x01, c.getId());
-            
-            ResultSet rs = ps.executeQuery();
-            
-            if(rs.next())
-            {
-            	reputation = rs.getInt("currentReputation");
-            	totalReputation = rs.getInt("totalReputation");
-            	todayReputation = rs.getInt("todayEarnedReputation");
-            	senior = rs.getInt("seniorId");
-            	junior1 = rs.getInt("junior1");
-            	junior2 = rs.getInt("junior2");
-            	
-            	family = c.getClient().getChannelServer().getWorldInterface().getFamily(rs.getInt("idFamily"));
-            }
-            else
-            {
-            	reputation = 0x00;
-            	totalReputation = 0x00;
-            	todayReputation = 0x00;
-            	senior = 0x00;
-            	junior1 = 0x00;
-            	junior2 = 0x00;
-            	
-            	family = new MapleFamily(-0x01);
-            }
-    	}
-    	catch(Exception e)
-    	{
-    		e.printStackTrace();	
-    	}
-    }
 
-    public MapleFamilyCharacterInfo(int _id, int _fid, int _sid, int _jr1, int _jr2, int _crep, int _trep, int _torep) 
+    public MapleFamilyCharacterInfo(int _id, int _level, int _job, int _channel, String _name, final MapleFamily family, int _sid, int _jr1, int _jr2, int _crep, int _trep, int _torep) 
     {
         characterId = _id;
-        family = _id > 0x00 ? new MapleFamily(_id) : null;
+        characterLevel = _level;
+        characterJob = _job;
+        characterName = _name;
+        characterChannel = _channel;
+        this.family = family;
         reputation = _crep;
         totalReputation = _trep;
         senior = _sid;
@@ -93,9 +63,24 @@ public class MapleFamilyCharacterInfo
 		return characterId;
 	}
 
-	public void setCharacterId(int characterId)
+	public int getCharacterLevel() 
 	{
-		this.characterId = characterId;
+		return characterLevel;
+	}
+
+	public int getCharacterJob() 
+	{
+		return characterJob;
+	}
+
+	public int getCharacterChannel()
+	{
+		return characterChannel;
+	}
+
+	public String getCharacterName() 
+	{
+		return characterName;
 	}
 
 	public int getTotalJuniors()
@@ -168,23 +153,26 @@ public class MapleFamilyCharacterInfo
 		this.junior2 = junior2;
 	}
 	
-	public void writeOnDB()
+	public void writeOnDB(Connection con) throws SQLException
 	{
+    	boolean ownConnection = false;
+    	
         try 
         {
-            final java.sql.Connection con = DatabaseConnection.getConnection();
-            
+    		if((ownConnection = (con == null || con.isClosed())))
+    			con = DatabaseConnection.getConnection();
+    		
             if(con.createStatement().executeQuery("SELECT idFamily from characterFamilyInfo WHERE idCharacter = " + characterId).next())
             {
                 try (java.sql.PreparedStatement ps = con.prepareStatement("UPDATE characterFamilyInfo SET idFamily = ?, seniorId = ?, junior1 = ?, junior2 = ?, currentReputation = ?, totalReputation = ? WHERE idCharacter = ?")) 
                 {
-                    ps.setInt(0x01, family.getId());
-                    ps.setInt(0x02, senior);
-                    ps.setInt(0x03, junior1);
-                    ps.setInt(0x04, junior2);
-                    ps.setInt(0x05, reputation);
-                    ps.setInt(0x06, totalReputation);
-                    ps.setInt(0x07, characterId);
+                    ps.setInt(0x000001, family.getId());
+                    ps.setInt(0x000002, senior);
+                    ps.setInt(0x000003, junior1);
+                    ps.setInt(0x000004, junior2);
+                    ps.setInt(0x000005, reputation);
+                    ps.setInt(0x000006, totalReputation);
+                    ps.setInt(0x000007, characterId);
                     ps.execute();
                 }	
             }
@@ -192,20 +180,35 @@ public class MapleFamilyCharacterInfo
             {
                 try (java.sql.PreparedStatement ps = con.prepareStatement("INSERT INTO characterFamilyInfo (idFamily, idCharacter, seniorId, junior1, junior2, currentReputation, totalReputation) VALUES (?,?,?,?,?,?,?) ")) 
                 {
-                    ps.setInt(0x01, family.getId());
-                    ps.setInt(0x02, characterId);
-                    ps.setInt(0x03, senior);
-                    ps.setInt(0x04, junior1);
-                    ps.setInt(0x05, junior2);
-                    ps.setInt(0x06, reputation);
-                    ps.setInt(0x07, totalReputation);
+                    ps.setInt(0x000001, family.getId());
+                    ps.setInt(0x000002, characterId);
+                    ps.setInt(0x000003, senior);
+                    ps.setInt(0x000004, junior1);
+                    ps.setInt(0x000005, junior2);
+                    ps.setInt(0x000006, reputation);
+                    ps.setInt(0x000007, totalReputation);
                     ps.execute();
                 }	
             }
         } 
         catch (SQLException se) 
         {
-            System.out.println("SQLException: " + se.getLocalizedMessage());
+            log.error("Não foi possível escrever as alterações do MapleFamilyCharacterInfo do Jogador " + characterId, se);
+            throw se;
+        }
+        finally
+        {
+        	if(ownConnection)
+        	{
+            	try
+            	{
+    				con.close();
+    			}
+            	catch (SQLException e) 
+            	{
+					log.warn("Não foi possível fechar a conexão", e);
+    			}	
+        	}
         }
 	}
 	
@@ -303,7 +306,6 @@ public class MapleFamilyCharacterInfo
         }
         return ret;
     }
-
 	
     public final List<Integer> getPedigree() 
     {

@@ -20,7 +20,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-function start(ms) {
-	ms.unlockUI();   	       
+function start(ms) 
+{
+	ms.unlockUI();	       
 	ms.mapEffect("maplemap/enter/10000");
 }

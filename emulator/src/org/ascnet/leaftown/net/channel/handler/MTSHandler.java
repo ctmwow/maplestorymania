@@ -123,14 +123,17 @@ public class MTSHandler extends AbstractMaplePacketHandler {
                     rs.close();
                     ps.close();
                     Timestamp endDate = new Timestamp(System.currentTimeMillis() + 7 * 86400000L);
-                    if (i.getType() == 2) {
+                    if (i.getType() == 2) 
+                    {
                         Item item = (Item) i;
                         if (item.getQuantity() < quantity)
                             quantity = item.getQuantity();
-                        if (quantity < 1) {
+                        if (quantity < 1) 
+                        {
                             c.getPlayer().dropMessage("An unkown error has occurred.");
                             return;
                         }
+                        
                         ps = con.prepareStatement("INSERT INTO mts_items (tab, type, itemid, quantity, seller, price, owner, flag, ExpireDate, sellername, sell_ends) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                         ps.setInt(1, 1);
                         ps.setInt(2, (int) type.getType());

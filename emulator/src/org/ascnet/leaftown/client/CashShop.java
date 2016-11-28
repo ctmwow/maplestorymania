@@ -138,7 +138,7 @@ public class CashShop
             if (item.getType() == 1)
             {
                 equip = (Equip) item;
-                isRing = equip.getRingId() > -1;
+                isRing = equip.getRingId() != null && equip.getRingId() > 0x00;
             }
             
             if ((item.getPetId() > -1 ? item.getPetId() : isRing ? equip.getRingId() : item.getCashId()) == cashId) 

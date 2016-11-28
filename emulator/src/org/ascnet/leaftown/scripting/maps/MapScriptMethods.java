@@ -30,6 +30,7 @@ package org.ascnet.leaftown.scripting.maps;
 import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.scripting.AbstractPlayerInteraction;
 import org.ascnet.leaftown.server.TimerManager;
+import org.ascnet.leaftown.server.maps.MapleMapUID;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 
 public class MapScriptMethods extends AbstractPlayerInteraction 
@@ -67,27 +68,27 @@ public class MapScriptMethods extends AbstractPlayerInteraction
     {
     	switch(getPlayer().getMapId())
     	{
-    		case 1020100:
+    		case MapleMapUID.WARRIOR_EXPERIENCE:
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/swordman/Scene" + getPlayer().getGender()));
     			break;
-    		case 1020200:
+    		case MapleMapUID.MAGICIAN_EXPERIENCE:
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/magician/Scene" + getPlayer().getGender()));
     			break;
-    		case 1020300:
+    		case MapleMapUID.BOWMAN_EXPERIENCE:
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/archer/Scene" + getPlayer().getGender()));
     			break;
-    		case 1020400:
+    		case MapleMapUID.THIEF_EXPERIENCE:
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/rogue/Scene" + getPlayer().getGender()));
     			break;
-    		case 1020500:
+    		case MapleMapUID.PIRATE_EXPERIENCE:
     			getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/pirate/Scene" + getPlayer().getGender()));
     			break;
     	}
     }
     
     public void goLith() 
-    {
-        lockUI();
+    { 
+    	lockUI();
         TimerManager.getInstance().schedule(new Runnable() 
         {
             @Override
@@ -96,12 +97,13 @@ public class MapScriptMethods extends AbstractPlayerInteraction
                 unlockUI();
                 warp(104000000);
             }
-        }, 5000);
+        }, 4800);
         getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/goLith/Scene" + getClient().getPlayer().getGender()));
     }
     
-    public void goAdventuregoAdventure()
+    public void goAdventure()
     {
-    	showIntro("Effect/Direction3.img/goAdventure/Scene" + (getClient().getPlayer().getGender() == 0 ? "0" : "1"));
+    	lockUI();
+		getClient().sendPacket(MaplePacketCreator.showIntro("Effect/Direction3.img/goAdventure/Scene" + getPlayer().getGender()));
     }
 }

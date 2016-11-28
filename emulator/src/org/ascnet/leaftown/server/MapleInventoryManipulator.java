@@ -27,6 +27,15 @@
 
 package org.ascnet.leaftown.server;
 
+import java.awt.Point;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ascnet.leaftown.client.Equip;
 import org.ascnet.leaftown.client.IItem;
 import org.ascnet.leaftown.client.InventoryException;
@@ -40,14 +49,6 @@ import org.ascnet.leaftown.client.MaplePet;
 import org.ascnet.leaftown.tools.FileTimeUtil;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.Pair;
-
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Matze
@@ -87,7 +88,7 @@ public class MapleInventoryManipulator
     public static void addById(MapleClient c, int itemId, short quantity, String logInfo, String owner, MaplePet pet, boolean gm) 
     {
         if (quantity < 0x00)
-            return;
+            return; 
         
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         MapleInventoryType type = ii.getInventoryType(itemId);
@@ -106,16 +107,19 @@ public class MapleInventoryManipulator
                     Iterator<IItem> i = existing.iterator();
                     while (quantity > 0x00) 
                     {
-                        if (i.hasNext()) {
+                        if (i.hasNext()) 
+                        {
                             Item eItem = (Item) i.next();
                             short oldQ = eItem.getQuantity();
-                            if (oldQ < slotMax && (eItem.getOwner().equals(owner) || owner == null) && eItem.getExpiration().compareTo(FileTimeUtil.getDefaultTimestamp()) == 0x00)
+                            if (oldQ < slotMax && (owner == null || eItem.isFromOwner(owner)) && eItem.getExpiration().compareTo(FileTimeUtil.getDefaultTimestamp()) == 0x00)
                             {
                                 short newQ = (short) Math.min(oldQ + quantity, slotMax);
                                 quantity -= newQ - oldQ;
                                 eItem.setQuantity(newQ);
+                                
                                 if (gm)
                                     eItem.setGMFlag();
+                                
                                 eItem.log("Added " + (newQ - oldQ) + " items to stack, new quantity is " + newQ + " (" + logInfo + " )", false);
                                 c.sendPacket(MaplePacketCreator.updateInventorySlot(type, eItem));
                             }
@@ -135,7 +139,9 @@ public class MapleInventoryManipulator
                         if (ii.isPet(itemId))
                             nItem.setPet(pet != null ? pet : MaplePet.createPet(c.getPlayer().getId(), itemId));
                         if (gm)
-                            nItem.setGMFlag();
+                            nItem.setGMFlag(); 
+                        if (nItem.getItemId() == 5000054) //SNAIL
+                        	nItem.setExpiration(new Timestamp(System.currentTimeMillis() + 18000000L));
                         
                         nItem.log("Created while adding by id. Quantity: " + newQ + " (" + logInfo + ")", false);
                         short newSlot = c.getPlayer().getInventory(type).addItem(nItem);
@@ -222,6 +228,7 @@ public class MapleInventoryManipulator
     public static List<Pair<Short, IItem>> addByItem(MapleClient c, IItem item, String logInfo, boolean pickUp)
     {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        
         List<Pair<Short, IItem>> items = new ArrayList<>(5);
         short quantity = item.getQuantity();
         if (quantity < 0)
@@ -245,7 +252,8 @@ public class MapleInventoryManipulator
             
             if (!ii.isThrowingStar(item.getItemId()) && !ii.isShootingBullet(item.getItemId()))
             {
-                if (!existing.isEmpty()) { // first update all existing slots to slotMax
+                if (!existing.isEmpty())// first update all existing slots to slotMax 
+                { 
                     Iterator<IItem> i = existing.iterator();
                     while (quantity > 0x00)
                     {
@@ -253,7 +261,7 @@ public class MapleInventoryManipulator
                         {
                             Item eItem = (Item) i.next();
                             short oldQ = eItem.getQuantity();
-                            if (oldQ < slotMax && item.getOwner().equals(eItem.getOwner()) && item.getExpiration().compareTo(eItem.getExpiration()) == 0x00)
+                            if (oldQ < slotMax && item.isFromOwner(eItem.getOwner()) && item.getExpiration().compareTo(eItem.getExpiration()) == 0x00)
                             {
                                 short newQ = (short) Math.min(oldQ + quantity, slotMax);
                                 quantity -= newQ - oldQ;
@@ -277,9 +285,10 @@ public class MapleInventoryManipulator
                     
                     if (ii.isPet(item.getItemId())) 
                         nItem.setPet(item.getPet() != null ? item.getPet() : MaplePet.createPet(c.getPlayer().getId(), item.getItemId()));
-                    
                     if (item.isByGM())
                         nItem.setGMFlag();
+                    if (nItem.getItemId() == 5000054) //SNAIL
+                    	nItem.setExpiration(new Timestamp(System.currentTimeMillis() + 18000000L));
                     
                     nItem.log("Created while adding from drop. Quantity: " + newQ + " (" + logInfo + " )", false);
                     short newSlot = c.getPlayer().getInventory(type).addItem(nItem);
@@ -357,7 +366,7 @@ public class MapleInventoryManipulator
                     for (IItem eItem : existing) 
                     {
                         short oldQ = eItem.getQuantity();
-                        if (oldQ < slotMax && owner.equals(eItem.getOwner()) && eItem.getExpiration().compareTo(FileTimeUtil.getDefaultTimestamp()) == 0x00) 
+                        if (oldQ < slotMax && eItem.isFromOwner(owner) && eItem.getExpiration().compareTo(FileTimeUtil.getDefaultTimestamp()) == 0x00) 
                         {
                             short newQ = (short) Math.min(oldQ + quantity, slotMax);
                             quantity -= newQ - oldQ;
@@ -515,7 +524,7 @@ public class MapleInventoryManipulator
             c.sendPacket(MaplePacketCreator.enableActions());
             return allItems;
         }
-        if (!type.equals(MapleInventoryType.EQUIP) && initialTarget != null && initialTarget.getItemId() == source.getItemId() && !ii.isThrowingStar(source.getItemId()) && !ii.isShootingBullet(source.getItemId()) && initialTarget.getOwner().equals(source.getOwner()) && initialTarget.getExpiration().compareTo(source.getExpiration()) == 0) {
+        if (!type.equals(MapleInventoryType.EQUIP) && initialTarget != null && initialTarget.getItemId() == source.getItemId() && !ii.isThrowingStar(source.getItemId()) && !ii.isShootingBullet(source.getItemId()) && initialTarget.isFromOwner(source.getOwner()) && initialTarget.getExpiration().compareTo(source.getExpiration()) == 0) {
             if (olddstQ + oldsrcQ > slotMax) {
                 allItems.add(new Pair<>((short) 1, source));
                 allItems.add(new Pair<>((short) 1, initialTarget));
@@ -936,7 +945,7 @@ public class MapleInventoryManipulator
                 }
                 if (newItemList.containsKey(item.getItemId())) {
                     final IItem nItem = newItemList.get(item.getItemId()).copy();
-                    if (nItem.getOwner().equals(item.getOwner()) && nItem.getExpiration().compareTo(item.getExpiration()) == 0) {
+                    if (nItem.isFromOwner(item.getOwner()) && nItem.getExpiration().compareTo(item.getExpiration()) == 0) {
                         nItem.setQuantity((short) (nItem.getQuantity() + item.getQuantity()));
                         newItemList.put(item.getItemId(), nItem);
                     }
@@ -959,7 +968,7 @@ public class MapleInventoryManipulator
                 final List<IItem> existing = c.getPlayer().getInventory(MapleInventoryType.getByType(type)).listById(itemId);
                 for (IItem eItem : existing) {
                     final short oldQ = eItem.getQuantity();
-                    if (oldQ < slotMax && eItem.getOwner().equals(item.getOwner()) && eItem.getExpiration().compareTo(item.getExpiration()) == 0) {
+                    if (oldQ < slotMax && eItem.isFromOwner(item.getOwner()) && eItem.getExpiration().compareTo(item.getExpiration()) == 0) {
                         quantity -= slotMax - oldQ;
                     }
                     if (quantity < 0)

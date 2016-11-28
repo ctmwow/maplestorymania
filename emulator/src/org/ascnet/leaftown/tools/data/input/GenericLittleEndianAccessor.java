@@ -39,7 +39,9 @@ import java.nio.charset.Charset;
  */
 public class GenericLittleEndianAccessor implements LittleEndianAccessor 
 {
-	private static final Charset UTF8 = Charset.forName("UTF-8");
+    @SuppressWarnings("unused")
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final Charset WINDOWS_1252 = Charset.forName("WINDOWS-1252");
     private final ByteInputStream bs;
 
     /**
@@ -69,7 +71,8 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      * @return The integer read.
      */
     @Override
-    public int readInt() {
+    public int readInt() 
+    {
         int byte1, byte2, byte3, byte4;
 
         byte1 = bs.readByte();
@@ -85,7 +88,8 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      * @return The short read.
      */
     @Override
-    public short readShort() {
+    public short readShort() 
+    {
         int byte1, byte2;
         byte1 = bs.readByte();
         byte2 = bs.readByte();
@@ -98,7 +102,8 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      * @return The character read.
      */
     @Override
-    public char readChar() {
+    public char readChar() 
+    {
         return (char) readShort();
     }
 
@@ -108,7 +113,8 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      * @return The long integer read.
      */
     @Override
-    public long readLong() {
+    public long readLong() 
+    {
         final long byte1 = bs.readByte();
         final long byte2 = bs.readByte();
         final long byte3 = bs.readByte();
@@ -127,7 +133,8 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      * @return The float-type integer read.
      */
     @Override
-    public float readFloat() {
+    public float readFloat() 
+    {
         return Float.intBitsToFloat(readInt());
     }
 
@@ -137,7 +144,8 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      * @return The double-type integer read.
      */
     @Override
-    public double readDouble() {
+    public double readDouble() 
+    {
         return Double.longBitsToDouble(readLong());
     }
 
@@ -149,12 +157,7 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      */
     public final String readAsciiString(int n) 
     {
-    	final byte ret[] = new byte[n];
-    	
-    	for (int x = 0x00; x < n; x++) 
-    		ret[x] = (byte) readByte();
-    	
-    	return new String(ret, UTF8);
+    	return new String(read(n), WINDOWS_1252);
     }
 
     /**
@@ -162,10 +165,12 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      *
      * @return The string read.
      */
-    public final String readNullTerminatedAsciiString() {
+    public final String readNullTerminatedAsciiString() 
+    {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte b = 1;
-        while (b != 0) {
+        while (b != 0) 
+        {
             b = readByte();
             baos.write(b);
         }
@@ -184,7 +189,8 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      *
      * @see org.ascnet.leaftown.tools.data.input.ByteInputStream#getBytesRead()
      */
-    public long getBytesRead() {
+    public long getBytesRead() 
+    {
         return bs.getBytesRead();
     }
 
@@ -196,13 +202,11 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      * @return The string read.
      */
     @Override
-    public String readMapleAsciiString() {
+    public String readMapleAsciiString() 
+    {
         return readAsciiString(readShort());
     }
-    @Override
-    public byte[] readMapleAsciiStringByte() {
-        return read(readShort());
-    }
+    
     /**
      * Reads <code>num</code> bytes off the stream.
      *
@@ -210,11 +214,11 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      * @return An array of bytes with the length of <code>num</code>
      */
     @Override
-    public byte[] read(int num) {
+    public byte[] read(int num) 
+    {
         final byte[] ret = new byte[num];
-        for (int x = 0; x < num; x++) {
+        for (int x = 0; x < num; x++) 
             ret[x] = readByte();
-        }
         return ret;
     }
 
@@ -224,17 +228,18 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      * @param num Number of bytes to skip.
      */
     @Override
-    public void skip(int num) {
-        for (int x = 0; x < num; x++) {
+    public void skip(int num) 
+    {
+        for (int x = 0; x < num; x++) 
             readByte();
-        }
     }
 
     /**
      * @see org.ascnet.leaftown.tools.data.input.ByteInputStream#available
      */
     @Override
-    public long available() {
+    public long available() 
+    {
         return bs.available();
     }
 
@@ -242,7 +247,8 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor
      * @see java.lang.Object#toString
      */
     @Override
-    public String toString() {
+    public String toString() 
+    {
         return bs.toString();
     }
 }

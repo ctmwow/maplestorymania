@@ -36,12 +36,16 @@ import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 public class CheckCharNameHandler extends AbstractMaplePacketHandler {
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        if (c.getTotalChars() >= 6) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
+    {
+        if (c.getTotalChars() >= 6) 
+        {
             c.disconnect();
             return;
         }
+        
         final String name = slea.readMapleAsciiString();
+
         c.sendPacket(MaplePacketCreator.charNameResponse(name, !MapleCharacterUtil.canCreateChar(name, c.getWorld())));
     }
 }

@@ -93,65 +93,93 @@ public class PlayerInteractionHandler extends AbstractMaplePacketHandler {
         }
     }
 
-    public void handlePacket(SeekableLittleEndianAccessor slea, final MapleClient c) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, final MapleClient c) 
+    {
         c.getPlayer().resetAfkTimer();
-        byte mode = slea.readByte();
-        if (mode == Action.CREATE.getCode()) {
+        
+        final byte mode = slea.readByte();
+        
+        if (mode == Action.CREATE.getCode()) 
+        {
             byte createType = slea.readByte();
-            if (createType == 3) { // trade
-                if (!c.getPlayer().isAlive()) {
-                    c.getPlayer().dropMessage(1, "You must be alive in order to start a trade!");
+            if (createType == 3)// trade
+            { 
+                if (!c.getPlayer().isAlive()) 
+                {
+                    c.getPlayer().dropMessage(1, "Você precisa estar vivo para iniciar uma troca!");
                     return;
                 }
                 MapleTrade.startTrade(c.getPlayer());
-            } else if (createType == 4 || createType == 5) { // shop
-                if (c.getChannelServer().isShutdown()) {
-                    c.getPlayer().dropMessage(1, "You cannot open a shop while the server is shutting down.");
+            }
+            else if (createType == 4 || createType == 5) // shop 
+            { 
+                if (c.getChannelServer().isShutdown()) 
+                {
+                    c.getPlayer().dropMessage(1, "Você não pode iniciar uma loja enquanto o servidor está sendo desligado.");
                     return;
                 }
-                if (!c.getPlayer().getMap().getMapObjectsInRange(c.getPlayer().getPosition(), 23000, Arrays.asList(MapleMapObjectType.HIRED_MERCHANT, MapleMapObjectType.SHOP)).isEmpty() || !c.getPlayer().getMap().allowShops()) {
-                    c.getPlayer().dropMessage(1, "You cannot open a shop here.");
+                
+                if (!c.getPlayer().getMap().getMapObjectsInRange(c.getPlayer().getPosition(), 23000, Arrays.asList(MapleMapObjectType.HIRED_MERCHANT, MapleMapObjectType.SHOP)).isEmpty() || !c.getPlayer().getMap().allowShops()) 
+                {
+                    c.getPlayer().dropMessage(1, "Você não pode abrir uma loja aqui.");
                     return;
                 }
-                if (c.getPlayer().hasMerchant()) {
-                    c.getPlayer().dropMessage(1, "You already have a shop or merchant open.");
+                
+                if (c.getPlayer().hasMerchant()) 
+                {
+                    c.getPlayer().dropMessage(1, "Você já tem uma loja aberta.");
                     return;
                 }
-                if (createType == 5 && !c.getPlayer().passedMerchTest()) {
-                    c.getPlayer().dropMessage(1, "You did not pass the merchant test. Stupid packet editor.");
+                
+                if (createType == 5 && !c.getPlayer().passedMerchTest()) 
+                {
+                    c.getPlayer().dropMessage(1, "Não foi possível abrir a loja. Código de erro #0000001");
                     return;
                 }
-                if (!c.getPlayer().getMap().getMapObjectsInRange(c.getPlayer().getPosition(), 19500, Arrays.asList(MapleMapObjectType.SHOP, MapleMapObjectType.HIRED_MERCHANT)).isEmpty()) {
-                    c.getPlayer().dropMessage(1, "You may not establish a store here.");
+                
+                if (!c.getPlayer().getMap().getMapObjectsInRange(c.getPlayer().getPosition(), 19500, Arrays.asList(MapleMapObjectType.SHOP, MapleMapObjectType.HIRED_MERCHANT)).isEmpty()) 
+                {
+                    c.getPlayer().dropMessage(1, "Você não pode abrir uma loja aqui.");
                     return;
                 }
-                String desc = slea.readMapleAsciiString();
-                slea.skip(3);
-                int itemId = slea.readInt();
-                if (!c.getPlayer().haveItem(itemId, 1, false, false)) {
+                
+                final String desc = slea.readMapleAsciiString();
+                slea.skip(0x00000003);
+                
+                final int itemId = slea.readInt();
+                
+                if (!c.getPlayer().haveItem(itemId, 1, false, false)) 
+                {
                     c.sendPacket(MaplePacketCreator.enableActions());
-                    c.getPlayer().dropMessage(1, "You do not have the permit.");
+                    c.getPlayer().dropMessage(1, "Você não tem permissão para executar essa ação. Código de erro #00000002");
                     return;
                 }
-                IMaplePlayerShop shop;
-                if (createType == 4) {
+                
+                final IMaplePlayerShop shop;
+                
+                if (createType == 4)
                     shop = new MaplePlayerShop(c.getPlayer(), itemId, desc);
-                } else {
+                else
                     shop = new HiredMerchant(c.getPlayer(), itemId, desc);
-                }
+                
                 c.getPlayer().setPlayerShop(shop);
+                
                 if (createType == 5)
                     c.sendPacket(MaplePacketCreator.getMaplePlayerStore(c.getPlayer(), true));
-                else {
-                    Runnable r = new Runnable() {
-
-                        public void run() {
+                else 
+                {
+                    final Runnable r = new Runnable() 
+                    {
+                        public void run() 
+                        {
                             c.getPlayer().getClient().sendPacket(org.ascnet.leaftown.tools.MaplePacketCreator.getMaplePlayerStore(c.getPlayer(), true));
                         }
                     };
-                    Runnable fr = new Runnable() {
-
-                        public void run() {
+                    
+                    final Runnable fr = new Runnable() 
+                    {
+                        public void run() 
+                        {
                             c.getPlayer().setHasMerchant(false);
                             c.getPlayer().setPlayerShop(null);
                         }
@@ -160,44 +188,63 @@ public class PlayerInteractionHandler extends AbstractMaplePacketHandler {
                 }
                 c.getPlayer().setPassMerchTest(false);
             }
-        } else if (mode == Action.INVITE.getCode()) {
-            int otherPlayer = slea.readInt();
+        }
+        else if (mode == Action.INVITE.getCode()) // invite trade 
+        {
+            final int otherPlayer = slea.readInt();
             MapleCharacter otherChar = c.getPlayer().getMap().getCharacterById(otherPlayer);
             MapleTrade.inviteTrade(c.getPlayer(), otherChar);
-        } else if (mode == Action.DECLINE.getCode()) {
+        }
+        else if (mode == Action.DECLINE.getCode()) // decline trade
+        {
             MapleTrade.declineTrade(c.getPlayer());
-        } else if (mode == Action.VISIT.getCode()) { // we will ignore the trade oids for now
+        } 
+        else if (mode == Action.VISIT.getCode())// we will ignore the trade oids for now 
+        { 
             if (c.hasPacketLog())
                 c.writePacketLog("PlayerInteraction: VISIT - IsTradeNull? " + (c.getPlayer().getTrade() == null));
-            if (c.getPlayer().getTrade() != null && c.getPlayer().getTrade().getPartner() != null) {
+            if (c.getPlayer().getTrade() != null && c.getPlayer().getTrade().getPartner() != null) 
+            {
                 if (c.hasPacketLog())
                     c.writePacketLog(" Trade not null - partner is " + c.getPlayer().getTrade().getPartner().getChr().getName() + " with " + c.getPlayer().getTrade().getMeso() + " mesos and " + c.getPlayer().getTrade().getPartner().getMeso() + " mesos on partner\r\n");
                 MapleTrade.visitTrade(c.getPlayer(), c.getPlayer().getTrade().getPartner().getChr());
-            } else {
+            }
+            else 
+            {
                 int oid = slea.readInt();
                 MapleMapObject ob = c.getPlayer().getMap().getMapObject(oid);
-                if (ob instanceof IMaplePlayerShop && c.getPlayer().getPlayerShop() == null) {
+                
+                if (ob instanceof IMaplePlayerShop && c.getPlayer().getPlayerShop() == null) 
+                {
                     IMaplePlayerShop ips = (IMaplePlayerShop) ob;
-                    if (ips.getShopType() == 1) {
+                    if (ips.getShopType() == 1) 
+                    {
                         HiredMerchant merchant = (HiredMerchant) ips;
-                        if (merchant.isOwner(c.getPlayer())) {
+                        if (merchant.isOwner(c.getPlayer())) 
+                        {
                             merchant.setOpen(false);
                             merchant.broadcastToVisitors(MaplePacketCreator.shopErrorMessage(0x0D, 1));
                             merchant.removeAllVisitors((byte) 16, (byte) 0);
                             c.getPlayer().setPlayerShop(ips);
                             c.sendPacket(MaplePacketCreator.getMaplePlayerStore(c.getPlayer(), false));
                             return;
-                        } else if (!merchant.isOpen()) {
+                        }
+                        else if (!merchant.isOpen()) 
+                        {
                             c.getPlayer().dropMessage(1, "This shop is in maintenance, please come by later.");
                             return;
                         }
-                    } else if (ips.getShopType() == 2) {
-                        if (((MaplePlayerShop) ips).isBanned(c.getPlayer().getName())) {
+                    } 
+                    else if (ips.getShopType() == 2) 
+                    {
+                        if (((MaplePlayerShop) ips).isBanned(c.getPlayer().getName())) 
+                        {
                             c.getPlayer().dropMessage(1, "You have been banned from this store.");
                             return;
                         }
                     }
-                    if (ips.getFreeSlot() == -1) {
+                    if (ips.getFreeSlot() == -1) 
+                    {
                         c.getPlayer().dropMessage(1, "This shop has reached it's maximum capacity, please come by later.");
                         return;
                     }
@@ -206,21 +253,29 @@ public class PlayerInteractionHandler extends AbstractMaplePacketHandler {
                     c.sendPacket(MaplePacketCreator.getMaplePlayerStore(c.getPlayer(), false));
                 }
             }
-        } else if (mode == Action.CHAT.getCode()) { // chat lol
-            if (c.getPlayer().getTrade() != null) {
+        } 
+        else if (mode == Action.CHAT.getCode())// chat lol 
+        { 
+            if (c.getPlayer().getTrade() != null) 
+            {
                 c.getPlayer().getTrade().chat(slea.readMapleAsciiString());
-            } else if (c.getPlayer().getPlayerShop() != null) {
+            }
+            else if (c.getPlayer().getPlayerShop() != null) 
+            {
                 IMaplePlayerShop ips = c.getPlayer().getPlayerShop();
                 String message = slea.readMapleAsciiString();
                 CommandProcessor.getInstance().processCommand(c, message);
                 ips.broadcastToVisitors(MaplePacketCreator.shopChat(c.getPlayer().getName() + " : " + message, ips.isOwner(c.getPlayer()) ? 0 : ips.getVisitorSlot(c.getPlayer()) + 1));
             }
-        } else if (mode == Action.EXIT.getCode()) {
+        }
+        else if (mode == Action.EXIT.getCode()) 
+        {
             if (c.hasPacketLog())
                 c.writePacketLog("PlayerInteraction: EXIT - IsTradeNull? " + (c.getPlayer().getTrade() == null));
-            if (c.getPlayer().getTrade() != null) {
+            if (c.getPlayer().getTrade() != null) 
                 MapleTrade.cancelTrade(c.getPlayer());
-            } else {
+            else 
+            {
                 IMaplePlayerShop ips = c.getPlayer().getPlayerShop();
                 if (ips != null) {
                     c.getPlayer().setPlayerShop(null);

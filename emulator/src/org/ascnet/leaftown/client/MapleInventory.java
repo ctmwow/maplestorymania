@@ -125,7 +125,7 @@ public class MapleInventory implements Iterable<IItem>, InventoryContainer
             inventory.put(dSlot, source);
             inventory.remove(sSlot);
         }
-        else if (target.getItemId() == source.getItemId() && !ii.isThrowingStar(source.getItemId()) && !ii.isShootingBullet(source.getItemId()) && source.getOwner().equals(target.getOwner()) && source.getExpiration().compareTo(target.getExpiration()) == 0x00) 
+        else if (target.getItemId() == source.getItemId() && !ii.isThrowingStar(source.getItemId()) && !ii.isShootingBullet(source.getItemId()) && source.isFromOwner(target.getOwner()) && source.getExpiration().compareTo(target.getExpiration()) == 0x00) 
         {
             if (type.getType() == MapleInventoryType.EQUIP.getType())
                 swap(target, source);
@@ -251,7 +251,7 @@ public class MapleInventory implements Iterable<IItem>, InventoryContainer
             if (item.getType() == MapleInventoryType.EQUIP.getType()) 
             {
                 equip = (Equip) item;
-                isRing = equip.getRingId() > -1;
+                isRing = equip.getRingId() != null && equip.getRingId() > 0x00;
             }
             if ((item.getPetId() > -1 ? item.getPetId() : isRing ? equip.getRingId() : item.getCashId()) == cashId)
                  return item;

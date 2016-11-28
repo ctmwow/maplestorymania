@@ -65,7 +65,7 @@ function action(mode, type, selection){
             if (cm.getJobId() % 10 == 0) {
                 // cm.gainItem(4031058, -1);
                 cm.changeJobById(cm.getJobId() + 1);
-                // cm.getPlayer().removePartyQuestItem("JBQ");
+                // cm.getPlayer().removePartQuestItem("JBQ");
             }
             //Need thieves text.
 			cm.dispose();
@@ -79,15 +79,15 @@ function action(mode, type, selection){
         else if (status == 1){
             if (cm.haveItem(4031057)){
                 cm.gainItem(4031057, -1);
-                cm.getPlayer().setPartyQuestItemObtained("JBQ");
+                cm.getPlayer().setPartQuestItemObtained("JBQ");
             }
             cm.sendNextPrev("Here's the 2nd half of the test. This test will determine whether you are smart enough to take the next step towards greatness. There is a dark, snow-covered area called the Holy Ground at the snowfield in Ossyria, where even the monsters can't reach. On the center of the area lies a huge stone called the Holy Stone. You'll need to offer a special item as the sacrifice, then the Holy Stone will test your wisdom right there on the spot.");
         } else if (status == 2)
             cm.sendNextPrev("You'll need to answer each and every question given to you with honesty and conviction. If you correctly answer all the questions, then the Holy Stone will formally accept you and hand you #b#t4031058##k. Bring back the necklace, and I will help you to the next step forward. Good luck.");
-    } else if (cm.getPlayer().gotPartyQuestItem("JB3") && selection == 0){
+    } else if (cm.getPlayer().gotPartQuestItem("JB3") && selection == 0){
         cm.sendNext("Go, talk with #b#p1052001##k and bring me #b#t4031057##k.");
         cm.dispose();
-    } else if (cm.getPlayer().gotPartyQuestItem("JBQ") && selection == 0){
+    } else if (cm.getPlayer().gotPartQuestItem("JBQ") && selection == 0){
         cm.sendNext("Go, talk with #b#p2030006##k and bring me #b#t4031058##k.");
         cm.dispose();
     } else {
@@ -98,7 +98,7 @@ function action(mode, type, selection){
                 if (status == 0)
                     cm.sendYesNo("Welcome. I'm #b#p2020011##k, the chief of all thieves, ready to share my street knowledge and hard knock life to those willing to listen. You seem ready to make the leap forward, the one ready to take on the challenges of the 3rd job advancement. Too many thieves have come and gone, unable to meet the standards of achieving the 3rd job advancement. What about you? Are you ready to be tested and make the 3th job advancemente?");
                 else if (status == 1){
-                    cm.getPlayer().setPartyQuestItemObtained("JB3");
+                    cm.getPlayer().setPartQuestItemObtained("JB3");
                     cm.sendNext("Good. You will be tested on two important aspects of the thief: strength and wisdom. I'll now explain to you the physical half of the test. Remember #b#p1052001##k from Kerning City? Go see him, and he'll give you the details on the first half of the test. Please complete the mission, and get #b#t4031057##k from #p1052001#.");
                 } else if (status == 2)
                     cm.sendNextPrev("The mental half of the test can only start after you pass the physical part of the test. #b#t4031057##k will be the proof that you have indeed passed the test. I'll let #b#p1052001##k in advance that you're making your way there, so get ready. It won't be easy, but I have the utmost faith in you. Good luck.");
@@ -106,7 +106,7 @@ function action(mode, type, selection){
         } else {
             if (cm.getPlayer().getLevel() >= 50){
             	cm.sendNext("Ok, go.");
-                cm.getPlayer().setPartyQuestItemObtained("z");
+                cm.getPlayer().setPartQuestItemObtained("z");
             }else
                 cm.sendNext("You're weak.");
             cm.dispose();

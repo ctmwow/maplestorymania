@@ -317,7 +317,7 @@ public class AbstractPlayerInteraction
             
             if (!MapleInventoryManipulator.checkSpace(player.getClient(), id, quantity, "")) 
             {
-                c.sendPacket(MaplePacketCreator.serverNotice(0x01, "Your inventory is full. Please remove an item from your " + type.name() + " inventory."));
+                c.sendPacket(MaplePacketCreator.serverNotice(0x01, "O seu inventário está cheio. Por favor, remova um item do seu " + type.name() + " inventory."));
                 return;
             }
             
@@ -786,7 +786,7 @@ public class AbstractPlayerInteraction
         c.sendPacket(MaplePacketCreator.hideUI(true));
         c.sendPacket(MaplePacketCreator.lockWindows(true));
     }
-    
+     
     public void unlockUI() 
     {
         c.sendPacket(MaplePacketCreator.hideUI(false)); 
@@ -808,7 +808,7 @@ public class AbstractPlayerInteraction
         c.sendPacket(MaplePacketCreator.enableTutor(false));
     }
     
-    public void displayGuide(int num) 
+    public void displayGuide(final int num) 
     {
         c.sendPacket(MaplePacketCreator.showInfo("UI/tutorial.img/" + num));
     }
@@ -820,11 +820,41 @@ public class AbstractPlayerInteraction
 
     public void guideHint(int hint) 
     { 
-        c.sendPacket(MaplePacketCreator.showTutorActions((byte) 0x01, null, hint, 0x1B58));
+        c.sendPacket(MaplePacketCreator.showTutorActions((byte) 0x01, null, hint, 0x00001B58));
     }
     
     public void showInfoText(String msg) 
     {
         c.sendPacket(MaplePacketCreator.playerMessage(msg));
+    }
+    
+    public final void openNpc(final int npc) 
+    {
+        openNpc(c, npc);
+    }
+
+    public final void openNpc(final String filename) 
+    {
+        openNpc(c, filename);
+    }
+
+    public final void openNpc(final int npc, final String filename) 
+    {
+        openNpc(c, npc, filename);
+    }
+
+    public final void openNpc(final MapleClient client, final int npc) 
+    {
+        openNpc(client, npc, null);
+    }
+
+    public final void openNpc(final MapleClient client, final String filename) 
+    {
+        openNpc(client, 0x00000000, filename);
+    }
+
+    public final void openNpc(final MapleClient client, final int npc, final String filename) 
+    {
+        NPCScriptManager.getInstance().start(client, npc, filename);
     }
 }

@@ -240,6 +240,10 @@ public class DebugCommands implements Command {
                 c.getPlayer().setComboCounter(Short.parseShort(splitted[1]));
                 c.sendPacket(MaplePacketCreator.showAranComboCounter(player.getComboCounter()));
                 break;
+            case "!openui":
+                c.sendPacket(MaplePacketCreator.sendOpenUI((byte) Integer.parseInt(splitted[0x001])));
+                break;
+            	
         }
     }
 
@@ -269,7 +273,8 @@ public class DebugCommands implements Command {
                 new CommandDefinition("questdebug", "", "", 4),
                 new CommandDefinition("energycharge", "", "", 4),
                 new CommandDefinition("packetlog", "<charname> <true/false>", "", 4),
-                new CommandDefinition("combo", "", "", 4)
+                new CommandDefinition("combo", "", "", 4),
+                new CommandDefinition("openui", "", "", 4)
         };
     }
 }

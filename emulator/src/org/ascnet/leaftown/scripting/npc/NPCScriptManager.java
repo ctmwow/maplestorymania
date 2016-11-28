@@ -1,5 +1,5 @@
 /*
- * This file is part of AscNet Leaftown.
+t * This file is part of AscNet Leaftown.
  * Copyright (C) 2014 Ascension Network
  *
  * AscNet Leaftown is a fork of the OdinMS MapleStory Server.
@@ -30,6 +30,7 @@ package org.ascnet.leaftown.scripting.npc;
 import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.net.world.MaplePartyCharacter;
 import org.ascnet.leaftown.scripting.AbstractScriptManager;
+import org.ascnet.leaftown.tools.MaplePacketCreator;
 
 import javax.script.Invocable;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -56,6 +57,7 @@ public class NPCScriptManager extends AbstractScriptManager
         try 
         {
             final NPCConversationManager cm = new NPCConversationManager(c, npc);
+            
             if (cms.containsKey(c)) 
                 return;
             
@@ -65,6 +67,8 @@ public class NPCScriptManager extends AbstractScriptManager
             
             if (iv == null || NPCScriptManager.getInstance() == null) 
             {
+            	MaplePacketCreator.boxMessage("O NPC ainda não está disponível. Por favor, contate os Administradores.");
+            	log.info("Não foi encontrado o arquivo de script para o NPC " + npc);
                 cm.dispose();
                 return;
             }
@@ -72,18 +76,20 @@ public class NPCScriptManager extends AbstractScriptManager
             scripts.put(c, iv);
             iv.invokeFunction("start");
         }
-        catch (UndeclaredThrowableException e) 
-        {
-            dispose(c);
-            cms.remove(c);
-        } 
-        catch (Exception e) 
-        {
-            log.error("Error executing NPC script in start: " + npc);
-            e.printStackTrace();
-            dispose(c);
-            cms.remove(c);
-        }
+	    catch (UndeclaredThrowableException e) 
+	    {
+	    	c.sendPacket(MaplePacketCreator.boxMessage("Ocorreu um erro na execução desse NPC. Por favor, contate os Administradores."));
+	    	log.error("Error executing NPC script in start: " + npc, e);
+	        dispose(c);
+	        cms.remove(c);
+	    } 
+	    catch (Exception e) 
+	    {
+	    	c.sendPacket(MaplePacketCreator.boxMessage("Ocorreu um erro na execução desse NPC. Por favor, contate os Administradores."));
+	        log.error("Error executing NPC script in start: " + npc, e);
+	        dispose(c);
+	        cms.remove(c);
+	    }
     }
 
     public void start(MapleClient c, int npc, String fname, String... params)
@@ -91,13 +97,17 @@ public class NPCScriptManager extends AbstractScriptManager
         try 
         {
             final NPCConversationManager cm = new NPCConversationManager(c, npc);
+            
             if (cms.containsKey(c)) 
                 return;
 
             cms.put(c, cm);
+            
             final Invocable iv = getInvocable("npc/" + fname + ".js", c);
             if (iv == null || NPCScriptManager.getInstance() == null) 
             {
+            	MaplePacketCreator.boxMessage("O NPC ainda não está disponível. Por favor, contate os Administradores.");
+            	log.info("Não foi encontrado o arquivo de script para o NPC " + npc);
                 cm.dispose();
                 return;
             }
@@ -110,12 +120,20 @@ public class NPCScriptManager extends AbstractScriptManager
             scripts.put(c, iv);
             iv.invokeFunction("start");
         } 
-        catch (Exception e) 
-        {
-            log.error("Error executing NPC script in start " + npc + " with filename " + fname + ". " + e.getMessage(), e);
-            dispose(c);
-            cms.remove(c);
-        }
+	    catch (UndeclaredThrowableException e) 
+	    {
+	    	c.sendPacket(MaplePacketCreator.boxMessage("Ocorreu um erro na execução desse NPC. Por favor, contate os Administradores."));
+	    	log.error("Error executing NPC script in start: " + npc, e);
+	        dispose(c);
+	        cms.remove(c);
+	    } 
+	    catch (Exception e) 
+	    {
+	    	c.sendPacket(MaplePacketCreator.boxMessage("Ocorreu um erro na execução desse NPC. Por favor, contate os Administradores."));
+	        log.error("Error executing NPC script in start: " + npc, e);
+	        dispose(c);
+	        cms.remove(c);
+	    }
     }
 
     public void start(String filename, MapleClient c, int npc, List<MaplePartyCharacter> chars) { // CPQ start
@@ -132,20 +150,30 @@ public class NPCScriptManager extends AbstractScriptManager
             
             if (iv == null || NPCScriptManager.getInstance() == null || npcsm == null) 
             {
+            	MaplePacketCreator.boxMessage("O NPC ainda não está disponível. Por favor, contate os Administradores.");
+            	log.info("Não foi encontrado o arquivo de script para o NPC " + npc + " com o FileName " + filename);
                 cm.dispose();
                 return;
             }
+            
             engine.put("cm", cm);
             scripts.put(c, iv);
             iv.invokeFunction("start", chars);
-        } 
-        catch (Exception e)
-        {
-            log.error("Error executing NPC script in start 2 " + filename + ". " + e.getMessage());
-            e.printStackTrace();
-            dispose(c);
-            cms.remove(c);
-        }
+	    }
+	    catch (UndeclaredThrowableException e) 
+	    {
+	    	c.sendPacket(MaplePacketCreator.boxMessage("Ocorreu um erro na execução desse NPC. Por favor, contate os Administradores."));
+	    	log.error("Error executing NPC script in start: " + npc, e);
+	        dispose(c);
+	        cms.remove(c);
+	    } 
+	    catch (Exception e) 
+	    {
+	    	c.sendPacket(MaplePacketCreator.boxMessage("Ocorreu um erro na execução desse NPC. Por favor, contate os Administradores."));
+	        log.error("Error executing NPC script in start: " + npc, e);
+	        dispose(c);
+	        cms.remove(c);
+	    }
     }
 
     public void action(MapleClient c, byte mode, byte type, int selection) 
@@ -162,6 +190,7 @@ public class NPCScriptManager extends AbstractScriptManager
                 if (c.getCM() != null && c.getCM().getNpc() != 9103001)
                     log.error("Error executing NPC script in action " + c.getCM().getNpc() + ". " + e.getMessage(), e);
                 
+    	    	c.sendPacket(MaplePacketCreator.boxMessage("Ocorreu um erro na execução desse NPC. Por favor, contate os Administradores."));
                 dispose(c);
             }
         }

@@ -29,9 +29,11 @@ package org.ascnet.leaftown.server.playerinteractions;
 
 import org.ascnet.leaftown.client.Equip;
 import org.ascnet.leaftown.client.IItem;
+import org.ascnet.leaftown.client.Item;
 import org.ascnet.leaftown.client.MapleCharacter;
 import org.ascnet.leaftown.database.DatabaseConnection;
 import org.ascnet.leaftown.net.MaplePacket;
+import org.ascnet.leaftown.server.MapleItemInformationProvider;
 import org.ascnet.leaftown.server.maps.AbstractMapleMapObject;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.Pair;
@@ -42,6 +44,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -306,19 +309,22 @@ public abstract class AbstractPlayerStore extends AbstractMapleMapObject impleme
     }
 
     @Override
-    public int getFreeSlot() {
+    public int getFreeSlot() 
+    {
         MapleCharacter chr = chr1.get();
-        if (chr == null) {
+        
+        if (chr == null) 
             return 1;
-        }
+        
         chr = chr2.get();
-        if (chr == null) {
+        
+        if (chr == null)
             return 2;
-        }
+        
         chr = chr3.get();
-        if (chr == null) {
+        
+        if (chr == null)
             return 3;
-        }
         return -1;
     }
 
@@ -333,30 +339,41 @@ public abstract class AbstractPlayerStore extends AbstractMapleMapObject impleme
     }
 
     @Override
-    public void makeAvailableAtFred() {
-        try {
+    public void makeAvailableAtFred() 
+    {
+        try 
+        {
             Connection con = DatabaseConnection.getConnection();
             PreparedStatement ps = con.prepareStatement("UPDATE hiredmerchant SET onSale = false WHERE id = ?");
-            for (MaplePlayerShopItem pItem : items) {
-                if (pItem.getId() != -1) {
+            for (MaplePlayerShopItem pItem : items) 
+            {
+                if (pItem.getId() != -1) 
+                {
                     ps.setInt(1, pItem.getId());
                     ps.executeUpdate();
                 }
             }
             ps.close();
             items.clear();
-        } catch (Exception e) {
+        } 
+        catch (Exception e) 
+        {
             System.err.println("Error making item available at Frederick!");
             e.printStackTrace();
         }
     }
 
-    public int saveItem(MaplePlayerShopItem pItem) throws SQLException {
+    public int saveItem(MaplePlayerShopItem pItem) throws SQLException 
+    {
         PreparedStatement ps;
         Connection con = DatabaseConnection.getConnection();
+        
         int setKeyId = -1;
-        if (pItem.getBundles() > 0) {
-            if (pItem.getItem().getType() == 1) {
+        
+        if (pItem.getBundles() > 0) 
+        {
+            if (pItem.getItem().getType() == 1) 
+            {
                 ps = con.prepareStatement("INSERT INTO hiredmerchant (ownerid, itemid, quantity, upgradeslots, level, str, dex, `int`, luk, hp, mp, watk, matk, wdef, mdef, acc, avoid, hands, speed, jump, hammer, flag, ExpireDate, owner, type, onSale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
                 Equip eq = (Equip) pItem.getItem();
                 ps.setInt(2, eq.getItemId());
@@ -384,7 +401,9 @@ public abstract class AbstractPlayerStore extends AbstractMapleMapObject impleme
                 ps.setString(24, eq.getOwner());
                 ps.setInt(25, 1);
                 ps.setBoolean(26, true);
-            } else {
+            }
+            else 
+            {
                 ps = con.prepareStatement("INSERT INTO hiredmerchant (ownerid, itemid, quantity, flag, ExpireDate, owner, type, onSale) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
                 IItem item = pItem.getItem();
                 ps.setInt(2, item.getItemId());
@@ -395,34 +414,39 @@ public abstract class AbstractPlayerStore extends AbstractMapleMapObject impleme
                 ps.setInt(7, 2);
                 ps.setBoolean(8, true);
             }
+            
             ps.setInt(1, ownerId);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) {
+            
+            if (rs.next())
                 setKeyId = rs.getInt(1);
-            }
             ps.close();
         }
         return setKeyId;
     }
 
     @Override
-    public void updateItem(MaplePlayerShopItem pItem) throws SQLException {
+    public void updateItem(MaplePlayerShopItem pItem) throws SQLException 
+    {
         PreparedStatement ps;
         Connection con = DatabaseConnection.getConnection();
-        if (pItem.getBundles() > 0) {
+        if (pItem.getBundles() > 0) 
+        {
             ps = con.prepareStatement("UPDATE hiredmerchant SET quantity = ? WHERE id = ?");
             ps.setInt(1, pItem.getItem().getQuantity() * pItem.getBundles());
             ps.setInt(2, pItem.getId());
             ps.executeUpdate();
             ps.close();
-        } else {
+        } 
+        else 
             deleteItem(pItem);
-        }
     }
 
-    public void deleteItem(MaplePlayerShopItem pItem) throws SQLException {
-        if (pItem.getId() != -1) {
+    public void deleteItem(MaplePlayerShopItem pItem) throws SQLException 
+    {
+        if (pItem.getId() != -1) 
+        {
             Connection con = DatabaseConnection.getConnection();
             PreparedStatement ps = con.prepareStatement("DELETE FROM hiredmerchant WHERE id = ?");
             ps.setInt(1, pItem.getId());

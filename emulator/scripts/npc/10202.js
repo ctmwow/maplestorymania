@@ -23,7 +23,7 @@ var status = -1;
 
 function start() 
 {
-    cm.sendNext("Warriors possess an enormous power with stamina to back it up, and they shine the brightest in melee combat situation. Regular attacks are powerful to begin with, and armed with complex skills, the job is perfect for explosive attacks.");
+    cm.sendNext("Guerreiros possuem um enorme poder com resistência para guardá-lo, e eles brilham em situação de combate corpo a corpo. ataques regulares são poderosos para começar, e armado com habilidades complexas, o trabalho é perfeito para ataques explosivos.");
 }
 
 function action(mode, type, selection) 
@@ -32,7 +32,7 @@ function action(mode, type, selection)
     if (mode != 1)
     {
         if(mode == 0)
-           cm.sendNext("If you wish to experience what it's like to be a Warrior, come see me again.");
+           cm.sendNext("Se você deseja experimentar o que é ser um guerreiro, venha me ver novamente.");
            
         cm.dispose();
         return;
@@ -40,7 +40,7 @@ function action(mode, type, selection)
     
     if (status == 0) 
     {
-        cm.sendYesNo("Would you like to experience what it's like to be a Warrior?");
+        cm.sendYesNo("Gostaria de experimentar o que é ser um guerreiro?");
     }
     else if (status == 1)
     {

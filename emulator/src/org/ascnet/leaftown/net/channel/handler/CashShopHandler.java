@@ -52,11 +52,12 @@ import java.util.List;
 
 /**
  * @author Acrylic (Terry Han)
+ * @author rSTK (Bug fixes and improvements)
  */
 public class CashShopHandler extends AbstractMaplePacketHandler
 {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CashShopHandler.class);
-    private final List<Integer> blockedItems = Arrays.asList(5000028, 5400000, 5510000, 5000029, 5000048);
+    private final List<Integer> blockedItems = Arrays.asList(5400000, 5510000, 5000029, 5000048);
 
     @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
@@ -391,9 +392,9 @@ public class CashShopHandler extends AbstractMaplePacketHandler
                 
                 if (item instanceof Equip) 
                 {
-                    final Equip equip = (Equip) item;
+                    final Equip equip = (Equip) item; 
                     
-                    if (equip.getRingId() >= 0x00) 
+                    if (equip.getRingId() != null && equip.getRingId() > 0x00) 
                     {
                         final MapleRing ring = MapleRing.loadFromDb(equip.getRingId());
                         

@@ -38,8 +38,8 @@ import java.util.List;
 /**
  * @author XoticStory
  */
-public interface IMaplePlayerShop {
-
+public interface IMaplePlayerShop 
+{
     public final byte HIRED_MERCHANT = 1;
     public final byte PLAYER_SHOP = 2;
 

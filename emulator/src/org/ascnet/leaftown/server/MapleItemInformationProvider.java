@@ -873,16 +873,20 @@ public class MapleItemInformationProvider {
         return getEquipById(equipId, -1);
     }
 
-    public IItem getEquipById(int equipId, int ringId) {
-        if (equipCache.containsKey(equipId) && ringId == -1) {
+    public IItem getEquipById(int equipId, int ringId) 
+    {
+        if (equipCache.containsKey(equipId) && ringId == -1) 
             return equipCache.get(equipId).copy();
-        }
+        
         Equip nEquip;
         nEquip = new Equip(equipId, (byte) 0, ringId);
         nEquip.setQuantity((short) 1);
         Map<String, Integer> stats = getEquipStats(equipId);
-        if (stats != null) {
-            for (Entry<String, Integer> stat : stats.entrySet()) {
+        
+        if (stats != null) 
+        {
+            for (Entry<String, Integer> stat : stats.entrySet()) 
+            {
                 if (stat.getKey().equals("STR"))
                     nEquip.setStr(stat.getValue().shortValue());
                 else if (stat.getKey().equals("DEX"))
@@ -919,30 +923,35 @@ public class MapleItemInformationProvider {
         return nEquip.copy();
     }
 
-    private short getRandStat(short defaultValue, int maxRange) {
-        if (defaultValue == 0) {
+    private short getRandStat(short defaultValue, int maxRange) 
+    {
+        if (defaultValue == 0)
             return 0;
-        }
+
         // vary no more than ceil of 10% of stat
         int lMaxRange = (int) Math.min(Math.ceil(defaultValue * 0.1), maxRange);
         return (short) (defaultValue - lMaxRange + Math.floor(Math.random() * (lMaxRange * 2 + 1)));
     }
 
-    private short getRandStatPositiveOnly(short defaultValue, int maxRange) {
-        if (defaultValue == 0) {
+    private short getRandStatPositiveOnly(short defaultValue, int maxRange) 
+    {
+        if (defaultValue == 0)
             return 0;
-        }
+        
         // vary no more than ceil of 10% of stat
         int lMaxRange = (int) Math.min(Math.ceil(defaultValue * 0.1), maxRange);
         return (short) (Math.random() * (defaultValue + lMaxRange - defaultValue + 1) + defaultValue);
     }
 
-    public Equip randomizeStats(Equip equip) {
+    public Equip randomizeStats(Equip equip) 
+    {
         return randomizeStats(equip, false);
     }
 
-    public Equip randomizeStats(Equip equip, boolean positiveOnly) {
-        if (!positiveOnly) {
+    public Equip randomizeStats(Equip equip, boolean positiveOnly) 
+    {
+        if (!positiveOnly) 
+        {
             equip.setStr(getRandStat(equip.getStr(), 5));
             equip.setDex(getRandStat(equip.getDex(), 5));
             equip.setInt(getRandStat(equip.getInt(), 5));
@@ -957,7 +966,9 @@ public class MapleItemInformationProvider {
             equip.setMdef(getRandStat(equip.getMdef(), 10));
             equip.setHp(getRandStat(equip.getHp(), 10));
             equip.setMp(getRandStat(equip.getMp(), 10));
-        } else {
+        }
+        else 
+        {
             equip.setStr(getRandStatPositiveOnly(equip.getStr(), 5));
             equip.setDex(getRandStatPositiveOnly(equip.getDex(), 5));
             equip.setInt(getRandStatPositiveOnly(equip.getInt(), 5));
@@ -1276,8 +1287,10 @@ public class MapleItemInformationProvider {
         return ret;
     }
 
-    public boolean isQuestItem(int itemId) {
-        if (isQuestItemCache.containsKey(itemId)) {
+    public boolean isQuestItem(int itemId) 
+    {
+        if (isQuestItemCache.containsKey(itemId)) 
+        {
             return isQuestItemCache.get(itemId);
         }
         MapleData data = getItemData(itemId);
@@ -1286,10 +1299,11 @@ public class MapleItemInformationProvider {
         return questItem;
     }
 
-    public int getAutoChangeMapId(String path) {
-        if (mapAutoChangeCache.containsKey(path)) {
+    public int getAutoChangeMapId(String path) 
+    {
+        if (mapAutoChangeCache.containsKey(path)) 
             return mapAutoChangeCache.get(path);
-        }
+
         String[] parts = path.split("/");
         MapleData root = effectData.getData(parts[1]).resolve(parts[2] + "/" + parts[3]);
         int mapId = DataUtil.toInt(root.resolve(root.getChildCount() - 1 + "/field"), -1);
@@ -1297,8 +1311,10 @@ public class MapleItemInformationProvider {
         return mapId;
     }
 
-    public boolean isMiniDungeonMap(int mapId) {
-        switch (mapId) {
+    public boolean isMiniDungeonMap(int mapId) 
+    {
+        switch (mapId) 
+        {
             case 100020000:
             case 105040304:
             case 105050100:
@@ -1309,29 +1325,34 @@ public class MapleItemInformationProvider {
         }
     }
 
-    public static class SummonEntry {
-
+    public static class SummonEntry 
+    {
         private final int chance, mobId;
 
-        public SummonEntry(int a, int b) {
+        public SummonEntry(int a, int b) 
+        {
             mobId = a;
             chance = b;
         }
 
-        public int getChance() {
+        public int getChance() 
+        {
             return chance;
         }
 
-        public int getMobId() {
+        public int getMobId() 
+        {
             return mobId;
         }
     }
 
-    public static class ItemLevelInfo {
+    public static class ItemLevelInfo 
+    {
         private final int exp, skill, skillLevel, prob;
         private final Map<String, Integer> upgrades;
 
-        public ItemLevelInfo(int exp, int skill, int skillLevel, int prob, Map<String, Integer> upgrades) {
+        public ItemLevelInfo(int exp, int skill, int skillLevel, int prob, Map<String, Integer> upgrades) 
+        {
             this.exp = exp;
             this.skill = skill;
             this.prob = prob;
@@ -1339,23 +1360,28 @@ public class MapleItemInformationProvider {
             this.upgrades = upgrades;
         }
 
-        public int getExp() {
+        public int getExp() 
+        {
             return exp;
         }
 
-        public int getSkill() {
+        public int getSkill() 
+        {
             return skill;
         }
 
-        public int getSkillLevel() {
+        public int getSkillLevel() 
+        {
             return skillLevel;
         }
 
-        public int getProbability() {
+        public int getProbability() 
+        {
             return prob;
         }
 
-        public Map<String, Integer> getUpgrades() {
+        public Map<String, Integer> getUpgrades() 
+        {
             return upgrades;
         }
     }

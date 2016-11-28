@@ -96,18 +96,25 @@ public class PortalScriptManager {
     }
 
     // rhino is thread safe so this should be fine without synchronisation
-    public boolean executePortalScript(MaplePortal portal, MapleClient c) {
+    public boolean executePortalScript(MaplePortal portal, MapleClient c) 
+    {
         final PortalScript script = getPortalScript(portal.getScriptName());
 
-        if (script != null) {
-            try {
+        if (script != null) 
+        {
+            try 
+            {
                 return script.enter(new PortalPlayerInteraction(c, portal));
-            } catch (Exception e) {
+            } 
+            catch (Exception e)
+            {
                 log.info("Error executing portal script: " + portal.getScriptName());
                 e.printStackTrace();
                 return false;
             }
-        } else {
+        }
+        else 
+        {
             //log.info("Unscripted portal script: " + portal.getScriptName());
             return false;
         }

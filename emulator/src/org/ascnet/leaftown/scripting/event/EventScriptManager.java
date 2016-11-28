@@ -27,6 +27,7 @@
 
 package org.ascnet.leaftown.scripting.event;
 
+import org.apache.log4j.Logger;
 import org.ascnet.leaftown.net.channel.ChannelServer;
 import org.ascnet.leaftown.scripting.AbstractScriptManager;
 
@@ -35,8 +36,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Matze
@@ -91,7 +90,7 @@ public class EventScriptManager extends AbstractScriptManager
             try 
             { 
             	if(((ScriptEngine) entry.iv) == null)
-            		Logger.getLogger(EventScriptManager.class.getName()).log(Level.SEVERE, "Error initializing script: " + entry.script + "\nReason: [Script file not found]", (Exception) null);
+            		Logger.getRootLogger().warn("Error initializing script: " + entry.script + "Reason: [Script file not found]");
             	else
             	{
                     ((ScriptEngine) entry.iv).put("em", entry.em);
@@ -100,11 +99,11 @@ public class EventScriptManager extends AbstractScriptManager
             } 
             catch (ScriptException ex) 
             {
-                Logger.getLogger(EventScriptManager.class.getName()).log(Level.SEVERE, "Error initializing script: " + entry.script, ex);
+            	Logger.getRootLogger().error("Error initializing Events Scripts", ex.getCause());
             }
             catch (NoSuchMethodException ex) 
             {
-                Logger.getLogger(EventScriptManager.class.getName()).log(Level.SEVERE, null, ex);
+            	Logger.getRootLogger().error("Error initializing Events Scripts", ex.getCause());
             }
         }
     }

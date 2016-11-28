@@ -3,7 +3,7 @@ package org.ascnet.leaftown.net.channel.handler;
 import java.rmi.RemoteException;
 
 import org.ascnet.leaftown.client.MapleClient;
-import org.ascnet.leaftown.client.MapleFamilyCharacterInfo;
+import org.ascnet.leaftown.client.MapleFamily;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
@@ -14,14 +14,15 @@ public final class OpenFamilyHandler extends AbstractMaplePacketHandler
     
     public final void handlePacket(final SeekableLittleEndianAccessor slea, final MapleClient c) 
     {
-    	try
+    	try 
     	{
-    		MapleFamilyCharacterInfo characterInfo = c.getChannelServer().getWorldInterface().getFamily(c.getPlayer().getMapleFamilyId()).getMFC(c.getPlayer().getId());
+    		MapleFamily characterFamily = c.getPlayer().getMapleFamily();
     		
-    		if(characterInfo == null)
-    			characterInfo = new MapleFamilyCharacterInfo(c.getPlayer());
-    		
-        	c.sendPacket(MaplePacketCreator.getFamilyInfo(characterInfo));	
+    		if(characterFamily != null)
+    		{
+    			characterFamily = c.getChannelServer().getWorldInterface().getFamily(characterFamily.getId());
+            	c.sendPacket(MaplePacketCreator.getFamilyInfo(characterFamily.getMFC(c.getPlayer().getId())));
+    		}
     	}
     	catch(RemoteException rme)
     	{

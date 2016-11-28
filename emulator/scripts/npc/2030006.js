@@ -26,7 +26,7 @@ ans = [4, 1, 3, 1, 3];
 rand = parseInt(Math.random() * quest.length);
 
 function start() {
-    if (cm.getPlayer().gotPartyQuestItem("JBQ") && !cm.haveItem(4031058))
+    if (cm.getPlayer().gotPartQuestItem("JBQ") && !cm.haveItem(4031058))
         if (cm.haveItem(4005004)) {
             cm.sendNext("Alright... I'll be testing out your wisdom here. Answer all the questions correctly, and you will pass the test BUT, if you even lie to me once, then you'll have to start over again ok, here we go.");
             return;

@@ -29,28 +29,31 @@ package org.ascnet.leaftown.client;
 
 import java.util.LinkedList;
 
-public class Equip extends Item implements IEquip {
-
+public class Equip extends Item implements IEquip 
+{
     private byte upgradeSlots;
     private byte level;
     private short str, dex, _int, luk, hp, mp, watk, matk, wdef, mdef, acc, avoid, hands, speed, jump;
     private int hammer;
-    private int ringid;
+    private Integer ringid;
     private int sn;
     private int uniqueid;
 
-    public Equip(int id, short position) {
+    public Equip(int id, short position) 
+    {
         super(id, position, (short) 1);
-        ringid = -1;
+        ringid = null;
     }
 
-    public Equip(int id, short position, int ringid) {
+    public Equip(int id, short position, Integer ringid) 
+    {
         super(id, position, (short) 1);
         this.ringid = ringid;
     }
 
     @Override
-    public IItem copy() {
+    public IItem copy() 
+    {
         Equip ret = new Equip(getItemId(), getPosition(), ringid);
         ret.str = str;
         ret.dex = dex;
@@ -82,206 +85,250 @@ public class Equip extends Item implements IEquip {
     }
 
     @Override
-    public byte getType() {
+    public byte getType() 
+    {
         return IItem.EQUIP;
     }
 
     @Override
-    public byte getUpgradeSlots() {
+    public byte getUpgradeSlots() 
+    {
         return upgradeSlots;
     }
 
     @Override
-    public int getRingId() {
+    public Integer getRingId() 
+    {
         return ringid;
     }
 
     @Override
-    public short getStr() {
+    public short getStr() 
+    {
         return str;
     }
 
     @Override
-    public short getDex() {
+    public short getDex() 
+    {
         return dex;
     }
 
     @Override
-    public short getInt() {
+    public short getInt() 
+    {
         return _int;
     }
 
     @Override
-    public short getLuk() {
+    public short getLuk() 
+    {
         return luk;
     }
 
     @Override
-    public short getHp() {
+    public short getHp() 
+    {
         return hp;
     }
 
     @Override
-    public short getMp() {
+    public short getMp() 
+    {
         return mp;
     }
 
     @Override
-    public short getWatk() {
+    public short getWatk() 
+    {
         return watk;
     }
 
     @Override
-    public short getMatk() {
+    public short getMatk() 
+    {
         return matk;
     }
 
     @Override
-    public short getWdef() {
+    public short getWdef() 
+    {
         return wdef;
     }
 
     @Override
-    public short getMdef() {
+    public short getMdef() 
+    {
         return mdef;
     }
 
     @Override
-    public short getAcc() {
+    public short getAcc() 
+    {
         return acc;
     }
 
     @Override
-    public short getAvoid() {
+    public short getAvoid() 
+    {
         return avoid;
     }
 
     @Override
-    public short getHands() {
+    public short getHands() 
+    {
         return hands;
     }
 
     @Override
-    public short getSpeed() {
+    public short getSpeed() 
+    {
         return speed;
     }
 
     @Override
-    public short getJump() {
+    public short getJump() 
+    {
         return jump;
     }
 
-    public void setStr(short str) {
+    public void setStr(short str) 
+    {
         this.str = str > 0 ? str : 0;
     }
 
-    public void setDex(short dex) {
+    public void setDex(short dex) 
+    {
         this.dex = dex > 0 ? dex : 0;
     }
 
-    public void setInt(short _int) {
+    public void setInt(short _int) 
+    {
         this._int = _int > 0 ? _int : 0;
     }
 
-    public void setLuk(short luk) {
+    public void setLuk(short luk) 
+    {
         this.luk = luk > 0 ? luk : 0;
     }
 
-    public void setHp(short hp) {
+    public void setHp(short hp) 
+    {
         this.hp = hp > 0 ? hp : 0;
     }
 
-    public void setMp(short mp) {
+    public void setMp(short mp)
+    {
         this.mp = mp > 0 ? mp : 0;
     }
 
-    public void setWatk(short watk) {
+    public void setWatk(short watk) 
+    {
         this.watk = watk > 0 ? watk : 0;
     }
 
-    public void setMatk(short matk) {
+    public void setMatk(short matk) 
+    {
         this.matk = matk > 0 ? matk : 0;
     }
 
-    public void setWdef(short wdef) {
+    public void setWdef(short wdef) 
+    {
         this.wdef = wdef > 0 ? wdef : 0;
     }
 
-    public void setMdef(short mdef) {
+    public void setMdef(short mdef) 
+    {
         this.mdef = mdef > 0 ? mdef : 0;
     }
 
-    public void setAcc(short acc) {
+    public void setAcc(short acc) 
+    {
         this.acc = acc > 0 ? acc : 0;
     }
 
-    public void setAvoid(short avoid) {
+    public void setAvoid(short avoid) 
+    {
         this.avoid = avoid > 0 ? avoid : 0;
     }
 
-    public void setHands(short hands) {
+    public void setHands(short hands) 
+    {
         this.hands = hands;
     }
 
-    public void setSpeed(short speed) {
+    public void setSpeed(short speed) 
+    {
         this.speed = speed > 0 ? speed : 0;
     }
 
-    public void setJump(short jump) {
+    public void setJump(short jump) 
+    {
         this.jump = jump > 0 ? jump : 0;
     }
 
-    public void setUpgradeSlots(byte upgradeSlots) {
+    public void setUpgradeSlots(byte upgradeSlots) 
+    {
         this.upgradeSlots = upgradeSlots;
     }
 
     @Override
-    public byte getLevel() {
+    public byte getLevel() 
+    {
         return level;
     }
 
-    public void setLevel(byte level) {
+    public void setLevel(byte level) 
+    {
         this.level = level;
     }
 
     @Override
-    public int getViciousHammers() {
+    public int getViciousHammers() 
+    {
         return hammer;
     }
 
-    public void setViciousHammers(int hammer) {
+    public void setViciousHammers(int hammer) 
+    {
         this.hammer = hammer;
     }
 
     @Override
-    public int getSN() {
+    public int getSN() 
+    {
         return sn;
     }
 
     @Override
-    public void setSN(int sn) {
+    public void setSN(int sn) 
+    {
         this.sn = sn;
     }
 
     @Override
-    public int getUniqueId() {
+    public int getUniqueId() 
+    {
         return uniqueid;
     }
 
     @Override
-    public void setUniqueId(int id) {
+    public void setUniqueId(int id) 
+    {
         uniqueid = id;
     }
 
     @Override
-    public void setQuantity(short quantity) {
-        if (quantity < 0 || quantity > 1) {
+    public void setQuantity(short quantity) 
+    {
+        if (quantity < 0 || quantity > 1) 
             throw new RuntimeException("Setting the quantity to " + quantity + " on an equip (itemid: " + getItemId() + ")");
-        }
+
         super.setQuantity(quantity);
     }
 
-    public void setRingId(int ringId) {
+    public void setRingId(Integer ringId) 
+    {
         ringid = ringId;
     }
 }

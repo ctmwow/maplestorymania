@@ -159,21 +159,15 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
     private ScheduledFuture<?> idleDisconnect = null;
     private CountDownLatch disconnectLatch = null;
     public final static short CLIENT_VERSION = 83;
-
-    public MapleClient() {
+    
+    public MapleClient() 
+    {
         send = receive = null;
         iochannel = null;
     }
-    
-    public static void main(String[] args) throws Exception
-    {
-    	byte[] packet = new byte[] { (byte) 0xA0, (byte) 0x13, (byte) 0x7F, (byte) 0x32, (byte) 0xDD, (byte) 0xD5, (byte) 0x3B, (byte) 0xCC, (byte) 0x52, (byte) 0xBC, (byte) 0x90, (byte) 0xCB, (byte) 0x33, (byte) 0xBE, (byte) 0x0F, (byte) 0x95, (byte) 0x63, (byte) 0x75, (byte) 0xB4, (byte) 0x7A, (byte) 0x7B, (byte) 0x9A, (byte) 0x35, (byte) 0x42, (byte) 0x92, (byte) 0xA9, (byte) 0x5D, (byte) 0xDF, (byte) 0xFF, (byte) 0x54, (byte) 0x04, (byte) 0x06, (byte) 0x37, (byte) 0xB1, (byte) 0xEE, (byte) 0xC2, (byte) 0x0E, (byte) 0xAA, (byte) 0x51, (byte) 0x5C, (byte) 0x4C, (byte) 0x9E, (byte) 0x39, (byte) 0x54, (byte) 0x6B, (byte) 0x41, (byte) 0x2C };
-    	
-    	MapleAESOFB received = new MapleAESOFB(Randomizer.nextBytes(0x04), (short) 82);
-    	System.out.println(received.checkPacket(packet));
-    }
 
-    public MapleClient(Channel ch) {
+    public MapleClient(Channel ch) 
+    {
         this.send = new MapleAESOFB(Randomizer.nextBytes(4), (short) (0xFFFF - CLIENT_VERSION));
         this.receive = new MapleAESOFB(Randomizer.nextBytes(4), CLIENT_VERSION);
         this.iochannel = ch;
@@ -196,27 +190,31 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (evt instanceof IdleStateEvent) {
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception 
+    {
+        if (evt instanceof IdleStateEvent) 
             sendPing();
-        }
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        byte[] byteArr = (byte[]) msg;
-        ByteBufAccessor bba = new ByteBufAccessor(Unpooled.wrappedBuffer(byteArr).order(ByteOrder.LITTLE_ENDIAN));
-        short header = bba.readShort();
-        MaplePacketHandler h = PacketProcessor.getProcessor().getHandler(header);
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception 
+    {
+        final byte[] byteArr = (byte[]) msg;
+        final ByteBufAccessor bba = new ByteBufAccessor(Unpooled.wrappedBuffer(byteArr).order(ByteOrder.LITTLE_ENDIAN));
+        final short header = bba.readShort();
+        final MaplePacketHandler h = PacketProcessor.getProcessor().getHandler(header);
+        
         if (h == null)
             log.info("Unhandled packet. Packet Header [" + header + "] {}.\n{}\n{}", (player != null ? " from " + player.getName() : ""),
                     HexTool.toString(byteArr), HexTool.toStringFromAscii(byteArr));
-        else if(!h.validateState(this)) {
+        else if(!h.validateState(this)) 
             log.debug("Client failed state validation by packet handler {}.", h.getClass().getSimpleName());
-        }
-        else {
-            if (hasPacketLog()) {
-                switch (h.getClass().getSimpleName()) {
+        else 
+        {
+            if (hasPacketLog()) 
+            {
+                switch (h.getClass().getSimpleName()) 
+                {
                     case "NPCAnimation":
                     case "NoOpHandler":
                     case "MovePlayerHandler":
@@ -242,22 +240,23 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
             }
             h.handlePacket(bba, this);
         }
-        //super.channelRead(ctx, msg);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (cause instanceof IOException) {
-            log.debug("IOException caught.", cause);
-        } else log.error("Exception caught.", cause);
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception 
+    {
+        if (cause instanceof IOException) log.debug("IOException caught.", cause);
+        else log.error("Exception caught.", cause);
     }
 
     public ChannelFuture sendPacket(final MaplePacket mp)
     {
         if (iochannel == null) return null;
-        return iochannel.writeAndFlush(mp).addListener(new ChannelFutureListener() {
+        return iochannel.writeAndFlush(mp).addListener(new ChannelFutureListener() 
+        {
             @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
+            public void operationComplete(ChannelFuture future) throws Exception 
+            {
                 if(mp.getOnSend() != null) mp.getOnSend().run();
             }
         });
@@ -279,12 +278,17 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
         sendPacket(MaplePacketCreator.getCharList(this, server));
     }
 
-    public List<MapleCharacter> loadCharacters(int serverId) { // TODO make this less costly zZz
-        ArrayList<MapleCharacter> chars = new ArrayList<>();
-        for (CharNameAndId cni : loadCharactersInternal(serverId)) {
-            try {
+    public List<MapleCharacter> loadCharacters(int serverId) // TODO make this less costly zZz 
+    {
+        final ArrayList<MapleCharacter> chars = new ArrayList<>();
+        for (final CharNameAndId cni : loadCharactersInternal(serverId)) 
+        {
+            try 
+            {
                 chars.add(MapleCharacter.loadCharFromDB(cni.id, this, false));
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) 
+            {
                 log.error("Loading characters failed", e);
             }
         }

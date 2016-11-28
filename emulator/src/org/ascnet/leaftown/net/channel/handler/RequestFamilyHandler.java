@@ -1,30 +1,35 @@
 package org.ascnet.leaftown.net.channel.handler;
 
-import org.ascnet.leaftown.client.MapleCharacter;
+import java.rmi.RemoteException;
+
 import org.ascnet.leaftown.client.MapleClient;
+import org.ascnet.leaftown.client.MapleFamily;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
-import org.ascnet.leaftown.net.channel.ChannelServer;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 public final class RequestFamilyHandler extends AbstractMaplePacketHandler
 {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RequestFamilyHandler.class);
+    
     @Override
     public final void handlePacket(final SeekableLittleEndianAccessor slea, final MapleClient c) 
     {
-    	final String characterName = slea.readMapleAsciiString();
-
-        for (ChannelServer cserv : ChannelServer.getAllInstances()) 
-        {
-        	final MapleCharacter inviter = cserv.getPlayerStorage().getCharacterByName(characterName);
-            
-            if (inviter != null)
-            {
-            	//inviter.getClient().sendPacket(MaplePacketCreator.sendFamilyJoinResponse(true, c.getPlayer().getName()));
-            	break;
-            }
-        }
-        System.out.println("what to do " + slea.toString());
-        //c.sendPacket(MaplePacketCreator.sendFamilyMessage(0x00, 0x00));
+    	slea.readMapleAsciiString();
+    	try 
+    	{
+    		MapleFamily characterFamily = c.getPlayer().getMapleFamily();
+    		
+    		if(characterFamily != null)
+    		{
+    			characterFamily = c.getChannelServer().getWorldInterface().getFamily(characterFamily.getId());
+            	c.sendPacket(MaplePacketCreator.getFamilyPedigree(characterFamily.getMFC(c.getPlayer().getId())));
+    		}
+    	}
+    	catch(RemoteException rme)
+    	{
+    		log.error("Remote Connection to the World cannot be estabilized!", rme);
+    		c.getPlayer().dropMessage("Não foi possível carregar as informações sobre a sua Família. Por favor, tente novamente mais tarde!");
+    	}
     }
 }

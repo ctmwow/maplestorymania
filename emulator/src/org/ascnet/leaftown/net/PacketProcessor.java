@@ -132,6 +132,7 @@ public final class PacketProcessor
         } 
         else if (mode == Mode.CHANNELSERVER) 
         {
+            registerHandler(RecvPacketOpcode.CHECK_CHAR_NAME, new CheckCharNameChangeHandler());
             registerHandler(RecvPacketOpcode.SERVERLIST_REREQUEST, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.TO_WORLDLIST, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.CHAR_SELECT, NoOpHandler.getInstance());
@@ -139,7 +140,7 @@ public final class PacketProcessor
             registerHandler(RecvPacketOpcode.CHAR_SELECT_PIC, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.VIEW_ALL_CHAR_CONNECT_CREATE_PIC, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.VIEW_ALL_CHAR_CONNECT_PIC, NoOpHandler.getInstance());
-            registerHandler(RecvPacketOpcode.NAME_CHANGE, NoOpHandler.getInstance());
+            registerHandler(RecvPacketOpcode.NAME_CHANGE, new NameChangeHandler());
             registerHandler(RecvPacketOpcode.PLAYER_LOGGEDIN, new PlayerLoggedinHandler());
             registerHandler(RecvPacketOpcode.CHANGE_MAP, new ChangeMapHandler());
             registerHandler(RecvPacketOpcode.CHANGE_CHANNEL, new ChangeChannelHandler());
@@ -164,12 +165,13 @@ public final class PacketProcessor
             registerHandler(RecvPacketOpcode.NPC_SHOP, new NPCShopHandler());
             registerHandler(RecvPacketOpcode.STORAGE, new StorageHandler());
             registerHandler(RecvPacketOpcode.HIRED_MERCHANT_REQUEST, new HiredMerchantRequestHandler());
+            registerHandler(RecvPacketOpcode.FREDRICK_ACTION, new FredrickHandler());
             registerHandler(RecvPacketOpcode.DUEY_ACTION, new DueyActionHandler());
             registerHandler(RecvPacketOpcode.MINERVA_WARP, new MinervaHandler());
             registerHandler(RecvPacketOpcode.SLOT_MERGE, new SlotMergeHandler());
             registerHandler(RecvPacketOpcode.ITEM_SORT, new ItemSortHandler());
             registerHandler(RecvPacketOpcode.ITEM_MOVE, new ItemMoveHandler());
-            registerHandler(RecvPacketOpcode.USE_ITEM, new UseItemHandler());
+            registerHandler(RecvPacketOpcode.USE_ITEM, new UseItemHandler()); 
             registerHandler(RecvPacketOpcode.CANCEL_ITEM_EFFECT, new CancelItemEffectHandler());
             registerHandler(RecvPacketOpcode.TOUCHING_REACTOR, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.USE_SUMMON_BAG, new UseSummonBagHandler());
@@ -261,8 +263,11 @@ public final class PacketProcessor
             registerHandler(RecvPacketOpcode.EIGHT_EFF, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.ACCEPT_FAMILY, new AcceptFamilyHandler());
             registerHandler(RecvPacketOpcode.ADD_FAMILY, new FamilyAddHandler());
+            registerHandler(RecvPacketOpcode.REMOVE_FAMILY, new FamilyDeleteHandler());
             registerHandler(RecvPacketOpcode.OPEN_FAMILY, new OpenFamilyHandler());
+            registerHandler(RecvPacketOpcode.REQUEST_FAMILY, new RequestFamilyHandler());
             //registerHandler(RecvPacketOpcode.USE_FAMILY, new FamilyUseHandler());
+            registerHandler(RecvPacketOpcode.SET_FAMILY_MESSAGE, new SetFamilyMessageHandler());
         }
         else 
             throw new RuntimeException("Unknown packet processor mode");

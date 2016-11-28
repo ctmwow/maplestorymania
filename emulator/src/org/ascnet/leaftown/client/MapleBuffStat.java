@@ -31,8 +31,8 @@ import org.ascnet.leaftown.tools.ValueHolder;
 
 import java.io.Serializable;
 
-public enum MapleBuffStat implements ValueHolder<Long>, Serializable {
-
+public enum MapleBuffStat implements ValueHolder<Long>, Serializable 
+{
     ELEMENTAL_RESET(0x200000000L, true),
     BATTLESHIP(0xA00000040L, true), // Joint mask
     ARAN_COMBO(0x1000000000L, true),
@@ -106,26 +106,31 @@ public enum MapleBuffStat implements ValueHolder<Long>, Serializable {
     private final long i;
     private final boolean isFirst;
 
-    private MapleBuffStat(long i) {
+    private MapleBuffStat(long i) 
+    {
         this.i = i;
         isFirst = false;
     }
 
-    private MapleBuffStat(long i, boolean isFirst) {
+    private MapleBuffStat(long i, boolean isFirst) 
+    {
         this.i = i;
         this.isFirst = isFirst;
     }
 
     @Override
-    public Long getValue() {
+    public Long getValue() 
+    {
         return i;
     }
 
-    public boolean isFirst() {
+    public boolean isFirst() 
+    {
         return isFirst;
     }
 
-    public boolean equalsTo(MapleBuffStat mbs) {
+    public boolean equalsTo(MapleBuffStat mbs) 
+    {
         return mbs.name().equals(name());
     }
 }

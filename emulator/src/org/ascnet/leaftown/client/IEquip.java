@@ -27,9 +27,10 @@
 
 package org.ascnet.leaftown.client;
 
-public interface IEquip extends IItem {
-
-    public enum ScrollResult {
+public interface IEquip extends IItem 
+{
+    public enum ScrollResult 
+    {
         SUCCESS,
         FAIL,
         CURSE
@@ -39,7 +40,7 @@ public interface IEquip extends IItem {
 
     byte getLevel();
 
-    public int getRingId();
+    public Integer getRingId();
 
     public short getStr();
 

@@ -774,22 +774,27 @@ public class MapleStatEffect implements Serializable {
                     applyto.removeCooldown(i.getSkillId());
                 }
             }
-        } else if (isHide()) {
-            if (applyto.isHidden()) {
+        }
+        else if (isHide()) 
+        {
+            if (applyto.isHidden()) 
+            {
                 applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.removePlayerFromMap(applyto.getId()), false);
                 applyto.getClient().sendPacket(MaplePacketCreator.giveGMHide(true));
-            } else {
+            }
+            else 
+            {
                 applyto.getClient().sendPacket(MaplePacketCreator.giveGMHide(false));
                 applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.spawnPlayerMapobject(applyto, false), false);
                 applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.playerGuildName(applyto), false);
                 applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.playerGuildInfo(applyto), false);
-                if (applyto.hasGMLevel(5)) {
-                    for (MapleCharacter c : applyto.getMap().getCharacters()) {
+                
+                if (applyto.hasGMLevel(5)) 
+                    for (MapleCharacter c : applyto.getMap().getCharacters()) 
                         c.finishAchievement(11);
-                    }
-                }
             }
-        } else if (isPowerCrash()) {
+        } 
+        else if (isPowerCrash()) {
             final Rectangle rect = calculateBoundingBox(applyfrom.getPosition(), applyfrom.isFacingLeft());
             List<MapleMapObject> mobs = applyto.getMap().getMapObjectsInRect(rect, Collections.singletonList(MapleMapObjectType.MONSTER));
             int count = 0;

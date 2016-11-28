@@ -43,19 +43,25 @@ public class DatabaseConnection {
     private final static org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DatabaseConnection.class);
     private static Properties props = null;
 
-    public static Connection getConnection() {
+    public static Connection getConnection() 
+    {
         if (props == null)
             throw new RuntimeException("DatabaseConnection not initialized");
-        try {
+        
+        try 
+        {
             Connection c = con.get();
-            if (c == null || !c.isValid(0)) {
+            
+            if (c == null || !c.isValid(0)) 
+            {
                 con.set(null);
                 con.remove();
             }
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             log.error("Error while getting connection", ex);
         }
-
         return con.get();
     }
 

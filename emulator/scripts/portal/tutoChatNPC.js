@@ -1,6 +1,6 @@
-function enter(pi) {
-    
+function enter(pi) 
+{    
 	pi.openNpc(2007);
 
-	return true;
+	return false;
 }

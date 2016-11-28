@@ -21,22 +21,29 @@
 */
 var status = -1;
 
-function start() {
-    cm.sendNext("Magicians are armed with flashy element-based spells and secondary magic that aids party as a whole. After the 2nd job adv., the elemental-based magic will provide ample amount of damage to enemies of opposite element.");
+function start() 
+{
+    cm.sendNext("Mágicos estão armados com magias baseadas em elementos chamativos e magia secundária que ajuda o grupo como um todo. Após o 2ª Job., A magia elementar base irá fornecer uma ampla quantidade de danos aos inimigos do elemento oposto.");
 }
 
-function action(mode, type, selection) {
+function action(mode, type, selection) 
+{
     status++;
-    if (mode != 1){
+    if (mode != 1)
+    {
         if(mode == 0)
-           cm.sendNext("If you wish to experience what it's like to be a Magician, come see me again.");
+           cm.sendNext("Se você quiser experimentar o que é como ser um mágico, venha me ver novamente.");
+           
         cm.dispose();
         return;
     }
-    if (status == 0) {
-        cm.sendYesNo("Would you like to experience what it's like to be a Magician?");
-    } else if (status == 1){
-	cm.lockUI();
+    if (status == 0) 
+    {
+        cm.sendYesNo("Gostaria de experimentar o que é ser um mágico?");
+    } 
+    else if (status == 1)
+    {
+		cm.lockUI();
         cm.warp(1020200, 0);
         cm.dispose();
     }
