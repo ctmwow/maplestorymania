@@ -27,6 +27,7 @@
 
 package org.ascnet.leaftown.net.channel;
 
+import org.apache.log4j.BasicConfigurator;
 import org.ascnet.leaftown.client.MapleCharacter;
 import org.ascnet.leaftown.client.SkillFactory;
 import org.ascnet.leaftown.client.messages.CommandProcessor;
@@ -677,6 +678,8 @@ public class ChannelServer implements Runnable, ChannelServerMBean
     {
         try 
         {
+        	BasicConfigurator.configure();
+        	
             final Properties dbProp = new Properties();
             dbProp.load(new FileReader(System.getProperty("br.com.maplestorymania.db.properties")));
             
