@@ -1,104 +1,106 @@
-/*
-  Growlie (that fatass uhh.. hungry lion or whatever)
-  FightDesign @RageZONE
-  */
-importPackage(Packages.org.ascnet.leaftown.net.world);
 importPackage(Packages.org.ascnet.leaftown.tools);
+importPackage(Packages.org.ascnet.leaftown.server);
+importPackage(Packages.org.ascnet.leaftown.server.life);
 importPackage(java.awt);
 
-var status = 0;
-var chosen = -1;
+var status;
+var curMap;
+var playerStatus;
+var chatState;
+var preamble;
+var mySelection;
+
 
 function start() {
-    if (cm.isLeader()) {
-		var eim = cm.getEventManager("HenesysPQ").getInstance("HenesysPQ_" + cm.getParty().getLeader().getName());
-	    if (eim.getProperty("clear").equals("true")) {
-		    status = 50;
-		    cm.sendNext("Mmmm ... this is delicious. Please come see me next time for more #b#t4001101##k. Have a safe trip home!");
-		} else
-        cm.sendSimple("Growl! I am Growlie, always ready to protect this place. What brought you here?\r\n#b#L0# Please tell me what this place is all about.#l\r\n#L1# I have brought #t4001101#.#l\r\n#L2# I would like to leave this place.#l");
-    } else {
-        cm.sendSimple("Growl! I am Growlie, always ready to protect this place. What brought you here?\r\n#b#L0# Please tell me what this place is all about.#l\r\n#L2# I would like to leave this place.#l");
-    }
+    status = -1;
+    mapId = cm.getMapId();
+    if (cm.getParty() != null) //Check for Party
+        playerStatus = cm.isPartyLeader();
+    preamble = null;
+    action(1, 0, 0);
 }
 
 function action(mode, type, selection) {
-    if (mode < 0) {
+    if (mode == -1) {
         cm.dispose();
-		return;
     } else {
-	    if (mode == 0 && status == 0) {
+        if (mode == 0 && status == 0) {
             cm.dispose();
             return;
         }
-        if (mode == 0)
-            status += chosen == 2 ? 1 : -1;
-        else
+        if (mode == 1)
             status++;
-		if (status == 51) {
-		    var eim = cm.getEventManager("HenesysPQ").getInstance("HenesysPQ_" + cm.getParty().getLeader().getName());
-			eim.finishPQ();
-            cm.dispose();
-			return;
-		}
-        if (status == 1) {
-		    if (chosen == -1)
-			    chosen = selection;
-            if (chosen == 0) {
-                cm.sendNext("This place can be best described as the prime spot where you can taste the delicious rice cakes made by Moon Bunny every full moon.");
-            } else if (chosen == 1) {
-                if (cm.haveItem(4001101, 10)) {
-                    cm.sendNext("Oh... isn't this rice cake made by Moon Bunny? Please hand me the rice cake.");
-                } else {
-                    cm.sendOk("I advise you to check and make sure that you have indeed gathered up #b10 #t4001101#s#k.");
-                    cm.dispose();
+        else
+            status--;
+        if (playerStatus) {
+            var eim = cm.getPlayer().getEventInstance();
+            var party = cm.getPlayer().getEventInstance().getPlayers();
+            if (status == 0) {
+                cm.sendSimple("Olá, Sou Growlie e eu quero alguns #bBolinhos de Arroz#k...#b\r\n#L0#Eu trouxe alguns Bolinhos de Arroz para você!#l\r\n#L1#O que eu tenho de fazer aqui?#l\r\n#L2#Eu quero sair!#l#k");
+            } else if (status == 1) {
+                mySelection = selection;
+                switch (mySelection) {
+                    case 0 :
+                        if (cm.haveItem(4001101, 10)) {
+                            clear(1, eim, cm);
+                            cm.sendNext("Obrigado por me dar #bBolinhos de Arroz#k!");
+                        } else {
+                            cm.sendNext("Você não possui 10 #bBolinhos de Arroz#k! Rawr!");
+                            cm.dispose();
+                        }
+                        break;
+                    case 1 :
+                        cm.sendNext("Esta é a Colina das Prímulas onde o Coelhinho de Lua faz #bBolinhos de Arroz#k quando há uma lua cheia. Para ter uma lua cheia, plante as semente obtidas das prímulas e quando todas as 6 sementes forem plantadas, a lua cheia aparecerá. O #rCoelhinho da Lua será invocado, e você deve proteger-lo de outros monstros que irão tentar atacar-lo#k. Num caso do #bCoelhinho da Lua#k morrer, você irá falhar a missão e eu ficarei faminto e zangado...");
+                        cm.dispose();
+                        break;
+                    case 2 :
+                        cm.sendNext("Certo, mas volte logo e me traga alguns #bBolinhos de Arroz#k!");
+                        break;
                 }
-            } else if (chosen == 2) {
-                cm.sendYesNo("Are you sure you want to leave?");
-            }
-			else {
-			    cm.dispose();
-				return;
-			}
-        } else if (status == 2) {
-            if (chosen == 0) {
-                cm.sendNextPrev("Gather up the primrose seeds from the primrose leaves all over this area, and plant the seeds at the footing near the crescent moon to see the primrose bloom. There are 6 types of primroses, and all of them require different footings. It is imperative that the footing fits the seed of the flower.");
-            } else if (chosen == 1) {
-                cm.sendNext("Mmmm ... this is delicious. Please come see me next time for more #b#t4001101##k. Have a safe trip home!");
-                cm.gainItem(4001101, -10);
-                cm.givePartyExp("HenesysPQ");
-                var eim = cm.getEventManager("HenesysPQ").getInstance("HenesysPQ_" + cm.getParty().getLeader().getName());
-				eim.setProperty("clear", "true");
-				var map = eim.getMapInstance(cm.getPlayer().getMapId());
-				map.allowSummonState(false);
-				map.killAllMonstersNotFriendly();
-				map.broadcastMessage(MaplePacketCreator.showEffect("quest/party/clear"));
-				map.broadcastMessage(MaplePacketCreator.playSound("Party1/Clear"));
-				cm.dispose();
-            } else {
-			     if (mode == 1) {
-			     	var eim = cm.getEventManager("HenesysPQ").getInstance("HenesysPQ_" + cm.getParty().getLeader().getName());
-				 	eim.disbandParty();
-				 } else {
-				 	cm.sendOk("You better collect some delicious rice cakes for me then, because time is running out, Growl !");
-				 }
-				 cm.dispose();
-			}
-        } else if (status == 3) {
-            if (chosen == 0) {
-                cm.sendNextPrev("When the flowers of primrose blooms, the full moon will rise, and that's when the Moon Bunnies will appear and start pounding the mill. Your task is to fight off the monsters to make sure that Moon Bunny can concentrate on making the best rice cake possible.");
-            } else if (chosen == 1) {
-				var eim = cm.getEventManager("HenesysPQ").getInstance("HenesysPQ_" + cm.getParty().getLeader().getName());
-				eim.finishPQ();
-                cm.dispose();
-            }
-        } else if (status == 4) {
-            if (chosen == 0) {
-                cm.sendNextPrev("I would like for you and your party members to cooperate and get me 10 rice cakes. I strongly advise you to get me the rice cakes within the allotted time.");
+            } else if (status == 2) {
+                switch (mySelection) {
+                    case 0 :
+                        var mf = eim.getMapFactory();
+                        cm.removeAll(4001101);
+                        map = mf.getMap(910010100);
+                        cm.givePartyExp(16000, party);
+                        cm.givePartyNX(100, party);
+                        for (var i = 0; i < party.size(); i++) {
+                            party.get(i).changeMap(map, map.getPortal(0));
+                            eim.unregisterPlayer(party.get(i));
+                        }
+                        eim.disbandParty();
+                        cm.dispose();
+                        break;
+                    case 1 :
+                        break;
+                    case 2 :
+                        eim.disbandParty();
+                        cm.dispose();
+                }
             }
         } else {
-		    cm.dispose();
-		}
-    
+            var eim = cm.getPlayer().getEventInstance();
+            var party = cm.getPlayer().getEventInstance().getPlayers();
+            if (status == 0) {
+                cm.sendYesNo("Você gostaria de sair da Missão de Grupo?");
+            } else if (status == 1) {
+                eim.unregisterPlayer(cm.getPlayer());
+                cm.warp(910010300, 0);
+                cm.dispose();
+            }
+        }
     }
-}	
+}
+
+function clear(stage, eim, cm) {
+    eim.setProperty("1stageclear", "true");
+    var packetef = MaplePacketCreator.showEffect("quest/party/clear");
+    var packetsnd = MaplePacketCreator.playSound("Party1/Clear");
+    var packetglow = MaplePacketCreator.environmentChange("gate", 2);
+    var map = eim.getMapInstance(cm.getChar().getMapId());
+    var party = cm.getPlayer().getEventInstance().getPlayers();
+    map.broadcastMessage(packetef);
+    map.broadcastMessage(packetsnd);
+    var mf = eim.getMapFactory();
+}

@@ -1,37 +1,20 @@
-/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
+importPackage(Packages.org.ascnet.leaftown.server.maps);
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-/**
- * @author BubblesDev
- * @NPC Tory
- */
+var map = 390009999;
 var status = 0;
-var chosen = 0;
-var min = 1;
 var minLevel = 10;
+var maxLevel = 200;
+var minPlayers = 1;
+var maxPlayers = 6;
+
+var PQItems = new Array(4001095, 4001096, 4001097, 4001098, 4001099, 40011000);
+var RiceCake = 40001101;
+/* Fim */
 
 
 function start() {
-    status = -1;
-    action(1, 0, 0);
+	status = -1;
+	action(1, 0, 0);
 }
 
 function action(mode, type, selection) {
@@ -45,97 +28,136 @@ function action(mode, type, selection) {
         if (mode == 1) {
             status++;
         } else {
-            status--;
-        }
-        if (cm.getPlayer().getMapId() == 100000200) {
-            if (cm.getParty() == null || !cm.isPartyLeader()) {
+            cm.dispose();
+			return;
+		}
+		if (cm.getPlayer().getMapId() == 100000200){ 
+		if (cm.getParty() == null) {
+                        cm.sendOk("Você não está em grupo.");
+                        cm.dispose();
+                        return;
+                    }
+            if (!cm.getParty().getLeader().getName() == cm.getPlayer().getName()) {
                 if (status == 0) {
-                    cm.sendNext("Hi there! I'm Tory. This place is covered with mysterious aura of the full moon, and no one person can enter here by him/herself.");
+                    cm.sendNext("Olá como vai? Sou Tory. Este lugar está envolvido com a misteriosa aura da lua cheia, e ninguém pode entrar aqui por conta própria.");
                 } else if (status == 1) {
-                    cm.sendOk("If you'd like to enter here, the leader of your party will have to talk to me. Talk to your party leader about this.");
-                    cm.dispose();
-                }
+                    cm.sendSimple("Se você deseja entrar, o líder do seu grupo deve falar comigo. Fale com o líder do seu grupo sobre isto.");
+                } 
             } else {
                 if (status == 0) {
-                    cm.sendNext("I'm Tory. Inside here is a beautiful hill where the primrose blooms. There's a tiger that lives in the hill, Growlie, and he seems to be looking for something to eat.");
+                    cm.sendNext("Sou Tory. Aqui dentro há uma bela colina onde as prímulas floram. Há um tigre que vive na colina, Growlie, e ele aparenta estar procurando por algo para comer.");
                 } else if (status == 1) {
-                    cm.sendSimple("Would you like to head over to the hill of primrose and join forces with your party members to help Growlie out?\r\n#b#L0# Yes, I will go.#l");
+                    cm.sendSimple("Você gostaria de ir até a Colina das Prímulas e juntar forças com os membros do seu grupo para ajudar o Growlie?\r\n#b#L0# Sim, eu irei.#l");
                 } else if (status == 2) {
-                    var party = cm.getPartyMembers();
-                    var onmap = 0;
-                    for (var i = 0; i < party.size(); i++) {
-                        if (party.get(i).getMap().getId() == 100000200) {
-                            if (party.get(i).getLevel() < minLevel) {
-                                cm.sendOk("A member of your party does not meet the level requirement.");
-                                cm.dispose();
-                                return;
-                            }
-                            onmap++;
-                        }
-                    }
-                    if (onmap < min) {
-                        cm.sendOk("A member of your party is not presently in the map.");
+                    if (cm.getParty() == null) {
+                        cm.sendOk("Você não está em grupo.");
                         cm.dispose();
                         return;
-                    }
-                    if (cm.getClient().getChannelServer().getMapFactory().getMap(910010000).countCharsOnMap > 0) {
-                        cm.sendOk("Someone is already attempting the PQ. Please wait for them to finish, or find another channel.");
+                    } else if (!cm.isPartyLeader()) { // Not Party Leader
+                        cm.sendOk("Se você deseja entrar, o líder do seu grupo deve falar comigo.");
                         cm.dispose();
-                        return;
-                    }
-                    var em = cm.getEventManager("HenesysPQ");
-                    if (em == null) { 
-                        cm.sendOk("This PQ is currently broken. Please report it on the forum!");
-                        cm.dispose();
-                        return;
-                    }
-
-                    var prop = em.getProperty("state");
-                    if (prop == null || prop.equals("0")) { //Start the PQ
-					    //cm.removeHPQItems(); *verificar*
-                        em.setProperty("latestLeader", cm.getPlayer().getName());
-                        em.startInstance(cm.getParty(), cm.getPlayer().getMap());
                     } else {
-                        cm.sendOk("Someone is already attempting the PQ. Please wait for them to finish, or find another channel.");
-                        cm.dispose();
-                        return;
-                    }
+					var party = cm.getParty().getMembers();
+					var mapId = cm.getMapId();
+					var next = true;
+					var levelValid = 0;
+					var inMap = 0;
+					if (party.size() < minPlayers || party.size() > maxPlayers) 
+						next = false;
+					else {
+						for (var i = 0; i < party.size() && next; i++) {
+							if ((party.get(i).getLevel() >= minLevel) && (party.get(i).getLevel() <= maxLevel))
+								levelValid += 1;
+							if (party.get(i).getMapId() == mapId)
+								inMap += 1;
+						}
+						if (levelValid < minPlayers || inMap < minPlayers)
+							next = false;
+					}  if (next) {
+		                  var em = cm.getEventManager("HenesysPQ");
+	                          if (em == null) {
+	                          cm.sendOk("A missão de grupo está indisponível no momento.");
+		                  } else {
+		                  var prop = em.getProperty("state");
+		                  if (prop.equals("0") || prop == null) {
+                                cm.getClient().getChannelServer().getMapFactory().destroyMap(910010000);
+								em.startInstance(cm.getParty(),cm.getPlayer().getMap());
+                                party = cm.getPlayer().getEventInstance().getPlayers();
+								cm.dispose();
+		                    } else {
+		            	      cm.sendOk("Existe outro grupo dentro da missão de grupo.");
+                                      cm.dispose();
+		                 }
+		               }
+	                 } else {
+		    cm.sendOk("Seu grupo aparenta não ter os requisitos mínimos, verifique se seu grupo possui #rentre "+ minPlayers +" e "+ maxPlayers +" membros acima do nível 10#k e fale comigo novamente.");
                     cm.dispose();
-                }
+				}
             }
-        } else if (cm.getPlayer().getMap().getId() == 910010100 || cm.getPlayer().getMap().getId() == 910010400) {
-            if (status == 0) {
-                cm.sendSimple("I appreciate you giving some rice cakes for the hungry Growlie. It looks like you have nothing else to do now. Would you like to leave this place?\r\n#L0#I want to give you the rest of my rice cakes.#l\r\n#L1#Yes, please get me out of here.#l");
-            } else if (status == 1) {
-                chosen = selection;
-                if (selection == 0) {
-                    if (cm.getPlayer().getGivenRiceCakes() >= 20) {
-                        if (cm.getPlayer().getGottenRiceHat()) {
-                            cm.sendNext("Do you like the hat I gave you? I ate so much of your rice cake that I will have to say no to your offer of rice cake for a little while.");
-                            cm.dispose();
-                        } else {
-                            cm.sendYesNo("I appreciate the thought, but I am okay now. I still have some of the rice cakes you gave me stored at home. To show you my appreciation, I prepared a small gift for you. Would you like to accept it?");
-                        }
-                    }
-                } else if (selection == 1) {
-                    cm.warp(100000200);
-                    cm.dispose();
-                }
+        }
+    }
+     } else if(cm.getChar().getMapId() == 910010400){
+              if (status == 0){
+                  /*if (cm.getHPQClear() >= 10) {
+                      for (var i = 0; i < PQItems.length; i++) {
+                          cm.removeAll(PQItems[i]);
+                      }
+                      cm.gainItem(1002798, 1);
+                      //cm.HPQClear(-10);
+                      cm.warp(910000022, 0);
+                      cm.playerMessage("Você ganhou uma recompensa por concluir a missão de grupo 10 vezes.");
+                      cm.dispose();                     
+                  } else {*/
+               for (var i = 0; i < PQItems.length; i++) {
+				cm.removeAll(PQItems[i]);
+                            }
+                cm.warp(100000200);
+                //cm.playerMessage("Você foi levado para o Mercado <22>.");
                 cm.dispose();
-            } else if (status == 2) {
-                if (chosen == 1) {
-                    if (cm.canHold(1002798)) { // we will let them try again if they can't
-                        cm.gainItem(1002798, 1);
-                        cm.setGottenRiceHat(true);
-                        cm.sendNext("It will really go well with you. I promise.");
-                    } else {
-                        cm.getPlayer().dropMessage(1, "EQUIP inventory full.");
-                    }
-                    cm.dispose();
-                } else if (cm.getPlayer().getGivenRiceCakes() < 20) {
-                    cm.sendOk("Thank you for rice cake number " + cm.getPlayer().getGivenRiceCakes() + "!! I really appreciate it!");
-                }
+            }
+        } else if (cm.getPlayer().getMapId() == 910010100) {
+            if (status==0) {
+                /*if (cm.getHPQClear() >= 10){
+                    cm.sendYesNo("Parabéns por concluir a missão de grupo de Henesys 10 vezes, como recompensa estarei lhe dando um #t1002798# como recompensa! Deseja voltar para o #rParque de Henesys#k?");
+                } else {*/
+                cm.sendYesNo("Você deseja voltar para o #rParque de Henesys#k?");
+            } else if (status == 1) {
+                /*if (cm.getHPQClear() >= 10){
+                    for (var i = 0; i < PQItems.length; i++) {
+                        cm.removeAll(PQItems[i]);
+                    } 
+                cm.gainItem(1002798, 1);
+                cm.HPQClear(-10);
+                cm.warp(910000022, 0);
+                cm.dispose();
+                } else {*/
+               for (var i = 0; i < PQItems.length; i++) {
+				cm.removeAll(PQItems[i]);
+                            } 
+                cm.warp(100000200);
+                cm.dispose();
             }
         }
     }
 }
+					
+function checkLevelsAndMap(lowestlevel, highestlevel) {
+    var party = cm.getParty().getMembers();
+    var mapId = cm.getMapId();
+    var valid = 0;
+    var inMap = 0;
+
+    var it = party.iterator();
+    while (it.hasNext()) {
+        var cPlayer = it.next();
+        if (!(cPlayer.getLevel() >= lowestlevel && cPlayer.getLevel() <= highestlevel) && cPlayer.getJobId() != 900) {
+            valid = 1;
+        }
+        if (cPlayer.getMapid() != mapId) {
+            valid = 2;
+        }
+    }
+    return valid;
+}
+		
+                
