@@ -158,6 +158,12 @@ public class MapleReactor extends AbstractMapleMapObject {
             }
         }, delay);
     }
+    
+    public void forceHitReactor(final byte newState) {
+        setState((byte) newState);
+        setTimerActive(false);
+        map.broadcastMessage(MaplePacketCreator.triggerReactor(this, (short) 0));
+    }
 
     //hitReactor command for item-triggered reactors
     public void hitReactor(MapleClient c) {
