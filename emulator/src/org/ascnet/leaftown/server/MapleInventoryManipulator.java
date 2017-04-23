@@ -287,8 +287,6 @@ public class MapleInventoryManipulator
                         nItem.setPet(item.getPet() != null ? item.getPet() : MaplePet.createPet(c.getPlayer().getId(), item.getItemId()));
                     if (item.isByGM())
                         nItem.setGMFlag();
-                    if (nItem.getItemId() == 5000054) //SNAIL
-                    	nItem.setExpiration(new Timestamp(System.currentTimeMillis() + 18000000L));
                     
                     nItem.log("Created while adding from drop. Quantity: " + newQ + " (" + logInfo + " )", false);
                     short newSlot = c.getPlayer().getInventory(type).addItem(nItem);

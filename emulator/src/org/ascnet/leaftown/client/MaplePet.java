@@ -41,6 +41,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -148,12 +150,29 @@ public class MaplePet
         try 
         {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO inventory_pets (CharacterID, Name, Level, Closeness, Fullness) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = con.prepareStatement("INSERT INTO inventory_pets (CharacterID, Name, Level, Closeness, Fullness, DeadDate) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, cid);
             ps.setString(2, MapleItemInformationProvider.getInstance().getName(itemid));
             ps.setInt(3, 1);
             ps.setInt(4, 0);
             ps.setInt(5, 100);
+            
+            // dia 86400000
+            
+            int petLimitedLife = MapleItemInformationProvider.getInstance().getPetLimitedLife(itemid);
+            
+            if(petLimitedLife == -1)
+            {
+            	int deadDate = MapleItemInformationProvider.getInstance().getPetDeadDate(itemid);
+                
+            	Calendar calendar = Calendar.getInstance();
+            	calendar.setTime(new Date());
+            	calendar.add(Calendar.DAY_OF_YEAR, deadDate);
+            	ps.setTimestamp(6, new Timestamp(calendar.getTimeInMillis()));
+            }
+            else
+            	ps.setTimestamp(6, new Timestamp(System.currentTimeMillis() + (petLimitedLife * 1000)));
+            
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();

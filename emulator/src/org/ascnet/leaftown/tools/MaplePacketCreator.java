@@ -1325,10 +1325,13 @@ public class MaplePacketCreator {
 			mplew.write(item.getType()); // 2 for safety charms
 
 		mplew.writeInt(item.getItemId());
-		if (ring) {
+		
+		if (ring) 
+		{
 			if (ii.isWeddingRing(item.getItemId()))
 				mplew.write(0x00);
-			else {
+			else 
+			{
 				mplew.write(1);
 				mplew.writeLong(equip.getRingId());
 			}
@@ -1392,12 +1395,20 @@ public class MaplePacketCreator {
 			mplew.write(pet.getLevel());
 			mplew.writeShort(pet.getCloseness());
 			mplew.write(pet.getFullness());
-			mplew.writeLong(FileTimeUtil.getFileTimestamp(item.getExpiration().getTime()));
-			mplew.writeInt(0);
 			
-			//snail only?
-			int expiration = (int) (item.getExpiration().getTime() - System.currentTimeMillis())/ 1000;
-			mplew.writeShort(expiration < 0 ? 0 : expiration); 
+			
+			mplew.writeLong(0L);
+			//mplew.writeLong(FileTimeUtil.getFileTimestamp(pet.getDeadDate().getTime()));
+			
+			mplew.writeInt(5); 
+			
+			if(item.getItemId() == 5000054)				//snail only?
+			{
+				int expiration = (int) (pet.getDeadDate().getTime() - System.currentTimeMillis())/ 1000;
+				mplew.writeShort(expiration < 0 ? 0 : expiration); 
+			}
+			else
+				mplew.writeShort(0);
 			
 			mplew.writeInt(0); 
 		}

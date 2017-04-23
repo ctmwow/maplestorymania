@@ -83,6 +83,8 @@ public class MapleItemInformationProvider {
     protected final Map<Integer, String> nameCache = new HashMap<>();
     protected final Map<Integer, String> descCache = new HashMap<>();
     protected final Map<Integer, String> msgCache = new HashMap<>();
+    protected final Map<Integer, Integer> petDeadDate = new HashMap<>();
+    protected final Map<Integer, Integer> petLimitedLife = new HashMap<>();
     protected final Map<Integer, Boolean> dropRestrictionCache = new HashMap<>();
     protected final Map<Integer, Boolean> pickupRestrictionCache = new HashMap<>();
     protected final Map<Integer, Boolean> consumeOnPickup = new HashMap<>();
@@ -1125,37 +1127,72 @@ public class MapleItemInformationProvider {
         return scrollCategoryQualifier == itemCategoryQualifier;
     }
 
-    public String getName(int itemId) {
+    public String getName(int itemId) 
+    {
         if (nameCache.containsKey(itemId))
             return nameCache.get(itemId);
+        
         MapleData strings = getStringData(itemId);
+        
         if (strings == null)
             return null;
+        
         String ret = DataUtil.toString(strings.getChild("name"), null);
         nameCache.put(itemId, ret);
         return ret;
     }
 
-    public String getDesc(int itemId) {
+    public String getDesc(int itemId) 
+    {
         if (descCache.containsKey(itemId))
             return descCache.get(itemId);
+        
         MapleData strings = getStringData(itemId);
         if (strings == null)
             return null;
+        
         String ret = DataUtil.toString(strings.resolve("desc"), null);
         descCache.put(itemId, ret);
         return ret;
     }
 
-    public String getMsg(int itemId) {
+    public String getMsg(int itemId) 
+    {
         if (msgCache.containsKey(itemId))
             return msgCache.get(itemId);
+        
         MapleData strings = getStringData(itemId);
         if (strings == null)
             return null;
+        
         String ret = DataUtil.toString(strings.resolve("msg"), null);
         msgCache.put(itemId, ret);
         return ret;
+    }
+    
+    public Integer getPetDeadDate(int itemId) 
+    {
+        if (petDeadDate.containsKey(itemId))
+            return petDeadDate.get(itemId);
+        
+        MapleData data = getItemData(itemId);
+        int deadDate = DataUtil.toInt(data.resolve("info/life"), 0);
+        
+        petDeadDate.put(itemId, deadDate);
+        
+        return deadDate;
+    }
+    
+    public Integer getPetLimitedLife(int itemId) 
+    {
+        if (petLimitedLife.containsKey(itemId))
+            return petLimitedLife.get(itemId);
+        
+        MapleData data = getItemData(itemId);
+        
+        int limitedLife = DataUtil.toInt(data.resolve("info/limitedLife"), -1);
+        petLimitedLife.put(itemId, limitedLife);
+        return limitedLife;
     }
 
     public boolean isDropRestricted(int itemId) {
