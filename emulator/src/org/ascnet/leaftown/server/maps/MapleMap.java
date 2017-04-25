@@ -130,6 +130,10 @@ public class MapleMap
     private ScheduledFuture<?> dojoSpawn = null;
     private MapleBuffZone buffZone;
     private final Lock objectLock = new ReentrantLock();
+    //begin HenesysPQ variables
+    private int hpq_Bunny_Hits = 0;  
+    private int riceCakeNum = 0;
+    //end HenesysPQ variables
 
     public MapleMap(int mapId, int channel, int returnMapId, float monsterRate, boolean isInstance) {
         this.mapId = mapId;
@@ -638,12 +642,47 @@ public class MapleMap
                                 }
                             }, null);
                             tMan.schedule(new ExpireMapItemJob(mdrop), dropLife);
+                            
                         }
                     }, monster.getAnimationTime("die1") + i);
                 }
             }
         }
     }
+    
+    //begin HenesysPQ functions    
+    public void resetRiceCakes() {
+        this.riceCakeNum = 0;
+    }
+    
+    public void addBunnyHit() {
+        this.hpq_Bunny_Hits ++;
+    }
+    
+    private void monsterItemDrop(final MapleMonster m, final IItem item, long delay) {
+        final ScheduledFuture<?> monsterItemDrop = TimerManager.getInstance().register(new Runnable() {
+            @Override
+            public void run() {
+                if (MapleMap.this.hpq_Bunny_Hits >= 5) {
+                        MapleMap.this.broadcastMessage(MaplePacketCreator.serverNotice(0, "O Coelhinho da lua está se sentindo doente. Proteja-o para que ele possa fazer deliciosos bolinhos de arroz.")); // Your choice, I think it should be in MobHitMobFriendly
+                        MapleMap.this.hpq_Bunny_Hits = 0;
+                        return;
+                    }
+                if (m.getMap().getId() == 910010000)
+                    MapleMap.this.riceCakeNum++;
+                    if (MapleMap.this.getMonsterByOid(m.getId()) != null) {
+                        if (item.getItemId() == 4001101) {
+                            MapleMap.this.broadcastMessage(MaplePacketCreator.serverNotice(0, "O Coelhinho da lua fez o bolinho de número " + riceCakeNum + "."));
+                        }
+                        spawnItemDrop(m, null, item, m.getPosition(), true, true);
+                    }
+                }
+        }, delay, delay);
+        if (getMonsterByOid(m.getId()) == null) {
+            monsterItemDrop.cancel(true);
+        }
+    }
+    //end HenesysPQ functions
 
     public boolean damageMonster(MapleCharacter chr, MapleMonster monster, int damage) {
         if (!isDojoMap()) { // it'd be easy with bamboo rain
@@ -1137,6 +1176,18 @@ public class MapleMap
         if (characters.isEmpty() && !isPQMap()) { // Without this monsters on PQ maps never spawn
             return;
         }
+        
+        //begin HenesysPQ check
+        if (monster.getDropPeriodTime() > 0) { //9300102 - Watchhog, 9300061 - Moon Bunny (HPQ)
+            if (monster.getId() == 9300102) {
+                monsterItemDrop(monster, new Item(4031507, (byte) 0, (short) 1), monster.getDropPeriodTime());
+            } else if (monster.getId() == 9300061) {
+                monsterItemDrop(monster, new Item(4001101, (byte) 0, (short) 1), monster.getDropPeriodTime() / 6);
+            } else {
+                System.out.println("UNCODED TIMED MOB DETECTED: " + monster.getId());
+            }
+        }
+        //end HenesysPQ check
         monster.setMap(this);
         doRemoveAfter(monster);
         spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
@@ -1298,7 +1349,7 @@ public class MapleMap
             tMan.schedule(new ExpireMapItemJob(drop), dropLife);
         }
 
-        activateItemReactors(drop);
+        activateItemReactors(drop); 
     }
     
     public void addMapTimer(int durationmin, int durationmax) {
@@ -1491,6 +1542,18 @@ public class MapleMap
         if (onFirstUserEnter.length() != 0x00000000)
             if (getCharacters().size() == 0x00000001)
                 MapScriptManager.getInstance().getMapScript(chr.getClient(), onFirstUserEnter, true);
+        //begin HenesysPQ and Kenta checks
+        if (mapId == 923010000 && getMonsterByOid(9300102) == null) { // Kenta's Mount Quest
+            spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(9300102), new Point(77, 426));
+        } else if (mapId == 910010000) { // Henesys Party Quest
+            List<MapleMapObject> monsters = chr.getClient().getPlayer().getMap().getMapObjectsInRange(chr.getClient().getPlayer().getPosition(), Double.POSITIVE_INFINITY, Arrays.asList(MapleMapObjectType.MONSTER));
+            for (MapleMapObject monstermo : monsters) {
+                MapleMonster monster = (MapleMonster) monstermo;
+                chr.getClient().getPlayer().getMap().killMonster(monster, chr.getClient().getPlayer(), true);
+            }           
+            //setSpawns(false);
+        }
+        //end HenesysPQ and Kenta checks
         
         final List<MaplePet> pets = chr.getPets();
         

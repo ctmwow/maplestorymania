@@ -27,7 +27,7 @@
  * [x]shows animation,
  * [x]makes stirges and stuff appear
  */
-importPackage(Packages.tools);
+importPackage(Packages.org.ascnet.leaftown.tools);
 
 function act() {
     rm.spawnMonster(9300061, 1, 0, 0); // (0, 0) is temp position

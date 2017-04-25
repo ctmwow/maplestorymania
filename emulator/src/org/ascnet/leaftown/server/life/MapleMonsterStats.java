@@ -64,6 +64,14 @@ public class MapleMonsterStats {
     private boolean fly;
     private boolean mobile;
     private boolean noRegen;
+    //begin HenesysPQ variables
+    private int PADamage;
+    private int PDDamage;
+    private int MADamage;
+    private int MDDamage;
+    private boolean friendly;
+    private int dropPeriod;
+    //end HenesysPQ variables
 
     public int getExp() {
         return exp;
@@ -272,4 +280,54 @@ public class MapleMonsterStats {
     public boolean getNoRegen() {
         return noRegen;
     }
+    
+    //begin HenesysPQ get setters
+    public int getPADamage() {
+        return PADamage;
+    }
+    
+    public int getPDDamage() {
+        return PDDamage;
+    }
+    
+    public int getMADamage() {
+        return MADamage;
+    }
+    
+    public int getMDDamage() {
+        return MDDamage;
+    }
+
+    public void setPADamage(int PADamage) {
+        this.PADamage = PADamage;
+    }
+    
+    public void setPDDamage(int PDDamage) {
+        this.PDDamage = PDDamage;
+    }
+    
+    public void setMADamage(int MADamage) {
+        this.MADamage = MADamage;
+    }
+    
+    public void setMDDamage(int MDDamage) {
+        this.MDDamage = MDDamage;
+    }
+    
+    public boolean Friendly() {
+        return friendly;
+    }
+    
+    public void setFriendly(boolean value) {
+        this.friendly = value;
+    }
+    
+    public int getDropPeriod() {
+        return dropPeriod;
+    }
+
+    public void setDropPeriod(int dropPeriod) {
+        this.dropPeriod = dropPeriod;
+    }
+    //end HenesysPQ get setters
 }

@@ -81,6 +81,7 @@ public class SpawnPoint {
         if (mob.getId() == 9400568)
             return false;
         mob.setPosition(new Point(pos));
+        
         spawnedMonsters.incrementAndGet();
         mob.addListener(new MonsterListener() {
 

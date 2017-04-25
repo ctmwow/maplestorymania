@@ -83,7 +83,17 @@ public class MapleLifeFactory {
             }
             MapleData monsterInfoData = monsterData.getChild("info");
             stats = new MapleMonsterStats();
-            stats.setHp(DataUtil.toInt(monsterInfoData.resolve("maxHP")));
+            stats.setHp(DataUtil.toInt(monsterInfoData.resolve("maxHP")));          
+
+            //begin HenesysPQ setters
+            stats.setFriendly(DataUtil.toInt(monsterInfoData.resolve("damagedByMob"), 0) == 1);
+            stats.setPADamage(DataUtil.toInt(monsterInfoData.resolve("PADamage"), 0));
+            stats.setPDDamage(DataUtil.toInt(monsterInfoData.resolve("PDDamage"), 0));
+            stats.setMADamage(DataUtil.toInt(monsterInfoData.resolve("MADamage"), 0));
+            stats.setMDDamage(DataUtil.toInt(monsterInfoData.resolve("MDDamage"), 0));
+            stats.setDropPeriod(DataUtil.toInt(monsterInfoData.resolve("dropItemPeriod"), 0) * 10000);
+            //end HenesysPQ setters
+            
             stats.setMp(DataUtil.toInt(monsterInfoData.resolve("maxMP"), 0));
             stats.setExp(DataUtil.toInt(monsterInfoData.resolve("exp"), 0));
             stats.setLevel(DataUtil.toInt(monsterInfoData.resolve("level")));

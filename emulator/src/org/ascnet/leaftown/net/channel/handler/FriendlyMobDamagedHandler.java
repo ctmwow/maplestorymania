@@ -29,6 +29,9 @@ package org.ascnet.leaftown.net.channel.handler;
 
 import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
+import org.ascnet.leaftown.server.life.MapleMonster;
+import org.ascnet.leaftown.server.maps.MapleMap;
+import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 /**
@@ -38,9 +41,30 @@ public class FriendlyMobDamagedHandler extends AbstractMaplePacketHandler {
 
     @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        /*int attackeroid = slea.readInt();
-		slea.skip(4); //always 1?
-		int damagedoid = slea.readInt();*/
-        //TODO: Make it do more than read packets and i dont think the damage is sent from client? I'll have to sniff myself sometime
+    	int oid1 = slea.readInt(); //Id of mob that got attacked?
+        @SuppressWarnings("unused")
+        int randomshit = slea.readInt(); //Dunno
+        int oid2 = slea.readInt(); //Oid of mob that attacked?
+        MapleMap map = c.getPlayer().getMap();
+        MapleMonster attacked;
+        MapleMonster attacker;
+        try {
+            attacked = map.getMonsterByOid(oid2);
+            attacker = map.getMonsterByOid(oid1);
+        } catch (NullPointerException npe) {
+            return;
+        }
+        if (attacker == null || attacked == null) return;
+                if (attacker.getId() == attacked.getId()) return;
+        int dmg = attacker.getLevel() * 9;
+        if (attacker.getLevel() > 50) {
+            dmg *= 2;
+        }
+        if (attacked.getId() == 9300102) {
+            dmg /= 2.1;
+       }
+        map.addBunnyHit();
+        attacked.damage(c.getPlayer(), dmg, true);
+        attacked.getMap().broadcastMessage(MaplePacketCreator.MobDamageMobFriendly(attacked, dmg));
     }
 }

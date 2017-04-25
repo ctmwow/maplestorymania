@@ -11,14 +11,14 @@ function act() {
 		var react = rm.getPlayer().getMap().getReactorByName("fullmoon");
 		em.setProperty("semente", parseInt(em.getProperty("semente")) + 1);
 		react.forceHitReactor(react.getState() + 1);
-		if (em.getProperty("semente").equals("6") && rm.getPlayer().getMap().getMonsterById(9300061) == null) {
+		if (em.getProperty("semente").equals("6") && rm.getPlayer().getMap().getMonsterByOid(9300061) == null) {
 			var eim = rm.getPlayer().getEventInstance();
 			var tehMap = eim.getMapInstance(910010000);
 			var bunny = MapleLifeFactory.getMonster(9300061);
 			tehMap.spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(9300061), new java.awt.Point(-187, -186));
 			eim.registerMonster(bunny);
-			//eim.setProperty("shouldDrop", "true");
-			rm.getPlayer().getMap().setSpawns(true);
+			eim.setProperty("shouldDrop", "true");
+			//rm.getPlayer().getMap().setSpawns(true);
 			rm.mapMessage(6, "Proteja o Coelhinho da Lua!");
 		}
 	}
