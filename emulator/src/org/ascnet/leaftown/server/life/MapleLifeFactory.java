@@ -83,17 +83,7 @@ public class MapleLifeFactory {
             }
             MapleData monsterInfoData = monsterData.getChild("info");
             stats = new MapleMonsterStats();
-            stats.setHp(DataUtil.toInt(monsterInfoData.resolve("maxHP")));          
-
-            //begin HenesysPQ setters
-            stats.setFriendly(DataUtil.toInt(monsterInfoData.resolve("damagedByMob"), 0) == 1);
-            stats.setPADamage(DataUtil.toInt(monsterInfoData.resolve("PADamage"), 0));
-            stats.setPDDamage(DataUtil.toInt(monsterInfoData.resolve("PDDamage"), 0));
-            stats.setMADamage(DataUtil.toInt(monsterInfoData.resolve("MADamage"), 0));
-            stats.setMDDamage(DataUtil.toInt(monsterInfoData.resolve("MDDamage"), 0));
-            stats.setDropPeriod(DataUtil.toInt(monsterInfoData.resolve("dropItemPeriod"), 0) * 10000);
-            //end HenesysPQ setters
-            
+            stats.setHp(DataUtil.toInt(monsterInfoData.resolve("maxHP")));
             stats.setMp(DataUtil.toInt(monsterInfoData.resolve("maxMP"), 0));
             stats.setExp(DataUtil.toInt(monsterInfoData.resolve("exp"), 0));
             stats.setLevel(DataUtil.toInt(monsterInfoData.resolve("level")));
@@ -117,6 +107,16 @@ public class MapleLifeFactory {
             }
             stats.setFirstAttack(firstAttack > 0);
             stats.setNoRegen(DataUtil.toInt(monsterInfoData.resolve("noregen"), 0) > 0);
+            
+          //begin HenesysPQ setters
+            stats.setFriendly(DataUtil.toInt(monsterInfoData.resolve("damagedByMob"), 0) == 1);
+            stats.setPADamage(DataUtil.toInt(monsterInfoData.resolve("PADamage"), 0));
+            stats.setPDDamage(DataUtil.toInt(monsterInfoData.resolve("PDDamage"), 0));
+            stats.setMADamage(DataUtil.toInt(monsterInfoData.resolve("MADamage"), 0));
+            stats.setMDDamage(DataUtil.toInt(monsterInfoData.resolve("MDDamage"), 0));
+            stats.setDropPeriod(DataUtil.toInt(monsterInfoData.resolve("dropItemPeriod"), 0) * 10000);
+            //end HenesysPQ setters
+            
             MapleData banData = monsterInfoData.getChild("ban");
             if (banData != null) {
                 String message = DataUtil.toString(banData.resolve("banMsg"));

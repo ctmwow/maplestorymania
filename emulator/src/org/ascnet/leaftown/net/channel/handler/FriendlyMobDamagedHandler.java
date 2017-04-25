@@ -28,10 +28,10 @@
 package org.ascnet.leaftown.net.channel.handler;
 
 import org.ascnet.leaftown.client.MapleClient;
-import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
-import org.ascnet.leaftown.server.life.MapleMonster;
+import org.ascnet.leaftown.net.AbstractMaplePacketHandler;]
 import org.ascnet.leaftown.server.maps.MapleMap;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
+import org.ascnet.leaftown.tools.Randomizer;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 /**
@@ -41,30 +41,16 @@ public class FriendlyMobDamagedHandler extends AbstractMaplePacketHandler {
 
     @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-    	int oid1 = slea.readInt(); //Id of mob that got attacked?
-        @SuppressWarnings("unused")
-        int randomshit = slea.readInt(); //Dunno
-        int oid2 = slea.readInt(); //Oid of mob that attacked?
-        MapleMap map = c.getPlayer().getMap();
-        MapleMonster attacked;
-        MapleMonster attacker;
-        try {
-            attacked = map.getMonsterByOid(oid2);
-            attacker = map.getMonsterByOid(oid1);
-        } catch (NullPointerException npe) {
+    	MapleMap map = c.getPlayer().getMap();
+        int attacker = slea.readInt();
+        slea.readInt(); //charId
+        int damaged = slea.readInt();
+        int damage = Randomizer.nextInt(((c.getPlayer().getMap().getMonsterByOid(damaged).getMaxHp() / 13 + c.getPlayer().getMap().getMonsterByOid(attacker).getPADamage() * 10)) * 2 + 500); //Beng's formula.
+        if (c.getPlayer().getMap().getMonsterByOid(damaged) == null || c.getPlayer().getMap().getMonsterByOid(attacker) == null) {
             return;
         }
-        if (attacker == null || attacked == null) return;
-                if (attacker.getId() == attacked.getId()) return;
-        int dmg = attacker.getLevel() * 9;
-        if (attacker.getLevel() > 50) {
-            dmg *= 2;
-        }
-        if (attacked.getId() == 9300102) {
-            dmg /= 2.1;
-       }
         map.addBunnyHit();
-        attacked.damage(c.getPlayer(), dmg, true);
-        attacked.getMap().broadcastMessage(MaplePacketCreator.MobDamageMobFriendly(attacked, dmg));
+        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.MobDamageMobFriendly(c.getPlayer().getMap().getMonsterByOid(damaged), damage), c.getPlayer().getMap().getMonsterByOid(damaged).getPosition());
+        c.sendPacket(MaplePacketCreator.enableActions());
     }
 }

@@ -1458,5 +1458,13 @@ public class MapleMonster extends AbstractLoadedMapleLife {
     public int getDropPeriodTime() {
         return stats.getDropPeriod();
     }
+    
+    public final MapleMonsterStats getStats() {
+        return stats;
+    }
+    
+    public int getPADamage() {
+        return stats.getPADamage();
+    }
     //end HenesysPQ functions
 }

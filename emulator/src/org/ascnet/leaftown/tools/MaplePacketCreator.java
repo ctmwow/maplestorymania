@@ -8033,7 +8033,7 @@ public class MaplePacketCreator {
 	
 	//begin HenesysPQ function
     public static MaplePacket MobDamageMobFriendly(MapleMonster mob, int damage) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.writeShort(SendPacketOpcode.DAMAGE_MONSTER.getValue());
         mplew.writeInt(mob.getObjectId());
         mplew.write(1); // direction ?

@@ -35,5 +35,4 @@ function act() {
     rm.getPlayer().getMap().broadcastMessage(MaplePacketCreator.bunnyPacket()); // Protect the Moon Bunny!
     rm.getPlayer().getMap().broadcastMessage(MaplePacketCreator.showHPQMoon());
     rm.getPlayer().getMap().showAllMonsters();
-    
 }

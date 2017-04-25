@@ -177,6 +177,7 @@ public enum RecvPacketOpcode implements MutableValueHolder<Integer> {
     MOVE_LIFE,
     AUTO_AGGRO,
     MOB_DAMAGE_MOB,
+    MOB_DAMAGE_MOB_FRIENDLY,
     MONSTER_BOMB,
     HYPNOTIZE,
     NPC_ACTION,

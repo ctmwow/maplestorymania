@@ -243,7 +243,8 @@ public final class PacketProcessor
             registerHandler(RecvPacketOpcode.KEYMAP_OPEN, NoOpHandler.getInstance());
             registerHandler(RecvPacketOpcode.MOVE_LIFE, new MoveLifeHandler());
             registerHandler(RecvPacketOpcode.AUTO_AGGRO, new AutoAggroHandler());
-            registerHandler(RecvPacketOpcode.MOB_DAMAGE_MOB, new FriendlyMobDamagedHandler());
+            registerHandler(RecvPacketOpcode.MOB_DAMAGE_MOB, new  MobDamageMobHandler());
+            registerHandler(RecvPacketOpcode.MOB_DAMAGE_MOB_FRIENDLY, new FriendlyMobDamagedHandler());
             registerHandler(RecvPacketOpcode.MONSTER_BOMB, new MonsterBombHandler());
             registerHandler(RecvPacketOpcode.HYPNOTIZE, new HypnotizeHandler());
             registerHandler(RecvPacketOpcode.NPC_ACTION, new NPCAnimation());

@@ -1176,7 +1176,15 @@ public class MapleMap
         if (characters.isEmpty() && !isPQMap()) { // Without this monsters on PQ maps never spawn
             return;
         }
-        
+        monster.setMap(this);
+        doRemoveAfter(monster);
+        spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
+
+            public void sendPackets(MapleClient c) {
+                c.sendPacket(MaplePacketCreator.spawnMonster(monster, true, 0, 0));
+            }
+        }, null);
+        updateMonsterController(monster);
         //begin HenesysPQ check
         if (monster.getDropPeriodTime() > 0) { //9300102 - Watchhog, 9300061 - Moon Bunny (HPQ)
             if (monster.getId() == 9300102) {
@@ -1188,15 +1196,6 @@ public class MapleMap
             }
         }
         //end HenesysPQ check
-        monster.setMap(this);
-        doRemoveAfter(monster);
-        spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
-
-            public void sendPackets(MapleClient c) {
-                c.sendPacket(MaplePacketCreator.spawnMonster(monster, true, 0, 0));
-            }
-        }, null);
-        updateMonsterController(monster);
         spawnedMonstersOnMap.incrementAndGet();
     }
 
