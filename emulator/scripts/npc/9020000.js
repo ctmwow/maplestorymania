@@ -32,7 +32,7 @@
 var status;
 var minLevel = 21;
 var maxLevel = 255;
-var minPlayers = 3;
+var minPlayers = 1;
 var maxPlayers = 6;
 
 function start() {
@@ -49,10 +49,10 @@ function action(mode, type, selection) {
     }
     if (status == 0) {
         if (cm.getParty() == null) { // No Party
-            cm.sendOk("How about you and your party members collectively beating a quest? Here you'll find obstacles and problems where you won't be able to beat it without great teamwork.  If you want to try it, please tell the #bleader of your party#k to talk to me.");
+            cm.sendOk("Que tal você e seu grupo terminarem uma missão juntos? Aqui você vai encontrar obstáculos e problemas que só poderão ser resolvidos em equipe. Se quiser tentar, peça ao #blíder do seu grupo#k para falar comigo.");
             cm.dispose();
-        } else if (!cm.isLeader()) { // Not Party Leader
-            cm.sendOk("If you want to try the quest, please tell the #bleader of your party#k to talk to me.");
+        } else if (!cm.isPartyLeader()) { // Not Party Leader
+            cm.sendOk("Se você quiser tentar a missão, por favor diga ao #bleader do seu Ggrupo#k para falar comigo.");
             cm.dispose();
         } else {
             var party = cm.getParty().getMembers();
@@ -63,24 +63,23 @@ function action(mode, type, selection) {
                     levelValid++;
             }
             if (inMap < minPlayers || inMap > maxPlayers) {
-                cm.sendOk("Your party is not a party of "+minPlayers+". Please make sure all your members are present and qualified to participate in this quest.");
+                cm.sendOk("Seu grupo não possui "+minPlayers+" membros. Certifique-se de que todos os seus membros estejam presentes e qualificados para participar nesta missão.");
                 cm.dispose();
             } else if (levelValid != inMap) {
-                cm.sendOk("Please make sure all your members are present and qualified to participate in this quest. This PQ requires players ranging from level "+minLevel+" to level "+maxLevel+". I see #b" + levelValid + "#k members are in the right level range. If this seems wrong, #blog out and log back in,#k or reform the party.");
+                cm.sendOk("Certifique-se de que todos os seus membros estejam presentes e qualificados para participar nesta missão. Esta PQ requer jogadores do level "+minLevel+" ao level "+maxLevel+". Eu vejo #b" + levelValid + "#k membros que estão no level correto. Se isso parece um engano, #breconecte-se#k, ou recrie o grupo.");
                 cm.dispose();
             } else {
                 var em = cm.getEventManager("KerningPQ");
                 if (em == null) {
-                    cm.sendOk("This PQ is currently unavailable.");
+                    cm.sendOk("Este evento está indisponível.");
                 } else if (em.getProperty("KPQOpen").equals("true")) {
                     // Begin the PQ.
                     em.startInstance(cm.getParty(), cm.getPlayer().getMap());
-                    party = cm.getParty();
-                    cm.removePartyItems(4001008);
-                    cm.removePartyItems(4001007);
+                    //cm.removeFromParty(4001008, party);
+                    //cm.removeFromParty(4001007, party);
                     em.setProperty("KPQOpen" , "false");
                 } else {
-                    cm.sendNext("There is already another party inside. Please wait !");
+                    cm.sendNext("Um outro grupo já entrou para completar a missão. Por favor, tente mais tarde.");
                 }
                 cm.dispose();
             }

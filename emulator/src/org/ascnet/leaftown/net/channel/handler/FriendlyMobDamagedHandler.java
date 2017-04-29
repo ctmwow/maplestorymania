@@ -28,7 +28,7 @@
 package org.ascnet.leaftown.net.channel.handler;
 
 import org.ascnet.leaftown.client.MapleClient;
-import org.ascnet.leaftown.net.AbstractMaplePacketHandler;]
+import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
 import org.ascnet.leaftown.server.maps.MapleMap;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.Randomizer;

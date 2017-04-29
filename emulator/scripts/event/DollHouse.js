@@ -22,25 +22,41 @@
 /**
  *Dollhouse Event
 **/
-importPackage(Packages.org.ascnet.leaftown.tools);
+importPackage(Packages.client);
+importPackage(Packages.server.life);
+importPackage(Packages.tools);
 
 var returnMap;
 var map;
 var eim;
+var minPlayers = 1;
+var instanceId;
 
 function init() {
     em.setProperty("noEntry","false");
 }
 
+function monsterValue(eim, mobId) {
+    return 1;
+}
+
+function setup(eim) {
+    em.setProperty("noEntry","true");
+	instanceId = em.getChannelServer().getInstanceId();
+	var instanceName = "DollHouse_" + instanceId;
+	var eim = em.newInstance(instanceName);
+	return eim;
+	
+}
+
 function playerEntry(eim, player) {
     returnMap = em.getChannelServer().getMapFactory().getMap(221024400);
-    eim = em.getInstance("DollHouse");
-    map = eim.getMapFactory().getMap(922000010);
+	var map = eim.getMapFactory().getMap(922000010);
     player.changeMap(map, map.getPortal(0));
     map.shuffleReactors();
-    em.setProperty("noEntry","true");
-    em.schedule("timeOut", 600000);
-    player.getClient().getSession().write(MaplePacketCreator.getClock(600));
+	var eventTime = 10 * 60000;
+    em.schedule("timeOut", eim, eventTime); // invokes "timeOut" in how ever many seconds.
+	eim.startEventTimer(eventTime);
 }
 
 function playerExit(eim, player) {

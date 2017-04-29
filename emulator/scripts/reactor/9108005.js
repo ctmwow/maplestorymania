@@ -17,7 +17,7 @@ function act() {
 			var bunny = MapleLifeFactory.getMonster(9300061);
 			tehMap.spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(9300061), new java.awt.Point(-187, -186));
 			eim.registerMonster(bunny);
-			eim.setProperty("shouldDrop", "true");
+			//eim.setProperty("shouldDrop", "true");
 			//rm.getPlayer().getMap().setSpawns(true);
 			rm.mapMessage(6, "Proteja o Coelhinho da Lua!");
 		}

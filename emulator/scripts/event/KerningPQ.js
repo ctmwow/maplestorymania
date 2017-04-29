@@ -39,7 +39,7 @@ INSERT monsterdrops (monsterid,itemid,chance) VALUES (9300003,4001008,1);
 
 importPackage(Packages.org.ascnet.leaftown.world);
 var exitMap;
-var minPlayers = 4;
+var minPlayers = 1;
 
 function init() { // Initial loading.
     exitMap = em.getChannelServer().getMapFactory().getMap(103000890);
@@ -57,7 +57,7 @@ function setup() { // Invoked from "EventManager.startInstance()"
     var eventTime = 30 * (1000 * 60); // 30 mins.
     var firstPortal = eim.getMapInstance(103000800).getPortal("next00");
     firstPortal.setScriptName("kpq0");
-    em.schedule("timeOut", eim, eventTime); // invokes "timeOut" in how ever many seconds.
+    em.schedule("timeOut", eventTime); // invokes "timeOut" in how ever many seconds.
     eim.startEventTimer(eventTime); // Sends a clock packet and tags a timer to the players.
     return eim; // returns the new instance.
 }

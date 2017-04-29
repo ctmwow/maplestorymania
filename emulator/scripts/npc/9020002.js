@@ -46,25 +46,25 @@ function action(mode, type, selection){
     var mapId = cm.getPlayer().getMapId();
     if (mapId == 103000890) {
         if (status == 0) {
-            cm.sendNext("See you next time.");
+            cm.sendNext("Entendo. O trabalho de equipe é muito importante aqui. Por favor, esforce-se mais com os membros do seu grupo.");
         } else {
-            cm.getPlayer().changeMap(103000000, cm.getClient().getChannelServer().getMapFactory().getMap(103000000).getRandomSpawnpoint());
+            cm.getPlayer().changeMap(103000000, cm.getClient().getChannelServer().getMapFactory().getMap(103000000).getRandomSpawnPoint());
             cm.removeAll(4001007);
             cm.removeAll(4001008);
             cm.dispose();
         }
     } else {
         if (status == 0) {
-            var outText = "Once you leave the map, you'll have to restart the whole quest if you want to try it again.  Do you still want to leave this map?";
+            var outText = "Se sair do mapa, você precisará refazer toda a missão se quiser tentar novamente. Ainda quer sair deste mapa?";
             if (mapId == 103000805) {
-                outText = "Are you ready to leave this map?";
+                outText = "Você está pronto para deixar este mapa?";
             }
             cm.sendYesNo(outText);
         } else if (mode == 1) {
             var eim = cm.getPlayer().getEventInstance(); // Remove them from the PQ!
             if (eim == null)
                 cm.warp(103000890, "st00"); // Warp player
-            else if (cm.isLeader()) {
+            else if (cm.isPartyLeader()) {
                 //cm.getEventManager("KerningPQ").setProperty("KPQOpen" , "true");
                 eim.disbandParty();
             }

@@ -144,6 +144,6 @@ function timeOut() { // possibly useful
 function debug(eim,msg) {
     var iter = eim.getPlayers().iterator();
     while (iter.hasNext()) {
-        iter.next().getClient().getSession().write(Packages.org.ascnet.leaftown.tools.MaplePacketCreator.serverNotice(6,msg));
+        iter.next().getClient().getSession().write(Packages.tools.MaplePacketCreator.serverNotice(6,msg));
     }
 }
