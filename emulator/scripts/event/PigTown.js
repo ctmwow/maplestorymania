@@ -28,16 +28,16 @@
  */
 
 
-importPackage(Packages.world);
-importPackage(Packages.client);
-importPackage(Packages.server.maps);
+importPackage(Packages.org.ascnet.leaftown.world);
+importPackage(Packages.org.ascnet.leaftown.client);
+importPackage(Packages.org.ascnet.leaftown.server.maps);
 
 var exitMap;
 var instanceId;
 var minPlayers = 1;
 
 function init() {
-    	exitMap = em.getChannelServer().getMapFactory().getMap(910010400); 
+    exitMap = em.getChannelServer().getMapFactory().getMap(910010400); 
 }
 
 function monsterValue(eim, mobId) {
@@ -45,12 +45,12 @@ function monsterValue(eim, mobId) {
 }
 
 function setup(eim) {
-        var eim = em.newInstance("PigTown");
+    var eim = em.newInstance("PigTown");
 	var mf = eim.getMapFactory();
-        var eventTime = 5 * 60000;
+    var eventTime = 5 * 60000;
 	var map = mf.getMap(910010200);//wutt
-        em.schedule("timeOut", eim, eventTime); 
-        eim.startEventTimer(eventTime);
+    eim.schedule("timeOut", eventTime); 
+    eim.startEventTimer(eventTime);
 	return eim;
 }
 
