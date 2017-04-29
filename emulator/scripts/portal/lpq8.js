@@ -1,42 +1,21 @@
-/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc> 
-                       Matthias Butz <matze@odinms.de>
-                       Jan Christian Meyer <vimes@odinms.de>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation. You may not use, modify
-    or distribute this program under any other version of the
-    GNU Affero General Public License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/*
-LudiPQ - 1 - 2 Portal
-@author Jvlaple
+/**
+ * @author: Eric
+ * @script: ludi_s1Clear
+ * @func: Handles the portal for stage 8 in Ludi PQ
 */
 
 function enter(pi) {
-	var nextMap = 922010900;
-	var eim = pi.getPlayer().getEventInstance()
-	var target = eim.getMapInstance(nextMap);
-	var targetPortal = target.getPortal("st00");
-	// only let people through if the eim is ready
-	var avail = eim.getProperty("8stageclear");
-	if (avail == null) {
-		// can't go thru eh?
-		pi.getPlayer().dropMessage(5, "Some seal is blocking this door.");
-		return false;	}
-	else {
-		pi.getPlayer().changeMap(target, targetPortal);
-		return true;
+	try {
+		var eim = pi.getPlayer().getEventInstance();
+		if (eim.getProperty("stage7status") == null) {
+			pi.playerMessage(5, "The portal is blocked.");
+		} else {
+			pi.warp(pi.getMapId() + 100, 0);
+			if (pi.getPlayer().getMap().getAllMonsters().size() == 0) {
+				pi.getPlayer().spawnCustomMonster(9300012, 55000 * pi.getPlayer().getAveragePartyLevel(), 55000 * pi.getPlayer().getAveragePartyLevel(), 1, 1096, 184, pi.getPlayer().getAveragePartyLevel());
+			}
+		}
+	} catch (e) {
+		pi.getPlayer().dropMessage(5, "Error: " + e);
 	}
 }

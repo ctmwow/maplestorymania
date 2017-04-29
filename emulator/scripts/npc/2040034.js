@@ -8,7 +8,7 @@
 var status = 0;
 var minLevel = 35; // according to Nexon it's 30, but it's actually a 50 requirement.
 var maxLevel = 200;
-var minPartySize = 5;
+var minPartySize = 1;
 var maxPartySize = 6;
 
 var brokenGlassesCount = 0; // code custom quest data is on the todo list
@@ -32,7 +32,6 @@ function action(mode, type, selection) {
 	}
 	if (status == 0) {
 		cm.sendSimple("#e<Party Quest: Dimensional Schism>#n\r\n\r\nYou can't go any higher because of the extremely dangerous creatures above. Would you like to collaborate with party members to complete the quest? If so, please have your #bparty leader#k talk to me.#b\r\n#L0#I want to participate in the party quest.\r\n#L1#I want to find party members.\r\n#L2#I want to receive the Broken Glasses.\r\n#L3#I would like to hear more details.");
-		cm.dispose();
 	} else if (status == 1) {
 		if (selection == 0) {
 			if (cm.getParty() == null) {

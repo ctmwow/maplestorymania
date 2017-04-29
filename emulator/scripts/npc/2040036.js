@@ -1,40 +1,9 @@
-/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * @author: Eric
+ * @npc: Red Balloon - LudiPQ 1st stage NPC
 */
-/*
-@	Author : Raz
-@
-@	NPC = Red Balloon
-@	Map = Hidden-Street <Stage 1>
-@	NPC MapId = 922010100
-@	Function = LPQ - 1st Stage
-@
-*/
-
-importPackage(Packages.org.ascnet.leaftown.tools);
 
 var status = 0;
-var party;
-var preamble;
-var gaveItems;
 
 function start() {
     status = -1;
@@ -42,73 +11,48 @@ function start() {
 }
 
 function action(mode, type, selection) {
-    if (mode == -1)
-        cm.dispose();//ExitChat
-    else if (mode == 0)
-        cm.dispose();//No
-    else{		    //Regular Talk
-        if (mode == 1)
-            status++;
-        else
-            status--;
-        var eim = cm.getPlayer().getEventInstance();
-        var nthtext = "1st";
-        if (status == 0) {
-            party = eim.getPlayers();
-            preamble = eim.getProperty("leader" + nthtext + "preamble");
-            gaveItems = eim.getProperty("leader" + nthtext + "gaveItems");
-            if (preamble == null) {
-                cm.sendNext("Hi. Welcome to the " + nthtext + " stage.");
-                eim.setProperty("leader" + nthtext + "preamble","done");
-                cm.dispose();
-            }else{
-                if(!isLeader()){
-                    if(gaveItems == null){
-                        cm.sendOk("Please tell your #bParty-Leader#k to come talk to me");
-                        cm.dispose();
-                    }else{
-                        cm.sendOk("Hurry, goto the next stage, the portal is open!");
-                        cm.dispose();
-                    }
-                }else{
-                    if(gaveItems == null){
-						if(cm.getPlayer().getMap().getCharacters().size() != eim.getPlayers().size()) {
-							cm.sendOk("Please wait for all of your party members to get here.");
-							cm.dispose();
-                        } else if(cm.itemQuantity(4001022) >= 25){
-                            cm.sendOk("Good job! you have collected all 25 #b#t4001022#'s#k");
-                        }else{
-                            cm.sendOk("Sorry you don't have all 25 #b#t4001022#'s#k");
-                            cm.dispose();
-                        }
-                    }else{
-                        cm.sendOk("Hurry, goto the next stage, the portal is open!");
-                        cm.dispose();
-                    }
-                }
-            }
-        }else if (status == 1){
-			var map = eim.getMapInstance(cm.getPlayer().getMapId());
-			map.broadcastMessage(MaplePacketCreator.showEffect("quest/party/clear"));
-			map.broadcastMessage(MaplePacketCreator.playSound("Party1/Clear"));
-			map.broadcastMessage(MaplePacketCreator.environmentChange("gate", 2));
-	
+	(mode == 1 ? status++ : mode == 0 ? stauts-- : cm.dispose());
+	var eim = cm.getPlayer().getEventInstance();
+	var stage1status = eim.getProperty("stage1status");
+	if (status == 0) {
+		if (stage1status == null) {
+			if (cm.isPartyLeader()) { // Leader
+				var stage1leader = eim.getProperty("stage1leader");
+				if (stage1leader == "done") { // not in gms anymore because i just tested this
+					if (cm.getPlayer().getMap().getAllMonsters().size() == 0) {
+						status = 0;
+						cm.sendNext("Wow! Congratulations on clearing the quests for this stage.\r\nPlease use the portal you see over there and move on to the next stage. Best of luck to you!");
+					} else { // Not done yet
+						cm.sendOk("In the first stage, you'll find Ratz and Black Rats from Another Dimension, who are nibbling away at the Dimensional Schism. If you gather up 20 passes that the Ratz and Black Ratz have stolen, I'll open the way to the next stage. Good luck!");
+						cm.dispose();
+					}
+				} else {
+					cm.sendNext("In the first stage, you'll find Ratz and Black Rats from Another Dimension, who are nibbling away at the Dimensional Schism. If you gather up 20 passes that the Ratz and Black Ratz have stolen, I'll open the way to the next stage. Good luck!");
+					eim.setProperty("stage1leader","done");
+					cm.dispose();
+				}
+			} else { // Members
+				cm.sendNext("In the first stage, you'll find Ratz and Black Rats from Another Dimension, who are nibbling away at the Dimensional Schism. If you gather up 20 passes that the Ratz and Black Ratz have stolen, I'll open the way to the next stage. Good luck!");
+				cm.dispose();
+			}
+		} else {
+			cm.sendNext("Wow! Congratulations on clearing the quests for this stage.\r\nPlease use the portal you see over there and move on to the next stage. Best of luck to you!");
+			cm.dispose();
+		}
+	} else if (status == 1) {
+		if (eim.getProperty("stage1status") == null) {
 			cm.removeAll(4001022);
-            cm.givePartyExp("LudiPQ1st");
-            eim.setProperty("1stageclear","true");
-            eim.setProperty("leader" + nthtext + "gaveItems","done");
-            cm.dispose();
-        }
-    }
+			clear(1, eim, cm);
+			cm.givePartyExp(2100, eim.getPlayers()); // handled automatically now.
+		}
+		cm.dispose();
+	}
 }
 
-
-function isLeader(){
-    if(cm.getParty() == null){
-        return false;
-    }else{
-        return cm.isLeader();
-    }
+function clear(stage, eim, cm) {
+    eim.setProperty("stage" + stage.toString() + "status", "clear");
+    cm.showEffect("quest/party/clear");
+    cm.playSound("Party1/Clear");
+	cm.mapMessage(-1, "A portal to the next stage has opened.");
+    cm.environmentChange(2, "gate");
 }
-
-

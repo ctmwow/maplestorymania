@@ -1,41 +1,9 @@
-/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * @author: Eric
+ * @npc: Sky-blue Balloon - LudiPQ 4th (was 7th) stage NPC
 */
-/*
-@	Author : Raz
-@
-@	NPC = Sky-Blue Balloon
-@	Map = Hidden-Street <Stage 7>
-@	NPC MapId = 922010700
-@	Function = LPQ - 7 Stage
-@
-@	Description: You need a ranged person here. The ranged person must kill the three Ratz, and they'll trigger something. What's next is for you to find out! Get me 3 passes!
-*/
-
-importPackage(Packages.org.ascnet.leaftown.tools);
 
 var status = 0;
-var party;
-var preamble;
-var gaveItems;
 
 function start() {
     status = -1;
@@ -43,77 +11,49 @@ function start() {
 }
 
 function action(mode, type, selection) {
-    if (mode == -1) {
-        cm.dispose();
-    }else if (mode == 0){
-        cm.dispose();
-    }else{
-        if (mode == 1)
-            status++;
-        else
-            status--;
-        var eim = cm.getPlayer().getEventInstance();
-        var nthtext = "7th";
-        if (status == 0) {
-            party = eim.getPlayers();
-            preamble = eim.getProperty("leader" + nthtext + "preamble");
-            gaveItems = eim.getProperty("leader" + nthtext + "gaveItems");
-            if (preamble == null) {
-                cm.sendOk("Hi. Welcome to the " + nthtext + " stage. You need a ranged person here. The ranged person must kill the three Ratz, and they'll trigger something. What's next is for you to find out! Get me 3 passes!");
-                eim.setProperty("leader" + nthtext + "preamble","done");
-                cm.dispose();
-            }else{
-                if(!isLeader()){
-                    if(gaveItems == null){
-                        cm.sendOk("Please tell your #bParty-Leader#k to come talk to me");
-                        cm.dispose();
-                    }else{
-                        cm.sendOk("Hurry, goto the next stage, the portal is open!");
-                        cm.dispose();
-                    }
-                }
-                if(gaveItems == null){
-                    cm.sendSimple("What's up?\r\n#L0#I've got your passes!#l\r\n"); // #L1#There's something wrong here.#l
-                }
-            }
-        }else if (status == 1){
-            if (selection == 0) {
-                if(cm.getPlayer().getMap().getCharacters().size() != eim.getPlayers().size()) {
-					cm.sendOk("Please wait for all of your party members to get here.");
+	(mode == 1 ? status++ : mode == 0 ? status-- : cm.dispose());
+	var eim = cm.getPlayer().getEventInstance();
+	var stage7status = eim.getProperty("stage7status");
+	if (status == 0) {
+		if (stage7status == null) {
+			if (cm.isPartyLeader()) { // Leader
+				var stage7leader = eim.getProperty("stage7leader");
+				if (stage7leader == "done") { // not in gms anymore because i just tested this
+					if (cm.getPlayer().getMap().getAllMonsters().size() == 0) {
+						status = 0;
+						cm.sendNext("Wow, not a single #b#o9300010##k left! I'm impressed! I can open the portal to the next stage now.");
+					} else { // Not done yet
+						cm.sendNext("Welcome to the fourth stage. Here, you must face the powerful #b#o9300010#. #o9300010##k is a fearsome opponent, so do not let your guard down. Once you do defeat it, let me know and I'll show you to the next stage.");
+						cm.dispose();
+					}
+				} else {
+					cm.sendNext("Welcome to the fourth stage. Here, you must face the powerful #b#o9300010#. #o9300010##k is a fearsome opponent, so do not let your guard down. Once you do defeat it, let me know and I'll show you to the next stage.");
+					eim.setProperty("stage7leader","done");
 					cm.dispose();
-                } else if(cm.itemQuantity(4001022) >= 3){
-                    cm.sendOk("Good job! you have collected all 3 #b#t4001022#'s#k");
-                }else{
-                    cm.sendOk("Sorry you don't have all 3 #b#t4001022#'s#k");
-                    cm.dispose();
-                }
-            } else if (selection == 1) {
-                if (cm.mapMobCount()==0) {
-                    cm.sendOk("Good job! You've killed all the Rombards!");
-                }else{
-                    cm.sendOk("What are you talking about? Kill those Rombards!");
-                    cm.dispose();
-                }
-            }
-        }else if (status == 2){
-            cm.removeAll(4001022);
-            
-			var map = eim.getMapInstance(cm.getPlayer().getMapId());
-			map.broadcastMessage(MaplePacketCreator.showEffect("quest/party/clear"));
-			map.broadcastMessage(MaplePacketCreator.playSound("Party1/Clear"));
-			map.broadcastMessage(MaplePacketCreator.environmentChange("gate", 2));
-			
-            cm.givePartyExp("LudiPQ7th");
-            eim.setProperty("7stageclear","true");
-            eim.setProperty("leader" + nthtext + "gaveItems","done");
-            cm.dispose();
-        }            
-    }
+				}
+			} else { // Members
+				cm.sendNext("Welcome to the fourth stage. Here, you must face the powerful #b#o9300010#. #o9300010##k is a fearsome opponent, so do not let your guard down. Once you do defeat it, let me know and I'll show you to the next stage.");
+				cm.dispose();
+			}
+		} else {
+			cm.sendNext("Wow, not a single #b#o9300010##k left! I'm impressed! I can open the portal to the next stage now.");
+			cm.dispose();
+		}
+	} else if (status == 1) {
+		cm.sendNextPrev("The portal that leads you to the next stage is now open.");
+	} else if (status == 2) {
+		if (eim.getProperty("stage7status") == null) { // this is manual in gms, turns out it's not automated like every other stage..
+			cm.removeAll(4001022); // not even dropped in this stage but whatever
+			clear(7, eim, cm);
+			cm.givePartyExp(4620, eim.getPlayers());
+		}
+		cm.dispose();
+	}
 }
 
-function isLeader(){
-    if(cm.getParty() == null)
-        return false;
-    else
-        return cm.isLeader();
+function clear(stage, eim, cm) {
+    eim.setProperty("stage" + stage.toString() + "status", "clear");
+    cm.showEffect("quest/party/clear");
+    cm.playSound("Party1/Clear");
+    cm.environmentChange(2, "gate");
 }

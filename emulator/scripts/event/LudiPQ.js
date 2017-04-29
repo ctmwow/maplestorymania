@@ -19,7 +19,7 @@ function monsterValue(eim, mobId) {
 }
 
 function setup() {
-        em.setProperty("state", "1")
+    em.setProperty("state", "1")
 	instanceId = em.getChannelServer().getInstanceId();
 	exitMap = em.getChannelServer().getMapFactory().getMap(922010000); //Teh exit map :) <---------t
 	var instanceName = "LudiPQ" + instanceId;
@@ -29,10 +29,10 @@ function setup() {
 	em.getChannelServer().addInstanceId();
 	var map = mf.getMap(922010100);//wutt
 	var map = eim.getMapInstance(922010100);
-        mf.getMap(922010200).resetReactors();
-        mf.getMap(922010201).resetReactors();
-        mf.getMap(922010300).resetReactors();
-        mf.getMap(922010700).resetReactors();
+	mf.getMap(922010200).resetReactors();
+	mf.getMap(922010201).resetReactors();
+	mf.getMap(922010300).resetReactors();
+	mf.getMap(922010700).resetReactors();
 	map.getPortal(2).setScriptName("lpq2");
 	var map1 = eim.getMapInstance(922010200);
 	map1.getPortal(2).setScriptName("lpq3");
@@ -48,7 +48,7 @@ function setup() {
 	map6.getPortal(2).setScriptName("lpqboss");
 	var mapBoss = eim.getMapInstance(922010900);
 	mapBoss.getPortal(0).setScriptName("blank");
-    em.schedule("timeOut", eim, eventTime); // invokes "timeOut" in how ever many seconds.
+    eim.schedule("timeOut", eventTime); // invokes "timeOut" in how ever many seconds.
     eim.startEventTimer(eventTime); // Sends a clock packet and tags a timer to the players.
 
 	return eim;
