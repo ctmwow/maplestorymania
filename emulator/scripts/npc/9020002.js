@@ -48,7 +48,7 @@ function action(mode, type, selection){
         if (status == 0) {
             cm.sendNext("Entendo. O trabalho de equipe é muito importante aqui. Por favor, esforce-se mais com os membros do seu grupo.");
         } else {
-            cm.getPlayer().changeMap(103000000, cm.getClient().getChannelServer().getMapFactory().getMap(103000000).getRandomSpawnPoint());
+            cm.warp(103000000);
             cm.removeAll(4001007);
             cm.removeAll(4001008);
             cm.dispose();

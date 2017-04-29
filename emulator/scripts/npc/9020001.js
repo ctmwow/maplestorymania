@@ -187,7 +187,7 @@ function action(mode, type, selection) {
 					cm.gainItem(4001008, -10);
 					clear(5,eim,cm);
 					cm.givePartyExp(1500, party);
-                    cm.givePartyNX(300, party);
+                    //cm.givePartyNX(300, party);
                                       //  cm.givePartyQPoints(20, party);
 					cm.dispose();
 				} else { 
