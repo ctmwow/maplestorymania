@@ -29,6 +29,7 @@ package org.ascnet.leaftown.net.channel.handler;
 
 import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
+import org.ascnet.leaftown.server.life.MapleMonster;
 import org.ascnet.leaftown.server.maps.MapleMap;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.Randomizer;
@@ -37,20 +38,43 @@ import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 /**
  * @author iamSTEVE
  */
-public class FriendlyMobDamagedHandler extends AbstractMaplePacketHandler {
+public class FriendlyMobDamagedHandler extends AbstractMaplePacketHandler 
+{
 
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
+    {
     	MapleMap map = c.getPlayer().getMap();
         int attacker = slea.readInt();
+        
         slea.readInt(); //charId
+        
         int damaged = slea.readInt();
-        int damage = Randomizer.nextInt(((c.getPlayer().getMap().getMonsterByOid(damaged).getMaxHp() / 13 + c.getPlayer().getMap().getMonsterByOid(attacker).getPADamage() * 10)) * 2 + 500); //Beng's formula.
-        if (c.getPlayer().getMap().getMonsterByOid(damaged) == null || c.getPlayer().getMap().getMonsterByOid(attacker) == null) {
+        
+        MapleMonster mob = c.getPlayer().getMap().getMonsterByOid(damaged);
+        
+        if (c.getPlayer().getMap().getMonsterByOid(damaged) == null || c.getPlayer().getMap().getMonsterByOid(attacker) == null)
+        {
+        	c.sendPacket(MaplePacketCreator.enableActions());
             return;
         }
-        map.addBunnyHit();
-        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.MobDamageMobFriendly(c.getPlayer().getMap().getMonsterByOid(damaged), damage), c.getPlayer().getMap().getMonsterByOid(damaged).getPosition());
+        
+        int damage = Randomizer.nextInt(((c.getPlayer().getMap().getMonsterByOid(damaged).getMaxHp() / 13 + c.getPlayer().getMap().getMonsterByOid(attacker).getPADamage() * 10)));
+        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.MobDamageMobFriendly(c.getPlayer(), mob, damage), mob.getPosition());
+        
+        
+        if(mob.getId() == 9300061 || mob.getId() == 9300102)
+        {
+            map.addBunnyHit();
+            
+            if(mob.getHp() < 1)
+            {
+            	c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.serverNotice(5, "[Notícia] Você falhou na missão."));
+            	c.getPlayer().getMap().killAllMonsters(false);
+            	
+            	c.getPlayer().getEventInstance().disbandParty();
+            }
+        }
         c.sendPacket(MaplePacketCreator.enableActions());
     }
 }

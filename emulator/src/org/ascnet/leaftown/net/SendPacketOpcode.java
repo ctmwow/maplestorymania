@@ -186,6 +186,7 @@ public enum SendPacketOpcode implements MutableValueHolder<Integer> {
     APPLY_MONSTER_STATUS,
     CANCEL_MONSTER_STATUS,
     DAMAGE_MONSTER,
+    DAMAGE_FRIENDLY_MONSTER,
     MONSTER_EFFECT,
     MONSTER_HEAL,
     UNKNOWN_STATE,

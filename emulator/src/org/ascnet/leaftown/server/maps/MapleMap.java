@@ -48,8 +48,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -124,7 +122,7 @@ public class MapleMap
     private final float origMobRate;
     private float monsterRate;
     private boolean everlast = false, allowShops, partyOnly;
-    private boolean dropsDisabled = false, clock, boat, docked, town, hasEvent, muted, lootable = true;
+    private boolean dropsDisabled = false, spawnsEnabled = true, clock, boat, docked, town, hasEvent, muted, lootable = true;
     private String mapName, streetName, onUserEnter, onFirstUserEnter;
     private boolean canEnter = true, canExit = true, cannotInvincible = false, canVipRock = true, allowSkills = true, canMovement = true;
     private ScheduledFuture<?> dojoSpawn = null;
@@ -219,6 +217,11 @@ public class MapleMap
     public boolean canUseSkills() {
         return allowSkills;
     }
+    
+    public void setSpawns(boolean value)
+    {
+    	spawnsEnabled = value;
+    }
 
     public void setAllowSkills(boolean allow) {
         allowSkills = allow;
@@ -269,23 +272,31 @@ public class MapleMap
         }
     }
 
-    private void spawnAndAddRangedMapObject(MapleMapObject mapobject, DelayedPacketCreation packetbakery, SpawnCondition condition) {
+    private void spawnAndAddRangedMapObject(MapleMapObject mapobject, DelayedPacketCreation packetbakery, SpawnCondition condition) 
+    {
         objectLock.lock();
-        try {
+        try 
+        {
             mapobject.setObjectId(runningOid);
-            for (MapleCharacter chr : characters) {
-                if (condition == null || condition.canSpawn(chr)) {
-                    if (chr.getPosition().distanceSq(mapobject.getPosition()) <= MapleCharacter.MAX_VIEW_RANGE_SQ) {
-                        if (chr.canSeeItem(mapobject)) {
-                            packetbakery.sendPackets(chr.getClient());
+            for (MapleCharacter chr : characters) 
+            {
+                if (condition == null || condition.canSpawn(chr)) 
+                {
+                    if (chr.getPosition().distanceSq(mapobject.getPosition()) <= MapleCharacter.MAX_VIEW_RANGE_SQ) 
+                    {
+                        if (chr.canSeeItem(mapobject)) 
+                        {
                             chr.addVisibleMapObject(mapobject);
+                            packetbakery.sendPackets(chr.getClient());
                         }
                     }
                 }
             }
             mapobjects.put(runningOid, mapobject);
             incrementRunningOid();
-        } finally {
+        } 
+        finally 
+        {
             objectLock.unlock();
         }
     }
@@ -659,28 +670,60 @@ public class MapleMap
         this.hpq_Bunny_Hits ++;
     }
     
-    private void monsterItemDrop(final MapleMonster m, final IItem item, long delay) {
-        final ScheduledFuture<?> monsterItemDrop = TimerManager.getInstance().register(new Runnable() {
+    private void monsterItemDrop(final MapleMonster m, final IItem item, final long delay) 
+    {
+    	final ScheduledFuture<?> monsterItemDrop =  TimerManager.getInstance().register(new Runnable() 
+        {
             @Override
-            public void run() {
-                if (MapleMap.this.hpq_Bunny_Hits >= 5) {
-                        MapleMap.this.broadcastMessage(MaplePacketCreator.serverNotice(0, "O Coelhinho da lua está se sentindo doente. Proteja-o para que ele possa fazer deliciosos bolinhos de arroz.")); // Your choice, I think it should be in MobHitMobFriendly
-                        MapleMap.this.hpq_Bunny_Hits = 0;
-                        return;
-                    }
+            public void run() 
+            {
+                if (MapleMap.this.hpq_Bunny_Hits >= 5) 
+                {
+	                MapleMap.this.broadcastMessage(MaplePacketCreator.serverNotice(0, "O Coelhinho da lua está se sentindo doente. Proteja-o para que ele possa fazer deliciosos bolinhos de arroz.")); // Your choice, I think it should be in MobHitMobFriendly
+	                MapleMap.this.hpq_Bunny_Hits = 0;
+	                return;
+                }
+                
                 if (m.getMap().getId() == 910010000)
+                {
                     MapleMap.this.riceCakeNum++;
-                    if (MapleMap.this.getMonsterByOid(m.getId()) != null) {
-                        if (item.getItemId() == 4001101) {
+                    if (MapleMap.this.countMobOnMap(m.getId()) > 0)
+                    {
+                        if (item.getItemId() == 4001101) 
                             MapleMap.this.broadcastMessage(MaplePacketCreator.serverNotice(0, "O Coelhinho da lua fez o bolinho de número " + riceCakeNum + "."));
-                        }
-                        spawnItemDrop(m, null, item, m.getPosition(), true, true);
+                        
+                        final Point dropPoint = new Point();
+                        dropPoint.setLocation(m.getPosition().getX() - 60, m.getPosition().getY());
+                        
+                        spawnItemDrop(m, null, item, dropPoint, true, true);
                     }
                 }
+            }
         }, delay, delay);
-        if (getMonsterByOid(m.getId()) == null) {
-            monsterItemDrop.cancel(true);
-        }
+    	
+    	final Thread bunnyWatcher = new Thread(new Runnable() 
+    	{
+			@Override
+			public void run() 
+			{
+				while(true)
+				{
+					if(MapleMap.this.countMobOnMap(m.getId()) == 0)
+					{
+						monsterItemDrop.cancel(true);
+						break;
+					}
+					
+					try 
+					{
+						Thread.sleep(delay);
+					} catch (InterruptedException e) {}
+				}
+			}
+		});
+    	bunnyWatcher.setName("Bunny Dead Watch");
+    	bunnyWatcher.setPriority(Thread.MIN_PRIORITY);
+    	bunnyWatcher.start();
     }
     //end HenesysPQ functions
 
@@ -1172,30 +1215,30 @@ public class MapleMap
         spawnedMonstersOnMap.incrementAndGet();
     }
 
-    public void spawnMonster(final MapleMonster monster) {
-        if (characters.isEmpty() && !isPQMap()) { // Without this monsters on PQ maps never spawn
+    public void spawnMonster(final MapleMonster monster) 
+    {
+        if (characters.isEmpty() && !isPQMap()) // Without this monsters on PQ maps never spawn
             return;
-        }
+        
         monster.setMap(this);
         doRemoveAfter(monster);
-        spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
-
-            public void sendPackets(MapleClient c) {
+        spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() 
+        {
+            public void sendPackets(MapleClient c) 
+            {
                 c.sendPacket(MaplePacketCreator.spawnMonster(monster, true, 0, 0));
+                
+                if (monster.getDropPeriodTime() > 0) //9300102 - Watchhog, 9300061 - Moon Bunny (HPQ)
+                { 
+                    if (monster.getId() == 9300102) 
+                        monsterItemDrop(monster, new Item(4031507, (byte) 0, (short) 1), monster.getDropPeriodTime());
+                    else if (monster.getId() == 9300061) 
+                        monsterItemDrop(monster, new Item(4001101, (byte) 0, (short) 1), monster.getDropPeriodTime() / 6);
+                }
             }
         }, null);
+        
         updateMonsterController(monster);
-        //begin HenesysPQ check
-        if (monster.getDropPeriodTime() > 0) { //9300102 - Watchhog, 9300061 - Moon Bunny (HPQ)
-            if (monster.getId() == 9300102) {
-                monsterItemDrop(monster, new Item(4031507, (byte) 0, (short) 1), monster.getDropPeriodTime());
-            } else if (monster.getId() == 9300061) {
-                monsterItemDrop(monster, new Item(4001101, (byte) 0, (short) 1), monster.getDropPeriodTime() / 6);
-            } else {
-                System.out.println("UNCODED TIMED MOB DETECTED: " + monster.getId());
-            }
-        }
-        //end HenesysPQ check
         spawnedMonstersOnMap.incrementAndGet();
     }
 
@@ -1326,27 +1369,31 @@ public class MapleMap
         spawnItemDrop(dropper, owner, item, pos, ffaDrop, expire, false);
     }
 
-    public void spawnItemDrop(final MapleMapObject dropper, final MapleCharacter owner, final IItem item, Point pos, final boolean ffaDrop, final boolean expire, final boolean isPlayerDrop) {
+    public void spawnItemDrop(final MapleMapObject dropper, final MapleCharacter owner, final IItem item, Point pos, final boolean ffaDrop, final boolean expire, final boolean isPlayerDrop) 
+    {
         TimerManager tMan = TimerManager.getInstance();
         final Point droppos = calcDropPos(pos, pos);
         byte dropType = 0;
+        
         if (ffaDrop)
             dropType = 2;
         else if (owner.getParty() != null)
             dropType = 1;
+        
         final MapleMapItem drop = new MapleMapItem(item, droppos, dropper, owner, dropType);
         drop.setPlayerDrop(isPlayerDrop);
-        spawnAndAddRangedMapObject(drop, new DelayedPacketCreation() {
-
-            public void sendPackets(MapleClient c) {
-                c.sendPacket(MaplePacketCreator.dropItemFromMapObject(item.getItemId(), drop.getObjectId(), 0, drop.getDropType() == 1 ? owner.getPartyId() : isPlayerDrop ? 0 : owner.getId(), dropper.getPosition(), droppos, (byte) 1, item.getExpiration(), drop.getDropType(), isPlayerDrop));
+        spawnAndAddRangedMapObject(drop, new DelayedPacketCreation() 
+        {
+            public void sendPackets(MapleClient c) 
+            {
+                c.sendPacket(MaplePacketCreator.dropItemFromMapObject(item.getItemId(), drop.getObjectId(), 0, drop.getDropType() == 1 ? owner.getPartyId() : isPlayerDrop ? 0 : owner == null ? 0 : owner.getId(), dropper.getPosition(), droppos, (byte) 1, item.getExpiration(), drop.getDropType(), isPlayerDrop));
             }
         }, null);
-        broadcastMessage(MaplePacketCreator.dropItemFromMapObject(item.getItemId(), drop.getObjectId(), 0, drop.getDropType() == 1 ? owner.getPartyId() : isPlayerDrop ? 0 : owner.getId(), dropper.getPosition(), droppos, (byte) 0, item.getExpiration(), dropType, isPlayerDrop), drop.getPosition(), drop);
+        
+        broadcastMessage(MaplePacketCreator.dropItemFromMapObject(item.getItemId(), drop.getObjectId(), 0, drop.getDropType() == 1 ? owner.getPartyId() : isPlayerDrop ? 0 : owner == null ? 0 : owner.getId(), dropper.getPosition(), droppos, (byte) 0, item.getExpiration(), dropType, isPlayerDrop), drop.getPosition(), drop);
 
-        if (expire) {
+        if (expire)
             tMan.schedule(new ExpireMapItemJob(drop), dropLife);
-        }
 
         activateItemReactors(drop); 
     }
@@ -2378,10 +2425,13 @@ public class MapleMap
         }
     }
 
-    public void respawn() {
+    public void respawn() 
+    {
         if (characters.isEmpty())
             return;
-
+	    if (!spawnsEnabled)
+	    	return;
+        
 		/*final int numShouldSpawn = maxRegularSpawn - spawnedMonstersOnMap.get();
 		if (numShouldSpawn > 0) {
 			int spawned = 0;
@@ -2396,7 +2446,7 @@ public class MapleMap
 				}
 				if (spawned >= numShouldSpawn) {
 					break;
-				}
+				} 
 			}
 		}*/
 

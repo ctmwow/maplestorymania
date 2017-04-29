@@ -96,7 +96,7 @@ function action(mode, type, selection) {
             }
         }
     }
-     } else if(cm.getChar().getMapId() == 910010400){
+     } else if(cm.getPlayer().getMapId() == 910010400){
               if (status == 0){
                   /*if (cm.getHPQClear() >= 10) {
                       for (var i = 0; i < PQItems.length; i++) {

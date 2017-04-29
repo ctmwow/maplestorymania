@@ -57,11 +57,13 @@ public class TimerManager implements TimerManagerMBean {
         return instance;
     }
 
-    public void start() {
-        if (ses != null && !ses.isShutdown() && !ses.isTerminated()) {
+    public void start() 
+    {
+        if (ses != null && !ses.isShutdown() && !ses.isTerminated()) 
             return; //starting the same timermanager twice is no - op
-        }
-        ScheduledThreadPoolExecutor stpe = new ScheduledThreadPoolExecutor(4, new ThreadFactory() {
+        
+        ScheduledThreadPoolExecutor stpe = new ScheduledThreadPoolExecutor(4, new ThreadFactory() 
+        {
 
             private final AtomicInteger threadNumber = new AtomicInteger(1);
 
@@ -72,9 +74,10 @@ public class TimerManager implements TimerManagerMBean {
                 return t;
             }
         });
+        
         stpe.setKeepAliveTime(10, TimeUnit.MINUTES);
         stpe.allowCoreThreadTimeOut(true);
-        stpe.setMaximumPoolSize(10);
+        stpe.setMaximumPoolSize(10); 
         stpe.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
         ses = stpe;
     }

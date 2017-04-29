@@ -105,12 +105,14 @@ public class MonsterSpawningCommands implements Command {
                     overrideStats.setExp(newexp);
                     overrideStats.setMp(onemob.getMaxMp());
                     overrideStats.setRemoveAfter(removeAfter);
-                    for (int i = 0; i < num; i++) {
+                    for (int i = 0; i < num; i++) 
+                    {
                         MapleMonster mob = MapleLifeFactory.getMonster(mid);
                         mob.setHp(newhp);
                         mob.setOverrideStats(overrideStats);
                         mob.setHpLock(hpLock);
                         mob.setMoveLocked(moveLock);
+                        mob.setMap(c.getPlayer().getMap());
                         c.getPlayer().getMap().spawnMonsterOnGroundBelow(mob, c.getPlayer().getPosition());
                     }
                 } else {

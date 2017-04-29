@@ -8031,22 +8031,23 @@ public class MaplePacketCreator {
 		}
 	}
 	
-	//begin HenesysPQ function
-    public static MaplePacket MobDamageMobFriendly(MapleMonster mob, int damage) {
+    public static MaplePacket MobDamageMobFriendly(MapleCharacter player, MapleMonster mob, int damage) 
+    {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.writeShort(SendPacketOpcode.DAMAGE_MONSTER.getValue());
+        mplew.writeShort(SendPacketOpcode.DAMAGE_FRIENDLY_MONSTER.getValue());
         mplew.writeInt(mob.getObjectId());
         mplew.write(1); // direction ?
         mplew.writeInt(damage);
+        
         int remainingHp = mob.getHp() - damage;
-        if (remainingHp <= 0) {
+        
+        if (remainingHp <= 0) 
             remainingHp = 0;
-            mob.getMap().removeMapObject(mob);
-        }
+        
         mob.setHp(remainingHp);
+        
         mplew.writeInt(remainingHp);
         mplew.writeInt(mob.getMaxHp());
         return mplew.getPacket();
     }
-    //end HenesysPQ function
 }

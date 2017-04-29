@@ -60,7 +60,7 @@ public class ReactorActionManager extends AbstractPlayerInteraction
 
     public ReactorActionManager(final MapleClient c, final MapleReactor reactor) 
     {
-        super(c);
+        super(c); 
         
         this.c = c;
         this.reactor = reactor;

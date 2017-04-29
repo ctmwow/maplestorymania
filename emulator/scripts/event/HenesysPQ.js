@@ -11,27 +11,35 @@ var mapaInicial;
 var instanceId;
 var minPlayers = 1;
 
-function init() {
+function init() 
+{
     mapaSaida = em.getChannelServer().getMapFactory().getMap(910010300); 
     mapaInicial = em.getChannelServer().getMapFactory().getMap(910010000); // <main>
     em.setProperty("state", "0");
     instanceId = 1;
 }
 
-function monsterValue(eim, mobId) {
+function monsterValue(eim, mobId) 
+{
 	return 1;
 }
 
-function setup(eim) {
+function setup(eim) 
+{
     em.setProperty("semente", "0");
     em.setProperty("state", "1");
+    
     var eim = em.newInstance("HenesysPQ");
     var mf = eim.getMapFactory();
     var map = mf.getMap(910010000);
+    
+    map.setSpawns(false);
+    
     em.setProperty("cakeNum", "1");
     em.setProperty("shouldDrop", "false");
-    var eventTime = 10 * 60000;
-    em.schedule("timeOut", eventTime); // invokes "timeOut" in how ever many seconds.
+   
+   	var eventTime = 10 * 60000;
+    eim.schedule("timeOut", eventTime); // invokes "timeOut" in how ever many seconds.
     eim.startEventTimer(eventTime);
     return eim;	
 }

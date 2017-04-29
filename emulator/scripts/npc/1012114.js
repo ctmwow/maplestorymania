@@ -14,8 +14,10 @@ var mySelection;
 function start() {
     status = -1;
     mapId = cm.getMapId();
+    
     if (cm.getParty() != null) //Check for Party
         playerStatus = cm.isPartyLeader();
+        
     preamble = null;
     action(1, 0, 0);
 }
@@ -32,8 +34,17 @@ function action(mode, type, selection) {
             status++;
         else
             status--;
-        if (playerStatus) {
+            
+        if (playerStatus) 
+        {
             var eim = cm.getPlayer().getEventInstance();
+            
+            if(eim == null)
+            {
+                cm.warp(910010300, 0);
+                cm.dispose();
+            }
+            
             var party = cm.getPlayer().getEventInstance().getPlayers();
             if (status == 0) {
                 cm.sendSimple("Olá, Sou Growlie e eu quero alguns #bBolinhos de Arroz#k...#b\r\n#L0#Eu trouxe alguns Bolinhos de Arroz para você!#l\r\n#L1#O que eu tenho de fazer aqui?#l\r\n#L2#Eu quero sair!#l#k");
@@ -64,7 +75,7 @@ function action(mode, type, selection) {
                         cm.removeAll(4001101);
                         map = mf.getMap(910010100);
                         cm.givePartyExp(16000, party);
-                        cm.givePartyNX(100, party);
+                        //cm.givePartyNX(100, party);
                         for (var i = 0; i < party.size(); i++) {
                             party.get(i).changeMap(map, map.getPortal(0));
                             eim.unregisterPlayer(party.get(i));
@@ -98,7 +109,7 @@ function clear(stage, eim, cm) {
     var packetef = MaplePacketCreator.showEffect("quest/party/clear");
     var packetsnd = MaplePacketCreator.playSound("Party1/Clear");
     var packetglow = MaplePacketCreator.environmentChange("gate", 2);
-    var map = eim.getMapInstance(cm.getChar().getMapId());
+    var map = eim.getMapInstance(cm.getPlayer().getMapId());
     var party = cm.getPlayer().getEventInstance().getPlayers();
     map.broadcastMessage(packetef);
     map.broadcastMessage(packetsnd);

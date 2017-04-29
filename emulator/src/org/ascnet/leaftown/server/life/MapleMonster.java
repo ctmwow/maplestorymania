@@ -362,14 +362,6 @@ public class MapleMonster extends AbstractLoadedMapleLife {
             }
             attackersCopy.clear();
         }
-        
-        //begin Watchdog Mission check
-        if (this.hp < 1 && this.getId() == 9300061 || this.hp < 1 && this.getId() == 9300102) {
-            this.getMap().broadcastMessage(MaplePacketCreator.serverNotice(5, "[Notícia] Você falhou na missão."));
-            this.getMap().killAllMonsters(false);
-            this.eventInstance.disbandParty();
-        }
-        //end Watchdog Mission check
     }
 
     public void heal(int level, int hp, int mp) {
