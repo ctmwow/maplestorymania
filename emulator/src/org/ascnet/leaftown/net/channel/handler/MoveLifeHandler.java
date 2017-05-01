@@ -142,7 +142,8 @@ public class MoveLifeHandler extends AbstractMovementPacketHandler {
             c.getPlayer().getMap().broadcastMessage(c.getPlayer(), packet, monster.getPosition());
             updatePosition(res, monster, -1);
             c.getPlayer().getMap().moveMonster(monster, monster.getPosition());
-            c.getPlayer().getCheatTracker().checkMoveMonster(monster.getPosition());
+            
+            //c.getPlayer().getCheatTracker().checkMoveMonster(monster.getPosition());
         }
     }
 }

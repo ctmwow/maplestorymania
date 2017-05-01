@@ -27,18 +27,6 @@
 
 package org.ascnet.leaftown.scripting.event;
 
-import org.ascnet.leaftown.client.MapleCharacter;
-import org.ascnet.leaftown.database.DatabaseConnection;
-import org.ascnet.leaftown.net.world.MapleParty;
-import org.ascnet.leaftown.net.world.MaplePartyCharacter;
-import org.ascnet.leaftown.provider.MapleDataProviderFactory;
-import org.ascnet.leaftown.server.MapleSquad;
-import org.ascnet.leaftown.server.TimerManager;
-import org.ascnet.leaftown.server.life.MapleMonster;
-import org.ascnet.leaftown.server.maps.MapleMap;
-import org.ascnet.leaftown.server.maps.MapleMapFactory;
-
-import javax.script.ScriptException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -52,11 +40,25 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.script.ScriptException;
+
+import org.ascnet.leaftown.client.MapleCharacter;
+import org.ascnet.leaftown.database.DatabaseConnection;
+import org.ascnet.leaftown.net.world.MapleParty;
+import org.ascnet.leaftown.net.world.MaplePartyCharacter;
+import org.ascnet.leaftown.server.MapleSquad;
+import org.ascnet.leaftown.server.TimerManager;
+import org.ascnet.leaftown.server.life.MapleMonster;
+import org.ascnet.leaftown.server.maps.MapleMap;
+import org.ascnet.leaftown.server.maps.MapleMapFactory;
+
 /**
  * @author Matze
  */
-public class EventInstanceManager {
-
+public class EventInstanceManager 
+{
+    private final List<Integer> mapIds = new LinkedList<>();
+    private final List<Boolean> isInstanced = new LinkedList<>();
     private final List<MapleCharacter> chars = new LinkedList<>();
     private final List<MapleMonster> mobs = new LinkedList<>();
     private final Map<MapleCharacter, Integer> killCount = new HashMap<>();
@@ -67,164 +69,252 @@ public class EventInstanceManager {
     private long timeStarted = 0;
     private long eventTime = 0;
 
-    public EventInstanceManager(EventManager em, String name) {
+    public EventInstanceManager(EventManager em, String name) 
+    {
         this.em = em;
         this.name = name;
-        mapFactory = new MapleMapFactory(MapleDataProviderFactory.getDataProvider("Map"), MapleDataProviderFactory.getDataProvider("String"));
-        mapFactory.setChannel(em.getChannelServer().getChannel());
+        
+        mapFactory = em.getChannelServer().getMapFactory();
+    }
+    
+    public final MapleMap setInstanceMap(final int mapid) //gets instance map from the channelserv 
+    {
+        mapIds.add(mapid);
+        isInstanced.add(false);
+        
+        return mapFactory.getMap(mapid);
     }
 
-    public void registerPlayer(MapleCharacter chr) {
-        if (chr != null && chr.getEventInstance() == null) {
-            try {
+    public void registerPlayer(MapleCharacter chr) 
+    {
+        if (chr != null && chr.getEventInstance() == null) 
+        {
+            try 
+            {
                 chars.add(chr);
                 chr.setEventInstance(this);
                 em.getIv().invokeFunction("playerEntry", this, chr);
-            } catch (ScriptException | NoSuchMethodException ex) {
+            }
+            catch (ScriptException | NoSuchMethodException ex) 
+            {
                 Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
             }
         }
     }
 
-    public void startEventTimer(long time) {
+    public void unregisterPlayer(MapleCharacter chr) 
+    {
+        chars.remove(chr);
+        chr.setEventInstance(null);
+        
+        if(chr.getMonsterCarnival() != null)
+        	chr.resetCP();
+        
+        if(getPlayerCount() == 0)
+        	dispose();
+    }
+    
+    public void startEventTimer(long time) 
+    {
         timeStarted = System.currentTimeMillis();
         eventTime = time;
     }
 
-    public boolean isTimerStarted() {
+    public boolean isTimerStarted() 
+    {
         return eventTime > 0 && timeStarted > 0;
     }
 
-    public long getTimeLeft() {
+    public boolean isEventStarted()
+    {
+    	return props.getProperty("started", "false").equals("true");
+    }
+    
+    public long getTimeLeft() 
+    {
         return eventTime - (System.currentTimeMillis() - timeStarted);
     }
+    
+    public final void broadcastPlayerMsg(final int type, final String msg) 
+    {
+        for (MapleCharacter chr : getPlayers())
+            chr.dropMessage(type, msg);
+    }
 
-    public void registerParty(MapleParty party, MapleMap map) {
-        List<MaplePartyCharacter> pMembers = new ArrayList<>(party.getMembers());
-        for (MaplePartyCharacter pc : pMembers) {
-            if (pc.isOnline()) {
-                MapleCharacter c = map.getCharacterById(pc.getId());
-                registerPlayer(c);
-            }
+    public void registerParty(MapleParty party, MapleMap map) 
+    {
+        for (MaplePartyCharacter pc : new ArrayList<>(party.getMembers())) 
+        {
+            if (pc.isOnline())
+                registerPlayer(map.getCharacterById(pc.getId()));
         }
     }
 
-    public void registerSquad(MapleSquad squad, MapleMap map) {
-        List<MapleCharacter> sMembers = new ArrayList<>(squad.getMembers());
-        for (MapleCharacter player : sMembers) {
-            if (map.getCharacterById(player.getId()) != null) {
+    public void registerSquad(MapleSquad squad, MapleMap map) 
+    {
+        for (MapleCharacter player : new ArrayList<>(squad.getMembers())) 
+        {
+            if (map.getCharacterById(player.getId()) != null) 
                 registerPlayer(player);
-            }
         }
-        sMembers.clear();
     }
 
-    public void unregisterPlayer(MapleCharacter chr) {
-        chars.remove(chr);
-        chr.setEventInstance(null);
-    }
-
-    public int getPlayerCount() {
+    public int getPlayerCount() 
+    {
         return chars.size();
     }
 
-    public List<MapleCharacter> getPlayers() {
+    public List<MapleCharacter> getPlayers() 
+    {
         return new ArrayList<>(chars);
     }
 
-    public boolean allPlayersInMap(int mapid) {
+    public boolean allPlayersInMap(int mapid) 
+    {
         int inMap = 0;
-        for (MapleCharacter c : getPlayers()) {
+        for (MapleCharacter c : getPlayers()) 
+        {
             if (c.getMapId() == mapid)
                 inMap++;
         }
         return inMap >= getPlayerCount(); // Even though it should never be more than... lol
     }
 
-    public void registerMonster(MapleMonster mob) {
+    public void registerMonster(MapleMonster mob) 
+    {
         mobs.add(mob);
         mob.setEventInstance(this);
     }
 
-    public void unregisterMonster(MapleMonster mob) {
-        if (mob != null) {
+    public void unregisterMonster(MapleMonster mob) 
+    {
+        if (mob != null) 
+        {
             mobs.remove(mob);
             mob.setEventInstance(null);
         }
-        if (mobs.isEmpty()) {
-            try {
+        if (mobs.isEmpty()) 
+        {
+            try 
+            {
                 em.getIv().invokeFunction("allMonstersDead", this);
-            } catch (ScriptException | NoSuchMethodException ex) {
+            } 
+            catch (ScriptException | NoSuchMethodException ex) 
+            {
                 Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
             }
         }
     }
 
-    public void playerKilled(MapleCharacter chr) {
-        try {
+    public void playerKilled(MapleCharacter chr) 
+    {
+        try 
+        {
             em.getIv().invokeFunction("playerDead", this, chr);
-        } catch (ScriptException | NoSuchMethodException ex) {
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
         }
     }
 
-    public boolean revivePlayer(MapleCharacter chr) {
-        try {
+    public boolean revivePlayer(MapleCharacter chr) 
+    {
+        try 
+        {
             Object b = em.getIv().invokeFunction("playerRevive", this, chr);
-            if (b instanceof Boolean) {
+            if (b instanceof Boolean) 
                 return (Boolean) b;
-            }
-        } catch (ScriptException | NoSuchMethodException ex) {
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
         }
         return true;
     }
 
-    public void playerDisconnected(MapleCharacter chr) {
-        try {
+    public void playerDisconnected(MapleCharacter chr) 
+    {
+        try 
+        {
             em.getIv().invokeFunction("playerDisconnected", this, chr);
-        } catch (ScriptException | NoSuchMethodException ex) {
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
         }
     }
 
-    public void playerMapExit(MapleCharacter chr) {
-        try {
+    public void playerMapExit(MapleCharacter chr) 
+    {
+        try 
+        {
             em.getIv().invokeFunction("playerMapExit", this, chr);
-        } catch (ScriptException | NoSuchMethodException ex) {
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
         }
     }
 
-    /**
-     * @param chr
-     * @param mob
-     */
-    public void monsterKilled(MapleCharacter chr, int mobId) {
-        try {
+    public void monsterKilled(final MapleCharacter chr, final MapleMonster mob) 
+    {
+        try 
+        {
+            int inc = ((Double) em.getIv().invokeFunction("monsterValue", this, mob.getId())).intValue();
+            if (chr == null)
+                return;
+            
+            Integer kc = killCount.get(chr.getId());
+            
+            if (kc == null)
+                kc = inc;
+            else
+                kc += inc;
+            
+            killCount.put(chr, kc);
+            
+            if (chr.getMonsterCarnival() != null && (mob.getStats().getPoint() > 0 || mob.getStats().getCP() > 0)) 
+                em.getIv().invokeFunction("monsterKilled", this, chr, mob.getStats().getCP() > 0 ? mob.getStats().getCP() : mob.getStats().getPoint());
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
+            Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
+        }
+    }
+    
+    public void monsterKilled(MapleCharacter chr, int mobId) 
+    {
+        try 
+        {
             Integer kc = killCount.get(chr);
             int inc = ((Double) em.getIv().invokeFunction("monsterValue", this, mobId)).intValue();
-            if (kc == null) {
+            
+            if (kc == null)
                 kc = inc;
-            } else {
+            else
                 kc += inc;
-            }
+                
             killCount.put(chr, kc);
-        } catch (ScriptException | NoSuchMethodException ex) {
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
         }
     }
 
-    public int getKillCount(MapleCharacter chr) {
+    public int getKillCount(MapleCharacter chr) 
+    {
         Integer kc = killCount.get(chr);
-        if (kc == null) {
+        
+        if (kc == null)
             return 0;
-        } else {
+        else
             return kc;
-        }
     }
 
-    public void dispose() {
+    public void dispose() 
+    {
         chars.clear();
         mobs.clear();
         killCount.clear();
@@ -233,14 +323,17 @@ public class EventInstanceManager {
         em = null;
     }
 
-    public MapleMapFactory getMapFactory() {
+    public MapleMapFactory getMapFactory() 
+    {
         return mapFactory;
     }
 
-    public ScheduledFuture<?> schedule(final String methodName, long delay) {
-        return TimerManager.getInstance().schedule(new Runnable() {
-
-            public void run() {
+    public ScheduledFuture<?> schedule(final String methodName, long delay) 
+    {
+        return TimerManager.getInstance().schedule(new Runnable() 
+        {
+            public void run() 
+            {
                 try {
                     em.getIv().invokeFunction(methodName, EventInstanceManager.this);
                 } catch (NullPointerException npe) {
@@ -251,12 +344,15 @@ public class EventInstanceManager {
         }, delay);
     }
 
-    public String getName() {
+    public String getName() 
+    {
         return name;
     }
 
-    public void saveWinner(MapleCharacter chr) {
-        try {
+    public void saveWinner(MapleCharacter chr) 
+    {
+        try 
+        {
             Connection con = DatabaseConnection.getConnection();
             PreparedStatement ps = con.prepareStatement("INSERT INTO eventstats (event, instance, characterid, channel) VALUES (?, ?, ?, ?)");
             ps.setString(1, em.getName());
@@ -265,83 +361,129 @@ public class EventInstanceManager {
             ps.setInt(4, chr.getClient().getChannel());
             ps.executeUpdate();
             ps.close();
-        } catch (SQLException ex) {
+        }
+        catch (SQLException ex) 
+        {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
         }
     }
 
-    public MapleMap getMapInstance(int mapId) {
-        boolean wasLoaded = mapFactory.isMapLoaded(mapId);
-        MapleMap map = mapFactory.getMap(mapId, true);
-
-        // in case reactors need shuffling and we are actually loading the map
-        if (!wasLoaded) {
-            if (em != null && em.getProperty("shuffleReactors") != null && em.getProperty("shuffleReactors").equals("true")) {
-                map.shuffleReactors();
-            }
+    public final MapleMap getMapInstance(int mapId) 
+    {
+        boolean instanced = false;
+        int trueMapID;
+        
+        if (mapId >= mapIds.size()) 
+            trueMapID = mapId;
+        else 
+        {
+            trueMapID = mapIds.get(mapId);
+            instanced = isInstanced.get(mapId);
         }
-
+        
+        final MapleMap map;
+        if (!instanced) 
+        {
+            map = mapFactory.getMap(trueMapID);
+            
+            if (map == null)
+                return null;
+           
+            if (map.countCharsOnMap() == 0x00000000)
+                if (em.getProperty("shuffleReactors") != null && em.getProperty("shuffleReactors").equals("true"))
+                    map.shuffleReactors();
+        } 
+        else 
+        {
+            map = mapFactory.getMap(trueMapID, true);
+            
+            if (map == null)
+                return null;
+            
+            if (map.countCharsOnMap() == 0x00000000) 
+                if (em.getProperty("shuffleReactors") != null && em.getProperty("shuffleReactors").equals("true"))
+                    map.shuffleReactors();
+        }
         return map;
     }
 
-    public void setProperty(String key, String value) {
+    public void setProperty(String key, String value) 
+    {
         props.setProperty(key, value);
     }
 
-    public Object setProperty(String key, String value, boolean prev) {
+    public Object setProperty(String key, String value, boolean prev) 
+    {
         return props.setProperty(key, value);
     }
 
-    public String getProperty(String key) {
+    public String getProperty(String key) 
+    {
         return props.getProperty(key);
     }
 
-    public void leftParty(MapleCharacter chr) {
-        try {
+    public void leftParty(MapleCharacter chr) 
+    {
+        try 
+        {
             em.getIv().invokeFunction("leftParty", this, chr);
-        } catch (ScriptException | NoSuchMethodException ex) {
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
         }
     }
 
-    public void disbandParty() {
-        try {
+    public void disbandParty() 
+    {
+        try 
+        {
             em.getIv().invokeFunction("disbandParty", this);
-        } catch (ScriptException | NoSuchMethodException ex) {
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
         }
     }
 
     //Separate function to warp players to a "finish" map, if applicable
-    public void finishPQ() {
-        try {
+    public void finishPQ() 
+    {
+        try 
+        {
             em.getIv().invokeFunction("clearPQ", this);
-        } catch (ScriptException | NoSuchMethodException ex) {
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
         }
     }
 
-    public void removePlayer(MapleCharacter chr) {
-        try {
+    public void removePlayer(MapleCharacter chr) 
+    {
+        try 
+        {
             em.getIv().invokeFunction("playerExit", this, chr);
-        } catch (ScriptException | NoSuchMethodException ex) {
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, "Error found in event script " + em.getName(), ex);
         }
     }
 
-    public boolean isPartyLeader(MapleCharacter chr) {
+    public boolean isPartyLeader(MapleCharacter chr) 
+    {
         return chr.getParty().getLeader().getId() == chr.getId();
     }
 
-    public void saveAllBossQuestPoints(int bossPoints) {
-        for (MapleCharacter character : chars) {
-            int points = character.getBossPoints();
-            character.setBossPoints(points + bossPoints);
-        }
+    public void saveAllBossQuestPoints(int bossPoints) 
+    {
+        for (MapleCharacter character : chars) 
+            character.setBossPoints(character.getBossPoints() + bossPoints);
     }
 
-    public void saveBossQuestPoints(int bossPoints, MapleCharacter character) {
-        int points = character.getBossPoints();
-        character.setBossPoints(points + bossPoints);
+    public void saveBossQuestPoints(int bossPoints, MapleCharacter character) 
+    {
+        character.setBossPoints(character.getBossPoints() + bossPoints);
     }
 }

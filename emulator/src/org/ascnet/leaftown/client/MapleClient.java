@@ -45,6 +45,7 @@ import org.ascnet.leaftown.net.MaplePacket;
 import org.ascnet.leaftown.net.MaplePacketHandler;
 import org.ascnet.leaftown.net.PacketProcessor;
 import org.ascnet.leaftown.net.RecvPacketOpcode;
+import org.ascnet.leaftown.net.SendPacketOpcode;
 import org.ascnet.leaftown.net.channel.ChannelServer;
 import org.ascnet.leaftown.net.handler.NoOpHandler;
 import org.ascnet.leaftown.net.login.LoginServer;
@@ -251,6 +252,33 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
 
     public ChannelFuture sendPacket(final MaplePacket mp)
     {
+        /*final ByteBufAccessor bba = new ByteBufAccessor(Unpooled.wrappedBuffer(mp.getBytes()).order(ByteOrder.LITTLE_ENDIAN));
+        
+        short packetId = bba.readShort();
+        
+    	if(hasPacketLog)
+    	{
+            if(packetId != 125 && packetId != 239 &&
+            		packetId != 31 && packetId != 32 &&
+            		packetId != 33 && packetId != 100 &&
+            		packetId != 201 && packetId != 236 &&
+            		packetId != 62 && packetId != 63 &&
+            		packetId != 160 && packetId != 289)
+            {
+            	String packetName = "";
+            	for(SendPacketOpcode sendPacket : SendPacketOpcode.values())
+            	{
+            		if(sendPacket.getValue() == packetId)
+            			packetName = sendPacket.name();
+            	}
+            	
+            	
+            	System.out.println("bloqueou pacote " + packetId + " (" + Integer.toHexString(packetId) + ") - " + packetName);
+            	return null;	
+            }
+    	}*/
+    	
+        
         if (iochannel == null) return null;
         return iochannel.writeAndFlush(mp).addListener(new ChannelFutureListener() 
         {

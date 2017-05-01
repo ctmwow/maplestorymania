@@ -47,6 +47,7 @@ import org.ascnet.leaftown.net.world.remote.WorldChannelInterface;
 import org.ascnet.leaftown.scripting.event.EventInstanceManager;
 import org.ascnet.leaftown.scripting.npc.NPCScriptManager;
 import org.ascnet.leaftown.server.MapleAchievements;
+import org.ascnet.leaftown.server.MapleCarnivalChallenge;
 import org.ascnet.leaftown.server.MapleInventoryManipulator;
 import org.ascnet.leaftown.server.MapleItemInformationProvider;
 import org.ascnet.leaftown.server.MapleMonsterCarnival;
@@ -102,6 +103,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Deque;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -246,6 +248,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     //CPQ
     private boolean CPQChallenged = false;
     private int CP = 0, totalCP = 0;
+    private transient Deque<MapleCarnivalChallenge> pendingCarnivalRequests;
     private MapleMonsterCarnival monsterCarnival;
     private int CPQRanking = 0;
     private int autoHpPot, autoMpPot;
@@ -313,6 +316,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         quests = new LinkedHashMap<>();
         questRecordsEx = new LinkedHashMap<>();
         savedLocations = new SavedLocation[SavedLocationType.values().length];
+        
+        pendingCarnivalRequests = new LinkedList<>(); 
         
         for (int i = 0x00; i < SavedLocationType.values().length; i++) 
             savedLocations[i] = null;
@@ -1332,44 +1337,58 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         return quests.get(questId);
     }
 
-    public MapleQuestStatus getQuestEx(int questId) {
+    public MapleQuestStatus getQuestEx(int questId) 
+    {
         if (!questRecordsEx.containsKey(questId))
             return new MapleQuestStatus(questId, MapleQuestStatus.Status.NOT_STARTED, "");
+        
         return questRecordsEx.get(questId);
     }
 
-    public void updateQuest(MapleQuestStatus quest, boolean update, boolean showAnimation, boolean silent) {
+    public void updateQuest(MapleQuestStatus quest, boolean update, boolean showAnimation, boolean silent) 
+    {
         updateQuest(quest, update, false, showAnimation, silent);
     }
 
-    public void updateQuest(MapleQuestStatus quest, boolean update, boolean questRecordEx, boolean showAnimation, boolean silent) {
+    public void updateQuest(MapleQuestStatus quest, boolean update, boolean questRecordEx, boolean showAnimation, boolean silent) 
+    {
         if (questRecordEx)
             questRecordsEx.put(quest.getQuestId(), quest);
         else
             quests.put(quest.getQuestId(), quest);
+        
         if (silent)
             return;
-        if (!update && !questRecordEx) {
-            if (!(MapleQuest.getInstance(quest.getQuestId()) instanceof MapleCustomQuest)) {
-                if (quest.getStatus().equals(MapleQuestStatus.Status.STARTED)) {
+        
+        if (!update && !questRecordEx) 
+        {
+            if (!(MapleQuest.getInstance(quest.getQuestId()) instanceof MapleCustomQuest)) 
+            {
+                if (quest.getStatus().equals(MapleQuestStatus.Status.STARTED)) 
+                {
                     client.sendPacket(MaplePacketCreator.updateQuestInfo((byte) 1, (short) quest.getQuestId(), quest.getQuestRecord()));
                     client.sendPacket(MaplePacketCreator.updateQuestInfo((short) quest.getQuestId(), false, quest.getNpc(), (byte) 8, (short) 0, true));
-                } else if (quest.getStatus().equals(MapleQuestStatus.Status.COMPLETED)) {
+                } 
+                else if (quest.getStatus().equals(MapleQuestStatus.Status.COMPLETED)) 
+                {
                     client.sendPacket(MaplePacketCreator.completeQuest((short) quest.getQuestId()));
                     client.sendPacket(MaplePacketCreator.updateQuestInfo((short) quest.getQuestId(), false, quest.getNpc(), (byte) 8, (short) 0, false));
-                    if (quest.getQuestId() != 3360 && showAnimation) {
+                    
+                    if (quest.getQuestId() != 3360 && showAnimation) 
+                    {
                         client.sendPacket(MaplePacketCreator.showAnimationEffect((byte) 9));
                         map.broadcastMessage(this, MaplePacketCreator.showForeignEffect(id, 9), false);
                     }
-                } else if (quest.getStatus().equals(MapleQuestStatus.Status.NOT_STARTED)) {
+                } 
+                else if (quest.getStatus().equals(MapleQuestStatus.Status.NOT_STARTED))
                     client.sendPacket(MaplePacketCreator.forfeitQuest((short) quest.getQuestId()));
-                }
-            } else {
-                if (quest.getStatus().equals(MapleQuestStatus.Status.STARTED)) {
+            }
+            else 
+            {
+                if (quest.getStatus().equals(MapleQuestStatus.Status.STARTED))
                     client.sendPacket(MaplePacketCreator.updateQuestInfo((byte) 1, (short) quest.getQuestId(), quest.getQuestRecord()));
-                } else if (quest.getStatus().equals(MapleQuestStatus.Status.COMPLETED)) {
+                else if (quest.getStatus().equals(MapleQuestStatus.Status.COMPLETED)) 
                     client.sendPacket(MaplePacketCreator.completeQuest((short) quest.getQuestId()));
-                }
             }
         }
         if (update)
@@ -1378,11 +1397,12 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             client.sendPacket(MaplePacketCreator.updateQuestRecordExInfo((short) quest.getQuestId(), quest.getQuestRecord()));
     }
 
-    public void completeQuestOnly(MapleQuestStatus quest) {
+    public void completeQuestOnly(MapleQuestStatus quest) 
+    {
         quests.put(quest.getQuestId(), quest);
         client.sendPacket(MaplePacketCreator.completeQuest((short) quest.getQuestId()));
     }
-
+   
     public static final int getIdByName(final String name, final int world) 
     {
         Connection con = DatabaseConnection.getConnection();
@@ -2233,11 +2253,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                     
                     getClient().sendPacket(MaplePacketCreator.unknownStatus());
                     
-                    if (to.getId() == 980000301) //TODO: all CPq map id's
-                    { 
-                        setTeam(rand(0, 1));
+                    if (to.getId() == 980000301 || to.getId() == 980000101) //TODO: all CPq map id's
                         getClient().sendPacket(MaplePacketCreator.startMonsterCarnival(getTeam()));
-                    }
+                    
                     
                     if (to.isDojoMap()) 
                     {
@@ -5262,47 +5280,69 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         return CP;
     }
 
-    public void gainCP(int gain) {
+    public void gainCP(int gain) 
+    {
         if (gain > 0)
             totalCP = totalCP + gain;
+        
         CP = CP + gain;
-        if (party != null) {
+        
+        if (party != null) 
+        {
             monsterCarnival.setCP(monsterCarnival.getCP(team) + gain, team);
             if (gain > 0)
                 monsterCarnival.setTotalCP(monsterCarnival.getTotalCP(team) + gain, team);
         }
+        
         if (CP > totalCP)
             totalCP = CP;
+        
         client.sendPacket(MaplePacketCreator.CPUpdate(false, CP, totalCP, team));
+        
         if (party != null && team != -1)
             map.broadcastMessage(MaplePacketCreator.CPUpdate(true, monsterCarnival.getCP(team), monsterCarnival.getTotalCP(team), team));
         else
             logger.warn(name + " is either not in a party or .. team: " + team);
     }
 
-    public void setTotalCP(int a) {
+    public void setTotalCP(int a) 
+    {
         totalCP = a;
     }
 
-    public void setCP(int a) {
+    public void setCP(int a) 
+    {
         CP = a;
     }
 
-    public int getTotalCP() {
+    public int getTotalCP() 
+    {
         return totalCP;
     }
 
-    public void resetCP() {
+    public void resetCP() 
+    {
         CP = 0;
         totalCP = 0;
-        monsterCarnival = null;
+    }
+    
+    public void addCarnivalRequest(MapleCarnivalChallenge request) 
+    {
+        pendingCarnivalRequests.add(request);
     }
 
-    public MapleMonsterCarnival getMonsterCarnival() {
+    public final MapleCarnivalChallenge getNextCarnivalRequest() 
+    {
+        return pendingCarnivalRequests.pollLast();
+    }
+
+    public MapleMonsterCarnival getMonsterCarnival() 
+    {
         return monsterCarnival;
     }
 
-    public void setMonsterCarnival(MapleMonsterCarnival monsterCarnival) {
+    public void setMonsterCarnival(MapleMonsterCarnival monsterCarnival) 
+    {
         this.monsterCarnival = monsterCarnival;
     }
 

@@ -54,6 +54,7 @@ public class MapleMonsterStats {
     private final Map<String, Integer> animationTimes = new HashMap<>();
     private final Map<Element, ElementalEffectiveness> resistance = new EnumMap<>(Element.class);
     private List<Integer> revives = Collections.emptyList();
+    private byte cp;
     private byte tagColor;
     private byte tagBgColor;
     private final List<Pair<Integer, Integer>> skills = new ArrayList<>();
@@ -64,14 +65,13 @@ public class MapleMonsterStats {
     private boolean fly;
     private boolean mobile;
     private boolean noRegen;
-    //begin HenesysPQ variables
+    private int point;
     private int PADamage;
     private int PDDamage;
     private int MADamage;
     private int MDDamage;
     private boolean friendly;
     private int dropPeriod;
-    //end HenesysPQ variables
 
     public int getExp() {
         return exp;
@@ -231,6 +231,22 @@ public class MapleMonsterStats {
 
     public boolean isFirstAttack() {
         return firstAttack;
+    }
+    
+    public void setCP(byte cp) {
+        this.cp = cp;
+    }
+
+    public byte getCP() {
+        return cp;
+    }
+
+    public void setPoint(int cp) {
+        this.point = cp;
+    }
+
+    public int getPoint() {
+        return point;
     }
 
     public void setBuffToGive(int buff) {

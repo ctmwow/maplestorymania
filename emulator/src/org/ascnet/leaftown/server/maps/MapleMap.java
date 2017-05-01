@@ -133,17 +133,45 @@ public class MapleMap
     private int riceCakeNum = 0;
     //end HenesysPQ variables
 
-    public MapleMap(int mapId, int channel, int returnMapId, float monsterRate, boolean isInstance) {
+    public MapleMap(int mapId, int channel, int returnMapId, float monsterRate, boolean isInstance) 
+    {
         this.mapId = mapId;
         this.channel = channel;
         this.returnMapId = returnMapId;
         this.monsterRate = monsterRate;
         origMobRate = monsterRate;
-        if (monsterRate > 0 && isInstance) {
+        
+        if (monsterRate > 0 && isInstance)
             spawnWorker = TimerManager.getInstance().register(new RespawnWorker(), createMobInterval);
-        }
         if (getPlayerNPCMap() != -1)
             loadPlayerNPCs();
+    }
+    
+    public final void resetFully() 
+    {
+        resetFully(true);
+    }
+
+    public final void resetFully(final boolean respawn) 
+    {
+        killAllMonsters(false);
+        resetReactors();
+        removeDrops();
+        resetSpawn();
+        resetPortals();
+        
+        if (respawn) 
+            respawn();
+    }
+    
+    public final void removeDrops() 
+    {
+        List<MapleMapObject> items = getAllItems();
+        for (MapleMapObject i : items) 
+        {
+        	for(MapleCharacter character : characters)
+        		i.sendDestroyData(character.getClient());
+        }
     }
 
     public boolean canEnter() {
@@ -959,18 +987,23 @@ public class MapleMap
         killAllMonsters(drop, false);
     }
 
-    public void killAllMonsters(boolean drop, boolean revive) {
-        for (MapleMapObject monstermo : getAllMonsters()) {
+    public void killAllMonsters(boolean drop, boolean revive) 
+    {
+        for (MapleMapObject monstermo : getAllMonsters()) 
+        {
             MapleMonster monster = (MapleMonster) monstermo;
             spawnedMonstersOnMap.decrementAndGet();
             monster.setHp(0);
+            
             if (revive)
-                monster.spawnRevives(this);
+            	monster.spawnRevives(this);
+            
             broadcastMessage(MaplePacketCreator.killMonster(monster.getObjectId(), true), monster.getPosition());
             removeMapObject(monster);
-            if (drop) {
+            
+            if (drop)
                 dropFromMonster(getCharacters().get(Randomizer.nextInt(characters.size())), monster);
-            }
+            
             monster.dispose();
         }
     }
@@ -1597,9 +1630,16 @@ public class MapleMap
                 MapleMonster monster = (MapleMonster) monstermo;
                 chr.getClient().getPlayer().getMap().killMonster(monster, chr.getClient().getPlayer(), true);
             }           
-            //setSpawns(false);
+            //setSpawns(false);        
+            //end HenesysPQ and Kenta checks
+        } else if (mapId ==  980000101)
+        {
+        	if(chr.getEventInstance() != null)
+        	{
+        		for (MapleMapObject monstermo : getAllMonsters()) 
+        			chr.getEventInstance().registerMonster((MapleMonster)monstermo);
+        	}
         }
-        //end HenesysPQ and Kenta checks
         
         final List<MaplePet> pets = chr.getPets();
         
@@ -2039,10 +2079,10 @@ public class MapleMap
         return footholds;
     }
 
-    public void addMonsterSpawn(MapleMonster monster, int mobTime) {
+    public void addMonsterSpawn(MapleMonster monster, final byte carnivalTeam, int mobTime) {
         Point newpos = calcPointBelow(monster.getPosition());
         newpos.y -= 1;
-        SpawnPoint sp = new SpawnPoint(monster, newpos, mobTime);
+        SpawnPoint sp = new SpawnPoint(monster, newpos, carnivalTeam, mobTime);
 
         monsterSpawn.add(sp);
     }

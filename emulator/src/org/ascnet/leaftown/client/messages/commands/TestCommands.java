@@ -47,7 +47,11 @@ public class TestCommands implements Command {
             // MapleCharacter faek = ((MapleCharacter) c.getPlayer().getMap().getMapObject(30000));
             // c.sendPacket(MaplePacketCreator.getPacketFromHexString("2B 00 14 30 C0 23 00 00 11 00 00 00"));
         } else*/
-        if (splitted[0].equals("!packet")) {
+    	if (splitted[0].equalsIgnoreCase("!sendCPQTime")) 
+    	{
+    		c.sendPacket(MaplePacketCreator.startMonsterCarnival(Integer.parseInt(splitted[1])));
+    	}
+    	else if (splitted[0].equals("!packet")) {
             if (splitted.length > 1) {
                 switch (splitted[1]) {
                     case "m":
@@ -107,6 +111,7 @@ public class TestCommands implements Command {
     @Override
     public CommandDefinition[] getDefinition() {
         return new CommandDefinition[] {
+        		new CommandDefinition("sendCPQTime", "?", "Probably does something", 5),
                 new CommandDefinition("test", "?", "Probably does something", 5),
                 new CommandDefinition("packet", "hex data", "Shows a clock to everyone in the map", 5),
                 new CommandDefinition("invismonster", "", "", 5),

@@ -178,7 +178,7 @@ public class MapleMapFactory {
                             if (mobTime == -1 && respawns) { //does not respawn, force spawn once
                                 newMap.spawnMonster(monster);
                             } else {
-                                newMap.addMonsterSpawn(monster, mobTime);
+                                newMap.addMonsterSpawn(monster, (byte) DataUtil.toInt(life.resolve("team"), -1), mobTime);
                             }
                         } else {
                             newMap.addMapObject(myLife);
@@ -257,7 +257,7 @@ public class MapleMapFactory {
                         mob.setRx0(cSpawn.getPoint().x + 50);
                         mob.setRx1(cSpawn.getPoint().x - 50);
                         mob.setFh(newMap.getFootholds().findBelow(cSpawn.getPoint()).getId());
-                        newMap.addMonsterSpawn(mob, cSpawn.getMobTime());
+                        newMap.addMonsterSpawn(mob, (byte) -1, cSpawn.getMobTime());
                     }
                 }
             }

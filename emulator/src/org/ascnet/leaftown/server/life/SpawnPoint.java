@@ -40,13 +40,15 @@ public class SpawnPoint {
     private long nextPossibleSpawn;
     private final int mobTime;
     private final AtomicInteger spawnedMonsters = new AtomicInteger(0);
+    private final byte carnivalTeam;
+    
     /**
      * Whether the spawned monster is immobile
      */
     private final boolean immobile;
     private final boolean boss;
 
-    public SpawnPoint(MapleMonster monster, Point pos, int mobTime) {
+    public SpawnPoint(MapleMonster monster, Point pos, final byte carnivalTeam, int mobTime) {
         super();
         this.monster = monster;
         this.pos = new Point(pos);
@@ -54,6 +56,8 @@ public class SpawnPoint {
         immobile = !monster.isMobile();
         boss = monster.isBoss();
         nextPossibleSpawn = System.currentTimeMillis();
+        
+        this.carnivalTeam = carnivalTeam;
     }
 
     public boolean shouldSpawn() {
@@ -81,6 +85,7 @@ public class SpawnPoint {
         if (mob.getId() == 9400568)
             return false;
         mob.setPosition(new Point(pos));
+        mob.setCarnivalTeam(carnivalTeam);
         
         spawnedMonsters.incrementAndGet();
         mob.addListener(new MonsterListener() {

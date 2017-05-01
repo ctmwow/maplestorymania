@@ -27,6 +27,7 @@
 
 package org.ascnet.leaftown.scripting.event;
 
+import org.ascnet.leaftown.client.MapleCharacter;
 import org.ascnet.leaftown.net.channel.ChannelServer;
 import org.ascnet.leaftown.net.world.MapleParty;
 import org.ascnet.leaftown.server.MapleSquad;
@@ -131,21 +132,40 @@ public class EventManager {
         props.setProperty(key, value);
     }
 
-    public String getProperty(String key) {
+    public String getProperty(String key) 
+    {
         return props.getProperty(key);
     }
 
-    public String getName() {
+    public String getName() 
+    {
         return name;
     }
 
     //PQ method: starts a PQ
-    public void startInstance(MapleParty party, MapleMap map) {
-        try {
+    public void startInstance(MapleParty party, MapleMap map) 
+    {
+        try 
+        {
             final EventInstanceManager eim = (EventInstanceManager) iv.invokeFunction("setup", (Object) null);
             eim.registerParty(party, map);
-        } catch (ScriptException | NoSuchMethodException ex) {
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
             Logger.getLogger(EventManager.class.getName()).log(Level.SEVERE, "Error in event script " + name, ex);
+        }
+    }
+    
+    public void startInstance(String mapid, MapleCharacter chr) 
+    {
+        try 
+        {
+            EventInstanceManager eim = (EventInstanceManager) iv.invokeFunction("setup", (Object) mapid);
+            eim.registerParty(chr.getParty(), chr.getMap());
+        } 
+        catch (ScriptException | NoSuchMethodException ex) 
+        {
+        	Logger.getLogger(EventManager.class.getName()).log(Level.SEVERE, "Error in event script " + name, ex);
         }
     }
 

@@ -68,6 +68,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
     private MapleMonsterStats overrideStats;
     private int hp;
     private int mp;
+    private byte carnivalTeam = -1;
     private WeakReference<MapleCharacter> controller = new WeakReference<>(null);
     private boolean controllerHasAggro, controllerKnowsAboutAggro;
     private final Collection<AttackerEntry> attackers = new LinkedList<>();
@@ -190,6 +191,14 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         if (hpLock)
             return;
         this.hp = hp;
+    }
+    
+    public final void setCarnivalTeam(final byte team) {
+        carnivalTeam = team;
+    }
+
+    public final byte getCarnivalTeam() {
+        return carnivalTeam;
     }
 
     public int getMaxHp() {
@@ -397,6 +406,12 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         if (highestDamage) {
             if (eventInstance != null) {
                 eventInstance.monsterKilled(attacker, getId());
+            }
+            else {
+                final EventInstanceManager em = attacker.getEventInstance();
+                if (em != null) {
+                    em.monsterKilled(attacker, this);
+                }
             }
             highestDamageChar = attacker;
         }

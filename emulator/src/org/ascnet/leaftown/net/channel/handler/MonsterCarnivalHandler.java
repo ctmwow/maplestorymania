@@ -27,6 +27,8 @@
 
 package org.ascnet.leaftown.net.channel.handler;
 
+import java.awt.Point;
+
 import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
 import org.ascnet.leaftown.server.life.MapleLifeFactory;
@@ -34,90 +36,103 @@ import org.ascnet.leaftown.server.life.MapleMonster;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
-import java.awt.Point;
-
-public class MonsterCarnivalHandler extends AbstractMaplePacketHandler {
-
+public class MonsterCarnivalHandler extends AbstractMaplePacketHandler 
+{
     @Override
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
+    {
+    	if(c.getPlayer().getMonsterCarnival() == null)
+    		return;
+    	
         int tab = slea.readByte();
         int num = slea.readByte();
-        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.playerSummoned(c.getPlayer().getName(), tab, num));
-        if (tab == 0) { // only spawning for now..
-            MapleMonster mob = MapleLifeFactory.getMonster(getMonsterIdByNum(num));
-            c.getPlayer().getMap().spawnMonsterOnGroundBelow(mob, randomizePosition(c.getPlayer().getMapId(), 1));
+        
+        if (tab == 0x00000000) // MONSTER SPAWN TAB
+        {
+        	final int cpCost = getMonsterCost(num);
+        	
+        	if(c.getPlayer().getCP() >= cpCost)
+        		c.getPlayer().gainCP(-cpCost);
+        	else
+        	{
+        		c.sendPacket(MaplePacketCreator.serverNotice(0x00000005, "CP insulficiente!"));
+        		c.sendPacket(MaplePacketCreator.enableActions());
+        		return;
+        	}
+        	
+        	c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.playerSummoned(c.getPlayer().getName(), tab, num));
+        	
+        	MapleMonster monster = MapleLifeFactory.getMonster(getMonsterIdByNum(num));
+        	monster.setCarnivalTeam((byte) (c.getPlayer().getTeam()));
+        	
+            c.getPlayer().getMap().spawnMonsterOnGroundBelow(monster, randomizePosition(c.getPlayer().getMapId(), 0x00000001));
+            c.sendPacket(MaplePacketCreator.enableActions());
         }
     }
 
-    public Point randomizePosition(int mapid, int team) {
-        int posx = 0;
-        int posy = 0;
-        if (mapid == 980000301) { //room 3 iirc
-            posy = 162;
-            if (team == 0) { //maple red goes left
-                posx = rand(-1554, -151);
-            } else { //maple blue goes right
-                posx = rand(148, 1571);
-            }
+    private Point randomizePosition(int mapid, int team) 
+    {
+        int posx = 0x00000000;
+        int posy = 0x00000000;
+        if (mapid == 980000301) //room 3 iirc 
+        {
+            posy = 0x000000A2;
+            if (team == 0x00000000)
+                posx = rand(-0x00000612, -0x00000097);
+            else
+                posx = rand(0x00000094, 0x00000623);
         }
         return new Point(posx, posy);
     }
 
-    public int getMonsterIdByNum(int num) {
-        /*
-		 *  1 - Brown Teddy - 3000005
-		2 - Bloctopus - 3230302
-		3 - Ratz - 3110102
-		4 - Chronos - 3230306
-		5 - Toy Trojan - 3230305
-		6 - Tick-Tock - 4230113
-		7 - Robo - 4230111
-		8 - King Bloctopus - 3230103
-		9 - Master Chronos - 4230115
-		10 - Rombot - 4130103
-		 * */
-        int mid = 0;
-        num++; //whatever, don't wanna change all the cases XD
-
-        switch (num) {
-            case 1:
-                mid = 3000005;
-                break;
-            case 2:
-                mid = 3230302;
-                break;
-            case 3:
-                mid = 3110102;
-                break;
-            case 4:
-                mid = 3230306;
-                break;
-            case 5:
-                mid = 3230305;
-                break;
-            case 6:
-                mid = 4230113;
-                break;
-            case 7:
-                mid = 4230111;
-                break;
-            case 8:
-                mid = 3230103;
-                break;
-            case 9:
-                mid = 4230115;
-                break;
-            case 10:
-                mid = 4130103;
-                break;
-            default:
-                mid = 210100; //LOL slime.. w/e, shouldn't happen
-                break;
-        }
-        return mid;
+    /* MOB SUMMOM LIST
+		1 - Brown Teddy - 9300127
+		2 - Bloctopus  - 9300128
+		3 - Ratz - 9300129
+		4 - Chronos  - 9300130
+		5 - Toy Trojan - 9300131
+		6 - Tick-Tock - 9300132
+		7 - Robo - 9300133
+		8 - King Bloctopus - 9300134
+		9 - Master Chronos - 9300135
+		10 - Rombot - 9300136
+	*/
+    private final int getMonsterIdByNum(final int num) 
+    {
+        if(num >= 0x00000000 && num <= 0x00000009)
+        	return 9300127 + num;
+        else
+        	return 210100; // wrong mob number. spawn a slime
+    }
+    
+    private final int getMonsterCost(final int num)
+    {
+    	switch(num)
+    	{
+	    	case 0x00000000:
+	    	case 0x00000001:
+	    		return 0x00000007;
+	    	case 0x00000002:
+	    	case 0x00000003:
+	    		return 0x00000008;
+	    	case 0x00000004:
+	    	case 0x00000005:
+	    		return 0x00000009;
+	    	case 0x00000006:
+	    		return 0x0000000A;
+	    	case 0x00000007:
+	    		return 0x0000000B;
+	    	case 0x00000008:
+	    		return 0x0000000C;
+	    	case 0x00000009:
+	    		return 0x0000001E;
+    		default:
+    			return 0x00000000;
+    	}
     }
 
-    private static int rand(int lbound, int ubound) {
-        return (int) (Math.random() * (ubound - lbound + 1) + lbound);
+    private static int rand(int lbound, int ubound) 
+    {
+        return (int) (Math.random() * (ubound - lbound + 0x00000001) + lbound);
     }
 }

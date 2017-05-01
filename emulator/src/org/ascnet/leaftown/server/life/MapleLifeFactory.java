@@ -108,14 +108,16 @@ public class MapleLifeFactory {
             stats.setFirstAttack(firstAttack > 0);
             stats.setNoRegen(DataUtil.toInt(monsterInfoData.resolve("noregen"), 0) > 0);
             
-          //begin HenesysPQ setters
+            stats.setCP((byte) DataUtil.toInt(monsterInfoData.resolve("getCP"), 0));
+            stats.setPoint(DataUtil.toInt(monsterInfoData.resolve("point"), 0));
+
             stats.setFriendly(DataUtil.toInt(monsterInfoData.resolve("damagedByMob"), 0) == 1);
             stats.setPADamage(DataUtil.toInt(monsterInfoData.resolve("PADamage")));
             stats.setPDDamage(DataUtil.toInt(monsterInfoData.resolve("PDDamage")));
             stats.setMADamage(DataUtil.toInt(monsterInfoData.resolve("MADamage")));
             stats.setMDDamage(DataUtil.toInt(monsterInfoData.resolve("MDDamage")));
             stats.setDropPeriod(DataUtil.toInt(monsterInfoData.resolve("dropItemPeriod"), 0) * 10000);
-            //end HenesysPQ setters
+
             
             MapleData banData = monsterInfoData.getChild("ban");
             if (banData != null) {

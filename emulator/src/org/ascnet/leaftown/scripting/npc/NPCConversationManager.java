@@ -54,7 +54,6 @@ import org.ascnet.leaftown.client.MapleSkinColor;
 import org.ascnet.leaftown.client.MapleStat;
 import org.ascnet.leaftown.client.SkillFactory;
 import org.ascnet.leaftown.database.DatabaseConnection;
-import org.ascnet.leaftown.net.MaplePacket;
 import org.ascnet.leaftown.net.channel.ChannelServer;
 import org.ascnet.leaftown.net.channel.handler.DueyActionHandler;
 import org.ascnet.leaftown.net.world.MapleParty;
@@ -64,6 +63,7 @@ import org.ascnet.leaftown.net.world.guild.MapleGuild;
 import org.ascnet.leaftown.net.world.remote.WorldChannelInterface;
 import org.ascnet.leaftown.scripting.AbstractPlayerInteraction;
 import org.ascnet.leaftown.server.GachaponItems;
+import org.ascnet.leaftown.server.MapleCarnivalChallenge;
 import org.ascnet.leaftown.server.MapleInventoryManipulator;
 import org.ascnet.leaftown.server.MapleItemInformationProvider;
 import org.ascnet.leaftown.server.MapleMonsterCarnival;
@@ -870,35 +870,46 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             sendOk("Could not find leader!");
         }
     }
+    
+    public boolean isLeader()
+    {
+    	return c.getPlayer().getParty().getLeader().getId() == c.getPlayer().getId();
+    }
 
-    public void startCPQ(final MapleCharacter challenger, int field) {
-        try {
-            if (challenger != null) {
+    public void startCPQ(final MapleCharacter challenger, int field) 
+    {
+        try 
+        {
+            if (challenger != null) 
+            {
                 if (challenger.getParty() == null)
                     throw new RuntimeException("ERROR: CPQ Challenger's party was null!");
-                for (MaplePartyCharacter mpc : challenger.getParty().getMembers()) {
-                    MapleCharacter mc;
-                    mc = c.getChannelServer().getPlayerStorage().getCharacterByName(mpc.getName());
-                    if (mc != null) {
-                        mc.changeMap(c.getPlayer().getMap(), c.getPlayer().getMap().getPortal(0));
-                        mc.getClient().sendPacket(MaplePacketCreator.getClock(10));
-                    }
+                
+                for (final MaplePartyCharacter _challangerPartyMember : challenger.getParty().getMembers()) 
+                {
+                    MapleCharacter challangerPartyMember = c.getChannelServer().getPlayerStorage().getCharacterByName(_challangerPartyMember.getName());
+                    challangerPartyMember.getClient().sendPacket(MaplePacketCreator.serverNotice(5, "O Festival de Monstros começará em 10 segundos!"));
                 }
             }
-            final int mapid = c.getPlayer().getMap().getId() + 1;
-            TimerManager.getInstance().schedule(new Runnable() {
-
+            
+            for (final MaplePartyCharacter _playerPartyMember : c.getPlayer().getParty().getMembers()) 
+            {
+                MapleCharacter playerPartyMember = c.getChannelServer().getPlayerStorage().getCharacterByName(_playerPartyMember.getName());
+                playerPartyMember.getClient().sendPacket(MaplePacketCreator.serverNotice(5, "O Festival de Monstros começará em 10 segundos!"));
+            }
+            
+            final int mapid = c.getPlayer().getMap().getId() + field;
+            TimerManager.getInstance().schedule(new Runnable() 
+            {
                 @Override
-                public void run() {
-                    MapleMap map;
-                    ChannelServer cs = c.getChannelServer();
-                    map = cs.getMapFactory().getMap(mapid);
+                public void run() 
+                {
                     new MapleMonsterCarnival(getPlayer().getParty(), challenger.getParty(), mapid);
-                    map.broadcastMessage(MaplePacketCreator.serverNotice(5, "The Monster Carnival has begun!"));
                 }
             }, 10000);
-            mapMessage(5, "The Monster Carnival will begin in 10 seconds!");
-        } catch (Exception e) {
+        }
+        catch (Exception e) 
+        {
             e.printStackTrace();
         }
     }
@@ -1202,5 +1213,15 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public void showFredrick()
     {
     	c.sendPacket(MaplePacketCreator.getFredrick(c.getPlayer()));
+    }
+    
+    public final MapleCarnivalChallenge getCarnivalChallenge(MapleCharacter chr) 
+    {
+        return new MapleCarnivalChallenge(chr);
+    }
+    
+    public final MapleCarnivalChallenge getNextCarnivalRequest() 
+    {
+        return c.getPlayer().getNextCarnivalRequest();
     }
 }
