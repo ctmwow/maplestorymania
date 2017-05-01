@@ -55,7 +55,7 @@ public class MonsterCarnivalHandler extends AbstractMaplePacketHandler
         		c.getPlayer().gainCP(-cpCost);
         	else
         	{
-        		c.sendPacket(MaplePacketCreator.serverNotice(0x00000005, "CP insulficiente!"));
+        		c.sendPacket(MaplePacketCreator.serverNotice(0x00000005, "CP insuficiente!"));
         		c.sendPacket(MaplePacketCreator.enableActions());
         		return;
         	}
