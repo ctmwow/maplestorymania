@@ -59,11 +59,11 @@ function action(mode, type, selection)
 		else if (selection == 1) 
 		{
 			status = 4;
-			cm.sendNext("O #bFestival de Monstros#k é um lugar mágico onde você se junta com seu grupo para destruir as hordas de monstros mais rápido do que os outros grupos.");
+			cm.sendOk("O #bFestival de Monstros#k é um lugar mágico onde você se junta com seu grupo para destruir as hordas de monstros mais rápido do que os outros grupos.");
 		} 
 		else if (selection == 2) 
 		{
-			if (!cm.getPlayer().haveItem(4001254)) 
+			if (!cm.haveItem(4001254)) 
 			{
 				cm.sendOk("What? You don't even have a single Shiny Maple Coin! If you want #i1102556# Spiegelmann's Mighty Mustache or #i1012270# Spiegelmann's Cape of Moxy, #i1122162# Spiegelmann's Mighty Bow Tie, then bring me more #i4001254# #bShiny Maple Coin!#k");
 				cm.dispose();

@@ -1632,7 +1632,13 @@ public class MapleMap
             }           
             //setSpawns(false);        
             //end HenesysPQ and Kenta checks
-        } else if (mapId ==  980000101)
+        } else 
+        	if (mapId == 980000101 || 
+        		mapId == 980000201 || 
+        		mapId == 980000301 ||
+				mapId == 980000401 ||
+				mapId == 980000501 ||
+				mapId == 980000601)
         {
         	if(chr.getEventInstance() != null)
         	{

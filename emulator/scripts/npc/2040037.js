@@ -3,7 +3,6 @@
 **/
 
 var status;
-var exp = 2520;
 			
 function start() {
     status = -1;
@@ -18,7 +17,6 @@ function action(mode, type, selection) {
 		if (cm.isPartyLeader()) { // Leader
 			var stage2leader = eim.getProperty("stage2leader");
 			if (stage2leader == "done") {
-
 				if (eim.getProperty("stage2status") == null) {
 					cm.sendNext("Congratulations! You've passed the 2nd stage. Hurry on now, to the 3rd stage.");
 					cm.removeAll(4001022);

@@ -19,7 +19,7 @@ function action(mode, type, selection) {
 			if (cm.isPartyLeader()) { // Leader
 				var stage1leader = eim.getProperty("stage1leader");
 				if (stage1leader == "done") { // not in gms anymore because i just tested this
-					if (cm.getPlayer().getMap().getAllMonsters().size() == 0) {
+					if (cm.haveItem(4001022, 25) && cm.getPlayer().getMap().getAllMonsters().size() == 0) {
 						status = 0;
 						cm.sendNext("Wow! Congratulations on clearing the quests for this stage.\r\nPlease use the portal you see over there and move on to the next stage. Best of luck to you!");
 					} else { // Not done yet
@@ -43,7 +43,7 @@ function action(mode, type, selection) {
 		if (eim.getProperty("stage1status") == null) {
 			cm.removeAll(4001022);
 			clear(1, eim, cm);
-			cm.givePartyExp(2100, eim.getPlayers()); // handled automatically now.
+			cm.givePartyExp(210, eim.getPlayers()); // handled automatically now.
 		}
 		cm.dispose();
 	}

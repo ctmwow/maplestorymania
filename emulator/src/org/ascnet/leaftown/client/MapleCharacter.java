@@ -2253,7 +2253,12 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                     
                     getClient().sendPacket(MaplePacketCreator.unknownStatus());
                     
-                    if (to.getId() == 980000301 || to.getId() == 980000101) //TODO: all CPq map id's
+                    if (to.getId() == 980000101 || 
+                    	to.getId() == 980000201 || 
+                    	to.getId() == 980000301 ||
+            			to.getId() == 980000401 ||
+    					to.getId() == 980000501 ||
+						to.getId() == 980000601)
                         getClient().sendPacket(MaplePacketCreator.startMonsterCarnival(getTeam()));
                     
                     
@@ -3159,7 +3164,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         return watk;
     }
 
-    private static int rand(int lbound, int ubound) {
+    public static int rand(int lbound, int ubound) {
         return (int) (Math.random() * (ubound - lbound + 1) + lbound);
     }
 
