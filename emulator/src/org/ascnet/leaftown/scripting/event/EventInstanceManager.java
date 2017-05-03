@@ -47,6 +47,7 @@ import org.ascnet.leaftown.database.DatabaseConnection;
 import org.ascnet.leaftown.net.world.MapleParty;
 import org.ascnet.leaftown.net.world.MaplePartyCharacter;
 import org.ascnet.leaftown.server.MapleSquad;
+import org.ascnet.leaftown.server.MapleSquadType;
 import org.ascnet.leaftown.server.TimerManager;
 import org.ascnet.leaftown.server.life.MapleMonster;
 import org.ascnet.leaftown.server.maps.MapleMap;
@@ -474,6 +475,10 @@ public class EventInstanceManager
     public boolean isPartyLeader(MapleCharacter chr) 
     {
         return chr.getParty().getLeader().getId() == chr.getId();
+    }
+    
+    public boolean isSquadLeader(MapleCharacter chr, MapleSquadType mst) {
+        return (chr.getClient().getChannelServer().getMapleSquad(mst).getLeader().equals(chr));
     }
 
     public void saveAllBossQuestPoints(int bossPoints) 
