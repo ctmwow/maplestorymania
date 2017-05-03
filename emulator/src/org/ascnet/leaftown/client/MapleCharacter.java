@@ -305,6 +305,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private final NumberFormat nf = new DecimalFormat("#,###,###,###");
     private Map<Short, String> area_info = new LinkedHashMap<>();
     private long arrivalTime = 0x00;
+    private boolean shield = false;
 
     private MapleCharacter(boolean channelServ) 
     {
@@ -4531,6 +4532,38 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             }
         }
     }
+    
+    public boolean hasShield() {
+        return shield;
+    }
+
+    public void setShield(boolean shield) {
+        this.shield = shield;
+    }
+
+    public void shield(ScheduledFuture<?> schedule) {
+        if (this.shield) {
+            return;
+        }
+        List<Pair<MapleBuffStat, Integer>> statup = Collections.singletonList(
+                new Pair<MapleBuffStat, Integer>(MapleBuffStat.ARIANT_COSS_IMU, Integer.valueOf(1)));
+        this.shield = true;
+        this.getClient().sendPacket(MaplePacketCreator.giveBuff(this, 2022269, 60 * 1000, statup));
+        //this.getMap().broadcastMessage(this, MaplePacketCreator.giveForeignBuff(this.getId(), statup, false), false);
+    }
+
+    public void cancelShield() {
+        if (getClient().getChannelServer().getPlayerStorage().getCharacterById(getId()) != null) { // are we still connected ?
+            if (!this.shield) {
+                return;
+            }
+            recalcLocalStats();
+            enforceMaxHpMp();
+            getClient().sendPacket(MaplePacketCreator.cancelBuff(Collections.singletonList(MapleBuffStat.ARIANT_COSS_IMU)));
+            //getMap().broadcastMessage(this, MaplePacketCreator.cancelForeignBuff(getId(), Collections.singletonList(MapleBuffStat.ARIANT_PQ_SHIELD)), false);
+            this.shield = false;
+        }
+    }
 
     public List<MapleDisease> getDiseases() {
         return diseases;
@@ -5187,6 +5220,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 	/*public boolean hasPlayerNPC() {
 		return playerNPC;
 	}*/
+    
+    public int countItem(int itemid) {
+        return inventory[MapleItemInformationProvider.getInstance().getInventoryType(itemid).ordinal()].countById(itemid);
+    }
 
     public void handleBattleShipHpLoss(int damage) {
         ISkill ship = SkillFactory.getSkill(5221006);

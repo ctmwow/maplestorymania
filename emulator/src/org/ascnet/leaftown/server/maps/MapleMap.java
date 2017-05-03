@@ -1299,6 +1299,50 @@ public class MapleMap
             }
         }, null);
         
+        if (monster.getId() == 9300166) {
+            //Bomb
+            final MapleMap map = this;
+            TimerManager.getInstance().schedule(new Runnable() {
+                public void run() {
+                    killMonster(monster, (MapleCharacter) getCharacters().get(0), false);
+                    for (MapleMapObject ob : map.getMapObjectsInRange(monster.getPosition(), 40000, Arrays.asList(MapleMapObjectType.PLAYER))) {
+                        MapleCharacter chr = (MapleCharacter) ob;
+                        if (chr != null) {
+                            if (chr.hasShield()) {
+                                chr.cancelShield();
+                                continue;
+                            }
+                            int hasJewels = chr.countItem(4031868);
+                            if (hasJewels <= 0) {
+                                chr.giveDebuff(MapleDisease.STUN, MobSkillFactory.getMobSkill(123, 11));
+                                continue;
+                            }
+                            int drop = (int) (Math.random() * hasJewels);
+                            if (drop > 5) {
+                                drop = (int) (Math.random() * 5);
+                            }
+                            if (drop < 1) {
+                                drop = 1;
+                            }
+                            MapleInventoryManipulator.removeById(chr.getClient(), MapleInventoryType.ETC, 4031868, (short) drop, false, false);
+                            for (int i = 0; i < drop; i++) {
+                                Point pos = chr.getPosition();
+                                int x = pos.x;
+                                int y = pos.y;
+                                if (Math.random() < 0.5) {
+                                    x -= (int) (Math.random() * 100);
+                                } else {
+                                    x += (int) (Math.random() * 100);
+                                }
+                                map.spawnItemDrop(ob, chr, new Item(4031868, (byte) -1, (short) 1), new Point(x, y), true, true);
+                            }
+                            broadcastMessage(MaplePacketCreator.updateAriantPQRanking(chr.getName(), chr.getAriantScore(), false));
+                        }
+                    }
+                }
+            }, 3000 + (int) (Math.random() * 2000));
+        }
+        
         updateMonsterController(monster);
         spawnedMonstersOnMap.incrementAndGet();
     }

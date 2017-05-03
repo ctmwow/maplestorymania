@@ -76,7 +76,6 @@ function playerRevive(eim, player) {
 				playerExit(eim, party.get(i));
 			}
 		}
-		eim.dispose();
 	}
 	else { 
 		var party = eim.getPlayers();
@@ -84,7 +83,6 @@ function playerRevive(eim, player) {
 			for (var i = 0; i < party.size(); i++) {
 				playerExit(eim,party.get(i));
 			}
-			eim.dispose();
 		}
 		else
 			playerExit(eim, player);
@@ -104,7 +102,7 @@ function playerDisconnected(eim, player) {
 				playerExit(eim, party.get(i));
 			}
 		}
-		eim.dispose();
+		
 	}
 	else { 
 		var party = eim.getPlayers();
@@ -112,7 +110,7 @@ function playerDisconnected(eim, player) {
 			for (var i = 0; i < party.size(); i++) {
 				playerExit(eim,party.get(i));
 			}
-			eim.dispose();
+			
 		}
 		else
 			playerExit(eim, player);
@@ -155,7 +153,6 @@ function clearPQ(eim) {
 	for (var i = 0; i < party.size(); i++) {
 		playerExit(eim, party.get(i));
 	}
-	eim.dispose();
 }
 
 function allMonstersDead(eim) {
@@ -171,7 +168,6 @@ function timeOut(eim) {
             while (pIter.hasNext())
                 playerDone(eim, pIter.next());
         }
-        eim.dispose();
     }
 }
 function scoreBoard(eim, player) {
