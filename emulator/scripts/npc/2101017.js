@@ -100,7 +100,7 @@ function action(mode, type, selection) {
 						}
 						else {
 							cm.setSquadState(arena, 2);
-							em.startInstance(cm.getSquad(arena), cm.getPlayer().getMap());
+							em.startInstance(cm.getMapleSquad(arena), cm.getPlayer().getMap());
 						}
 						cm.dispose();
 					}

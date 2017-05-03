@@ -132,22 +132,22 @@ function clearPQ(eim) {
 	var iter = eim.getPlayers().iterator();
         var bonusMap = eim.getMapInstance(910010200);
         while (iter.hasNext()) {
-                var player = iter.next();
-		player.changeMap(bonusMap, bonusMap.getPortal(0));
-		eim.setProperty("entryTimestamp",System.currentTimeMillis() + (5 * 60000));
-                player.getClient().getSession().write(MaplePacketCreator.getClock(300));
-}
+		var player = iter.next();
+			player.changeMap(bonusMap, bonusMap.getPortal(0));
+			eim.setProperty("entryTimestamp",System.currentTimeMillis() + (5 * 60000));
+			player.getClient().getSession().write(MaplePacketCreator.getClock(300));
+		}
         eim.schedule("finish", 5 * 60000)
         em.setProperty("state", "0");
 }
 
 function finish(eim) {
-		var dMap = eim.getMapInstance(910010400);
-        var iter = eim.getPlayers().iterator();
-        while (iter.hasNext()) {
+	var dMap = eim.getMapInstance(910010400);
+	var iter = eim.getPlayers().iterator();
+	while (iter.hasNext()) {
 		var player = iter.next();
 		eim.unregisterPlayer(player);
-        player.changeMap(dMap, dMap.getPortal(0));
+		player.changeMap(dMap, dMap.getPortal(0));
 	}
 	eim.dispose();
 	em.setProperty("state", "0");

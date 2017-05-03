@@ -8,7 +8,6 @@
 /* global Packages, java */
 
 importPackage(java.lang);
-
 importPackage(Packages.org.ascnet.leaftown.world);
 importPackage(Packages.org.ascnet.leaftown.client);
 importPackage(Packages.org.ascnet.leaftown.server);
@@ -17,7 +16,7 @@ importPackage(Packages.org.ascnet.leaftown.tools);
 
 var exitMap;
 var instanceId;
-var minPlayers = 2;
+var minPlayers = 1;
 
 function init() {
 	exitMap = em.getChannelServer().getMapFactory().getMap(980010020);
@@ -35,7 +34,7 @@ function setup() {
 	var mf = eim.getMapFactory();
 	em.getChannelServer().addInstanceId();
 	var eventTime = 10 * 60000 + 10000;
-	eim.schedule("timeOut", eim, eventTime); // invokes "timeOut" in how ever many seconds.
+	eim.schedule("timeOut", eventTime); // invokes "timeOut" in how ever many seconds.
 	eim.schedule("scoreBoard", 10 * 60000); 
 	eim.schedule("broadcastClock", 1500);
 	eim.setProperty("entryTimestamp",System.currentTimeMillis() + (10 * 60000));
@@ -52,7 +51,7 @@ function setup() {
 function playerEntry(eim, player) {
 	var map = eim.getMapInstance(980010201);
 	player.changeMap(map, map.getPortal(0));
-	player.getClient().getSession().write(MaplePacketCreator.getClock((Long.parseLong(eim.getProperty("entryTimestamp")) - System.currentTimeMillis()) / 1000));
+	player.getClient().sendPacket(MaplePacketCreator.getClock((Long.parseLong(eim.getProperty("entryTimestamp")) - System.currentTimeMillis()) / 1000));
 }
 
 function respawn(eim) {	
@@ -176,29 +175,29 @@ function timeOut(eim) {
     }
 }
 function scoreBoard(eim, player) {
-	 var iter = em.getInstances().iterator();
-	 var shouldScheduleThis = true;
-	 while (iter.hasNext()) {
-		 var eim = iter.next();
-			 if (eim.getPlayerCount() > 0) {
-                                 var map = eim.getMapInstance(980010201);
-	                         map.broadcastMessage(MaplePacketCreator.showAriantScoreBoard());
-				 shouldScheduleThis = false;
-		 }
+	var iter = em.getInstances().iterator();
+	var shouldScheduleThis = true;
+	while (iter.hasNext()) {
+		var eim = iter.next();
+		if (eim.getPlayerCount() > 0) {
+			var map = eim.getMapInstance(980010101);
+			map.broadcastMessage(MaplePacketCreator.showAriantScoreBoard());
+			shouldScheduleThis = false;
+		}
 	 }
 	 if (shouldScheduleThis)
 	 em.schedule("scoreBoard", 100000);
  }
 
 function playerClocks(eim, player) {
-  if (player.getMap().hasTimer() == false){
-	player.getClient().getSession().write(MaplePacketCreator.getClock((Long.parseLong(eim.getProperty("entryTimestamp")) - System.currentTimeMillis()) / 1000));
+	if (player.getMap().hasClock() == false){
+		player.getClient().sendPacket(MaplePacketCreator.getClock((Long.parseLong(eim.getProperty("entryTimestamp")) - System.currentTimeMillis()) / 1000));
 	}
 }
 
 function playerTimer(eim, player) {
-	if (player.getMap().hasTimer() == false) {
-		player.getMap().setTimer(true);
+	if (player.getMap().hasClock() == false) {
+		player.getMap().setClock(true);
 	}
 }
 
