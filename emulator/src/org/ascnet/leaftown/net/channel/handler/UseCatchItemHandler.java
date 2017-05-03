@@ -59,7 +59,7 @@ public class UseCatchItemHandler extends AbstractMaplePacketHandler {
                 c.getPlayer().setAPQScore(c.getPlayer().getAPQScore() + 1);
                 c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.updateAriantPQRanking(c.getPlayer().getName(), c.getPlayer().getAPQScore(), false));
             } else {
-                c.sendPacket(MaplePacketCreator.serverNotice(5, "You cannot catch the monster as it is too strong."));
+                c.sendPacket(MaplePacketCreator.serverNotice(5, "Você não pode pegar o monstro, pois é muito forte."));
             }
         }
     }
