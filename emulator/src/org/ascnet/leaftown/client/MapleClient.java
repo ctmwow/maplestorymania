@@ -205,6 +205,7 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
         final short header = bba.readShort();
         final MaplePacketHandler h = PacketProcessor.getProcessor().getHandler(header);
         
+        log.info("Received Packet Packet Header [" + header + "] {}.", (player != null ? " from " + player.getName() : ""));
         if (h == null)
             log.info("Unhandled packet. Packet Header [" + header + "] {}.\n{}\n{}", (player != null ? " from " + player.getName() : ""),
                     HexTool.toString(byteArr), HexTool.toStringFromAscii(byteArr));
@@ -764,6 +765,8 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
             ps.close();
         } catch (SQLException e) {
         }
+        if(ip.equals("127.0.0.1"))
+        	return true;
         return ip.compareTo(getIP()) == 0;
     }
 

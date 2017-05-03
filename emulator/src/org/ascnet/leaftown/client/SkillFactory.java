@@ -32,10 +32,10 @@ import org.ascnet.leaftown.provider.MapleData;
 import org.ascnet.leaftown.provider.MapleDataProvider;
 import org.ascnet.leaftown.provider.MapleDataProviderFactory;
 import org.ascnet.leaftown.tools.StringUtil;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class SkillFactory {
 

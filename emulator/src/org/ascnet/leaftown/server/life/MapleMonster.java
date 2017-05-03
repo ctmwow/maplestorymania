@@ -1011,6 +1011,10 @@ public class MapleMonster extends AbstractLoadedMapleLife {
     public MapleMonsterBanInfo getBanInfo() {
         return stats.getBanInfo();
     }
+    
+    public boolean isCPQMonster() {
+    	return getId() >= 9300127 && getId() <= 9300136;
+    }
 
     public boolean isDojoBoss() {
         return getId() > 9300183 && getId() < 9300216;

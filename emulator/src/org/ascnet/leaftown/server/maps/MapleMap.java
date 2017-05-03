@@ -431,10 +431,10 @@ public class MapleMap
         return ret;
     }
 
-    private void dropFromMonster(MapleCharacter dropOwner, MapleMonster monster) {
-        if (dropsDisabled || monster.dropsDisabled()) {
+    private void dropFromMonster(MapleCharacter dropOwner, MapleMonster monster) 
+    {
+        if (dropsDisabled || monster.dropsDisabled())
             return;
-        }
 
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
 
@@ -443,11 +443,11 @@ public class MapleMap
 
         List<Integer> toDrop = new ArrayList<>();
 
-        for (int i = 0; i < maxDrops; i++) {
+        for (int i = 0; i < maxDrops; i++) 
             toDrop.add(monster.getDrop(dropOwner));
-        }
 
-        if (dropOwner.getEventInstance() == null && !monster.isDojoMinion()) {
+        if (dropOwner.getEventInstance() == null && !monster.isDojoMinion()) 
+        {
             int chance = Randomizer.nextInt(100);
             if (chance < 30 && !monster.isHalloweenBoss()) { // 20% chance of getting a maple leaf
                 toDrop.add(4001126);
@@ -457,32 +457,32 @@ public class MapleMap
                 toDrop.add(2388023);
             } else if (chance == 7 || chance == 8 || chance == 99 || chance == 23) { // 1% Chance of getting a monster card (Actual Value = 0.5 - 2%)
                 int cardid = ii.getMobCardId(monster.getId());
-                if (cardid != -1) {
+                if (cardid != -1) 
                     toDrop.add(cardid);
-                }
-            } else if (monster.isBoss() && chance >= 80) {
+            } else if (monster.isBoss() && chance >= 80) 
+            {
                 int cardid = ii.getMobCardId(monster.getId());
-                if (cardid != -1) {
+                if (cardid != -1)
                     toDrop.add(cardid);
-                }
             }
             chance = Randomizer.nextInt(100);
             if (mapId / 100000 == 2400 && chance < 10)
                 toDrop.add(4001393);
         }
-        if (monster.isDojoMinion()) {
+        if (monster.isDojoMinion()) 
+        {
             toDrop.add(2022432); //dojo power elixir
             toDrop.add(2022433); //dojo all cure
         }
-        if (monster.getId() == 8810018) {
-            toDrop.add(2290096); //force add one MW per HT
-        /*} else if (monster.getId() == 9400511 || monster.getId() == 9400510 || monster.getId() == 9400749 || monster.getId() == 9400749) {
-			for (int i = 0; i < 10; i++) { //force drop eggs for easter
-				toDrop.add(4220125);
-			}*/
-        } else if (monster.getId() == 9001011) {
+        if (monster.getId() == 8810018) 
+        {
+            toDrop.add(2290096);
+        } 
+        else if (monster.getId() == 9001011) 
+        {
             int proofOfExam = 0;
-            switch (dropOwner.getJob().getId()) {
+            switch (dropOwner.getJob().getId()) 
+            {
                 case 1100:
                     proofOfExam = 4032096;
                     break;
@@ -502,39 +502,46 @@ public class MapleMap
             if (proofOfExam != 0 && !dropOwner.haveItem(proofOfExam, 30, false, false))
                 toDrop.add(proofOfExam);
         }
+        
         Set<Integer> alreadyDropped = new HashSet<>();
         int htpendants = 0;
         int htstones = 0;
-        for (int i = 0; i < toDrop.size(); i++) {
-            if (toDrop.get(i) == 1122000) {
-                if (htpendants > 3) {
+        for (int i = 0; i < toDrop.size(); i++) 
+        {
+            if (toDrop.get(i) == 1122000) 
+            {
+                if (htpendants > 3)
                     toDrop.set(i, -1);
-                } else {
+                else
                     htpendants++;
-                }
-            } else if (toDrop.get(i) == 4001094) {
-                if (htstones > 2) {
+            } 
+            else if (toDrop.get(i) == 4001094) 
+            {
+                if (htstones > 2)
                     toDrop.set(i, -1);
-                } else {
+                else
                     htstones++;
-                }
-            } else if (alreadyDropped.contains(toDrop.get(i)) && !explosive) {
+            } 
+            else if (alreadyDropped.contains(toDrop.get(i)) && !explosive) 
+            {
                 toDrop.remove(i);
                 i--;
-            } else {
+            } 
+            else
                 alreadyDropped.add(toDrop.get(i));
-            }
         }
-        if (monster.getId() == 9400608) {
-            for (int i = 0; i < 5; i++) {
+        if (monster.getId() == 9400608) 
+        {
+            for (int i = 0; i < 5; i++)
                 toDrop.add(4001168);
-            }
         }
-        if (monster.getId() == 9400633) { // astaroth
-            for (int i = 0; i < 10; i++) {
+        if (monster.getId() == 9400633) 
+        {
+            for (int i = 0; i < 10; i++) 
                 toDrop.add(2022428);
-            }
-        } else if (monster.isHalloweenBoss()) {
+        } 
+        else if (monster.isHalloweenBoss()) 
+        {
             final int GREEN = 2022105;
             final int RED = 2022106;
             final int BLUE = 2022107;
@@ -554,20 +561,22 @@ public class MapleMap
                     {9500332, BLUE, -1, -1}
             };
             toDrop.clear();
-            for (int[] candyDrop : candyDrops) {
-                if (candyDrop[0] == monster.getId()) {
-                    while (toDrop.size() < 6) {
-                        for (int k = 1; k < 4; k++) {
-                            if (candyDrop[k] != -1) {
+            for (int[] candyDrop : candyDrops) 
+            {
+                if (candyDrop[0] == monster.getId()) 
+                {
+                    while (toDrop.size() < 6) 
+                    {
+                        for (int k = 1; k < 4; k++) 
+                        {
+                            if (candyDrop[k] != -1)
                                 toDrop.add(candyDrop[k]);
-                            }
                         }
                     }
                 }
             }
-            if (toDrop.size() > maxDrops) {
+            if (toDrop.size() > maxDrops)
                 toDrop = toDrop.subList(0, maxDrops);
-            }
         }
 
         if (toDrop.isEmpty())
@@ -579,87 +588,104 @@ public class MapleMap
 
         int curX = Math.min(Math.max(monster.getPosition().x - 25 * (toDrop.size() / 2), footholds.getMinDropX() + 25), footholds.getMaxDropX() - toDrop.size() * 25);
         int curY = Math.max(monster.getPosition().y, footholds.getY1());
-        while (shiftDirection < 3 && shiftCount < 1000) {
-            if (shiftDirection == 1) {
+        while (shiftDirection < 3 && shiftCount < 1000) 
+        {
+            if (shiftDirection == 1) 
                 curX += 25;
-            } else if (shiftDirection == 2) {
+            else if (shiftDirection == 2)
                 curX -= 25;
-            }
-            for (int i = 0; i < toDrop.size(); i++) {
+            
+            for (int i = 0; i < toDrop.size(); i++) 
+            {
                 MapleFoothold wall = footholds.findWall(new Point(curX, curY), new Point(curX + toDrop.size() * 25, curY));
-                if (wall != null) {
-                    if (wall.getX1() < curX) {
+                if (wall != null) 
+                {
+                    if (wall.getX1() < curX) 
+                    {
                         shiftDirection = 1;
                         shiftCount++;
                         break;
-                    } else if (wall.getX1() == curX) {
-                        if (shiftDirection == 0) {
+                    } 
+                    else if (wall.getX1() == curX) 
+                    {
+                        if (shiftDirection == 0)
                             shiftDirection = 1;
-                        }
                         shiftCount++;
                         break;
-                    } else {
+                    } 
+                    else 
+                    {
                         shiftDirection = 2;
                         shiftCount++;
                         break;
                     }
-                } else if (i == toDrop.size() - 1) {
+                } 
+                else if (i == toDrop.size() - 1)
                     shiftDirection = 3;
-                }
+                
                 final Point dropPos = calcDropPos(new Point(curX + i * 25, curY), new Point(monster.getPosition()));
                 toPoint[i] = new Point(curX + i * 25, curY);
                 final int drop = toDrop.get(i);
                 byte dropType = 0;
+              
                 if (explosive)
                     dropType = 3;
                 else if (monster.isFfaLoot())
                     dropType = 2;
                 else if (dropOwner.getParty() != null)
                     dropType = 1;
-                if (drop == -1) {
+                
+                if (drop == -1) 
+                {
+                	if(monster.isDojoMinion() || monster.isCPQMonster())
+                		return;
+                	
                     final int mesoRate = ChannelServer.getInstance(channel).getMesoRate();
                     double mesoDecrease = Math.pow(0.93, monster.getExp() / 300.0);
-                    if (mesoDecrease > 1.0) {
+                    if (mesoDecrease > 1.0)
                         mesoDecrease = 1.0;
-                    }
-                    if (mesoDecrease <= 0.0 && (monster.getId() == 8810018 || monster.getId() == 8800002)) {
+                    if (mesoDecrease <= 0.0 && (monster.getId() == 8810018 || monster.getId() == 8800002))
                         mesoDecrease = Math.random();
-                    }
                     int tempmeso = Math.min(30000, (int) (mesoDecrease * monster.getExp() * (1.0 + Math.random() * 20) / 10.0));
-                    if (dropOwner.getBuffedValue(MapleBuffStat.MESOUP) != null) {
+                    if (dropOwner.getBuffedValue(MapleBuffStat.MESOUP) != null)
                         tempmeso = (int) (tempmeso * dropOwner.getBuffedValue(MapleBuffStat.MESOUP).doubleValue() / 100.0);
-                    }
-                    if (tempmeso < 1 && (monster.getId() == 8810018 || monster.getId() == 8800002)) {
+                    if (tempmeso < 1 && (monster.getId() == 8810018 || monster.getId() == 8800002))
                         tempmeso = Randomizer.nextInt(30000);
-                    }
+                        
                     final int meso = tempmeso;
 
-                    if (meso > 0 && !monster.isDojoMinion()) {
+                    if (meso > 0) 
+                    {
                         final MapleMonster dropMonster = monster;
                         final MapleCharacter dropChar = dropOwner;
                         final byte fDropType = dropType;
-                        TimerManager.getInstance().schedule(new Runnable() {
-
-                            public void run() {
+                        TimerManager.getInstance().schedule(new Runnable() 
+                        {
+                            public void run() 
+                            {
                                 spawnMesoDrop(meso * mesoRate, dropPos, dropMonster, dropChar, explosive, fDropType);
                             }
                         }, monster.getAnimationTime("die1") + i);
                     }
-                } else {
+                } 
+                else 
+                {
                     IItem idrop;
                     MapleInventoryType type = ii.getInventoryType(drop);
-                    if (type.equals(MapleInventoryType.EQUIP)) {
+                    if (type.equals(MapleInventoryType.EQUIP)) 
+                    {
                         Equip nEquip = ii.randomizeStats((Equip) ii.getEquipById(drop));
                         idrop = nEquip;
-                    } else {
+                    } 
+                    else 
+                    {
                         idrop = new Item(drop, (byte) 0, (short) 1);
-                        if (ii.isArrowForBow(drop) || ii.isArrowForCrossBow(drop)) { // Randomize quantity for certain items
+                        if (ii.isArrowForBow(drop) || ii.isArrowForCrossBow(drop))
                             idrop.setQuantity((short) (1 + 100 * Math.random()));
-                        } else if (idrop.getItemId() == 4001106 && monster.getId() == 9400218) {
+                        else if (idrop.getItemId() == 4001106 && monster.getId() == 9400218)
                             idrop.setQuantity((short) 50);
-                        } else if (ii.isThrowingStar(drop) || ii.isShootingBullet(drop)) {
+                        else if (ii.isThrowingStar(drop) || ii.isShootingBullet(drop))
                             idrop.setQuantity((short) 1);
-                        }
                     }
 
                     idrop.log("Created as a drop from monster " + monster.getObjectId() + " (" + monster.getId() + ") at " + dropPos.toString() + " on map " + mapId, false);
@@ -669,13 +695,15 @@ public class MapleMap
                     final MapleCharacter dropChar = dropOwner;
                     final TimerManager tMan = TimerManager.getInstance();
 
-                    tMan.schedule(new Runnable() {
-
+                    tMan.schedule(new Runnable() 
+                    {
                         @Override
-                        public void run() {
-                            spawnAndAddRangedMapObject(mdrop, new DelayedPacketCreation() {
-
-                                public void sendPackets(MapleClient c) {
+                        public void run() 
+                        {
+                            spawnAndAddRangedMapObject(mdrop, new DelayedPacketCreation() 
+                            {
+                                public void sendPackets(MapleClient c) 
+                                {
                                     c.sendPacket(MaplePacketCreator.dropItemFromMapObject(drop, mdrop.getObjectId(), dropMonster.getObjectId(), mdrop.getDropType() == 1 ? dropChar.getPartyId() : dropChar.getId(), dropMonster.getPosition(), dropPos, (byte) 1, mdrop.getItem().getExpiration(), mdrop.getDropType(), false));
                                     activateItemReactors(mdrop);
                                 }
@@ -1632,19 +1660,6 @@ public class MapleMap
             }           
             //setSpawns(false);        
             //end HenesysPQ and Kenta checks
-        } else 
-        	if (mapId == 980000101 || 
-        		mapId == 980000201 || 
-        		mapId == 980000301 ||
-				mapId == 980000401 ||
-				mapId == 980000501 ||
-				mapId == 980000601)
-        {
-        	if(chr.getEventInstance() != null)
-        	{
-        		for (MapleMapObject monstermo : getAllMonsters()) 
-        			chr.getEventInstance().registerMonster((MapleMonster)monstermo);
-        	}
         }
         
         final List<MaplePet> pets = chr.getPets();
