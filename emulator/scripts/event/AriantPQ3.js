@@ -1,22 +1,19 @@
 /*
  * @Author Jvlaple
- * @Re-Coder JavaScriptz
  * Ariant Coliseum (3)
- * Adicionado funcoes/Aperfeicoamento
  * 2014-21-09
  */
 
 
-
-/* global Packages, java, em */
+/* global Packages, java */
 
 importPackage(java.lang);
 
-importPackage(Packages.world);
-importPackage(Packages.client);
-importPackage(Packages.server.maps);
-importPackage(Packages.server);
-importPackage(Packages.tools);
+importPackage(Packages.org.ascnet.leaftown.world);
+importPackage(Packages.org.ascnet.leaftown.client);
+importPackage(Packages.org.ascnet.leaftown.server);
+importPackage(Packages.org.ascnet.leaftown.server.maps);
+importPackage(Packages.org.ascnet.leaftown.tools);
 
 var exitMap;
 var instanceId;
@@ -35,11 +32,12 @@ function setup() {
 	instanceId = em.getChannelServer().getInstanceId();
 	var instanceName = "AriantPQ3_" + instanceId;
 	var eim = em.newInstance(instanceName);
+	var mf = eim.getMapFactory();
 	em.getChannelServer().addInstanceId();
-        var eventTime = 10 * 60000 + 10000;
-        em.schedule("timeOut", eim, eventTime); // invokes "timeOut" in how ever many seconds.
-        em.schedule("scoreBoard", 10 * 60000); 
-	em.schedule("broadcastClock", 1500);
+	var eventTime = 10 * 60000 + 10000;
+	eim.schedule("timeOut", eim, eventTime); // invokes "timeOut" in how ever many seconds.
+	eim.schedule("scoreBoard", 10 * 60000); 
+	eim.schedule("broadcastClock", 1500);
 	eim.setProperty("entryTimestamp",System.currentTimeMillis() + (10 * 60000));
 	var tehwat = Math.random() * 3;
 	if (tehwat > 1) {
@@ -47,7 +45,7 @@ function setup() {
 	} else {
 		eim.setProperty("theWay", "light");
 	}
-        respawn(eim);
+	respawn(eim);
 	return eim;
 }
 
