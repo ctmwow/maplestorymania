@@ -35,7 +35,10 @@ public enum MapleSquadType {
     ZAKUM(0),
     HORNTAIL(1),
     UNKNOWN(2),
-    BOSSQUEST(3);
+    BOSSQUEST(3),
+    ARIANT1(4),
+    ARIANT2(5),
+    ARIANT3(6);
 
     final byte type;
 
