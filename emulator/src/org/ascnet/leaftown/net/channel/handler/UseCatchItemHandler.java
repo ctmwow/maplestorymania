@@ -28,7 +28,9 @@
 package org.ascnet.leaftown.net.channel.handler;
 
 import org.ascnet.leaftown.client.MapleClient;
+import org.ascnet.leaftown.client.MapleInventoryType;
 import org.ascnet.leaftown.net.AbstractMaplePacketHandler;
+import org.ascnet.leaftown.server.MapleInventoryManipulator;
 import org.ascnet.leaftown.server.life.MapleMonster;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
@@ -45,17 +47,17 @@ public class UseCatchItemHandler extends AbstractMaplePacketHandler {
         // 32 A3 22 00 // itemid
         // 38 37 2B 00 // monsterid
         slea.readInt();
-        slea.readShort();
+        byte slot = (byte) slea.readShort();
         final int itemid = slea.readInt();
         final int monsterid = slea.readInt();
 
         final MapleMonster mob = c.getPlayer().getMap().getMonsterByOid(monsterid);
-        if (mob != null) {
+        
+        if (mob != null && itemid == 2270002) {
             if (mob.getHp() <= mob.getMaxHp() / 2) {
-                if (itemid == 2270002) {
-                    c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.catchMonster(monsterid, itemid, (byte) 1));
-                }
+                c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.catchMonster(monsterid, itemid, (byte) 1));
                 mob.getMap().killMonster(mob);
+                MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, false, false);
                 c.getPlayer().setAPQScore(c.getPlayer().getAPQScore() + 1);
                 c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.updateAriantPQRanking(c.getPlayer().getName(), c.getPlayer().getAPQScore(), false));
             } else {
