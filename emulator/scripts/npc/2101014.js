@@ -3,7 +3,7 @@
  * For Jvlaple's AriantPQ
  */
 importPackage(java.lang);
-importPackage(Packages.server);
+importPackage(Packages.org.ascnet.leaftown.server);
  
 var status = 0;
 var toBan = -1;
@@ -33,7 +33,7 @@ function action(mode, type, selection) {
 		}
 		if (cm.getPlayer().getMapId() == 980010000) {
 			if (status == 0) {
-				var toSnd = "Você gostaria de participar do Desafio #eAriant Coliseu#n?\r\n\r\n#e#r       (Escolha uma arena)#n#k\r\n#b";
+				var toSnd = "VocÃª gostaria de participar do Desafio #eAriant Coliseu#n?\r\n\r\n#e#r       (Escolha uma arena)#n#k\r\n#b";
 				if (cm.getSquadState(MapleSquadType.ARIANT1) != 2 && cm.getSquadState(MapleSquadType.ARIANT1) != 1) {
 					toSnd += "#L0#Comece Ariant Coliseu (1)#l\r\n";
 				} else if (cm.getSquadState(MapleSquadType.ARIANT1) == 1) {
@@ -49,8 +49,8 @@ function action(mode, type, selection) {
 				} else if (cm.getSquadState(MapleSquadType.ARIANT3) == 1) {
 					toSnd += "#L2#Junte-se ao Ariant Coliseu (3)  Dono (" + cm.getSquadMember(MapleSquadType.ARIANT3, 0).getName() + ")" + " Membros Atuais:: " + cm.numSquadMembers(MapleSquadType.ARIANT3) + "\r\n";
 				}
-				if (toSnd.equals("Você gostaria de participar do Desafio Ariant Coliseu? Escolha uma arena!\r\n#b")) {
-                                        cm.sendOk("Todas as arenas esta ocupadas agora. Eu sugiro que você volte mais tarde ou mudar de canal.");
+				if (toSnd.equals("VocÃª gostaria de participar do Desafio Ariant Coliseu? Escolha uma arena!\r\n#b")) {
+                                        cm.sendOk("Todas as arenas esta ocupadas agora. Eu sugiro que vocÃª volte mais tarde ou mudar de canal.");
 					cm.dispose();
 				} else {
 					cm.sendSimple(toSnd);
@@ -77,7 +77,7 @@ function action(mode, type, selection) {
 						cm.warp(map, 0);
 						cm.dispose();
 					} else {
-						cm.getPlayer().dropMessage("Houve um erro. Por favor, reporte este fato a um GameMaster o mais breve possível.");
+						cm.getPlayer().dropMessage("Houve um erro. Por favor, reporte este fato a um GameMaster o mais breve possï¿½vel.");
 						cm.dispose();
 					}
 				} else if (cm.getSquadState(choice) == 1) {
@@ -87,11 +87,11 @@ function action(mode, type, selection) {
 					} else {
 						if (cm.canAddSquadMember(choice)) {
 							cm.addSquadMember(choice);
-							cm.sendOk("Você já se inscreveu!");
+							cm.sendOk("Vocï¿½ jï¿½ se inscreveu!");
 							cm.warp(map, 0);
 							cm.dispose();
 						} else {
-							cm.sendOk("Desculpe, mas o líder pediu para nao ser autorizado a entrar.");
+							cm.sendOk("Desculpe, mas o lï¿½der pediu para nao ser autorizado a entrar.");
 							cm.dispose();
 						}
 					}
