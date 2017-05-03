@@ -72,6 +72,7 @@ import org.ascnet.leaftown.net.MaplePacket;
 import org.ascnet.leaftown.net.channel.ChannelServer;
 import org.ascnet.leaftown.net.world.MaplePartyCharacter;
 import org.ascnet.leaftown.scripting.maps.MapScriptManager;
+import org.ascnet.leaftown.server.MapleInventoryManipulator;
 import org.ascnet.leaftown.server.MapleItemInformationProvider;
 import org.ascnet.leaftown.server.MapleOxQuiz;
 import org.ascnet.leaftown.server.MaplePlayerNPC;
@@ -1336,7 +1337,7 @@ public class MapleMap
                                 }
                                 map.spawnItemDrop(ob, chr, new Item(4031868, (byte) -1, (short) 1), new Point(x, y), true, true);
                             }
-                            broadcastMessage(MaplePacketCreator.updateAriantPQRanking(chr.getName(), chr.getAriantScore(), false));
+                            broadcastMessage(MaplePacketCreator.updateAriantPQRanking(chr.getName(), chr.getAPQScore(), false));
                         }
                     }
                 }
