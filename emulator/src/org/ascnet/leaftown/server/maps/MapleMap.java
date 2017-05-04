@@ -997,6 +997,30 @@ public class MapleMap
         }
         monster.dispose();
     }
+    
+    public void killMonster(final MapleMonster monster, final MapleCharacter chr, final boolean withDrops, final boolean catched, final boolean secondTime, int animation) {
+        if (monster.getId() == 8810018 && !secondTime) {
+            TimerManager.getInstance().schedule(new Runnable() {
+                @Override
+                public void run() {
+                    killMonster(monster, chr, withDrops, false, true, 1);
+                    killAllMonsters(true);
+                }
+            }, 3000);
+            return;
+        }
+        spawnedMonstersOnMap.decrementAndGet();
+        monster.setHp(0);
+        broadcastMessage(MaplePacketCreator.killMonster(monster.getObjectId(), true), monster.getPosition());
+        removeMapObject(monster);
+        MapleCharacter dropOwner = monster.killBy(chr,chr.getClient().getChannel());
+        if (withDrops && !monster.dropsDisabled()) {
+            if (dropOwner == null) {
+                    dropOwner = chr;
+            }
+            dropFromMonster(dropOwner, monster);
+        }
+    }
 
     public void killMonster(final MapleMonster monster) {
         killMonster(monster, 3, false);

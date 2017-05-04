@@ -174,7 +174,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private boolean isDJ;
     private int chair;
     private int itemEffect;
-    private int APQScore;
     private int buffCount = 0, attackCount = 0;
     private MapleParty party;
     private EventInstanceManager eventInstance = null;
@@ -306,6 +305,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private Map<Short, String> area_info = new LinkedHashMap<>();
     private long arrivalTime = 0x00;
     private boolean shield = false;
+    private long catchdelay = System.currentTimeMillis();
 
     private MapleCharacter(boolean channelServ) 
     {
@@ -871,7 +871,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         }
         ret.inMTS = false;
         ret.bookCover = 0;
-        ret.APQScore = 0;
         ret.alliancerank = 5;
 
         ret.keymap.put(2, new MapleKeyBinding(4, 10));
@@ -1983,7 +1982,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public int getAPQScore() {
-        return APQScore;
+    	return this.countItem(4031868);
     }
 
     public int getFame() {
@@ -2131,10 +2130,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     public void setFame(int fame) {
         this.fame = fame;
-    }
-
-    public void setAPQScore(int score) {
-        APQScore = score;
     }
 
     public void setRemainingAp(int remainingAp) {
@@ -4259,6 +4254,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         }
         return false;
     }
+    
+    public boolean haveItem(int itemid) {
+        return getItemQuantity(itemid, false) > 0;
+    }
 
     public int getItemQuantity(int itemid) {
         return inventory[MapleItemInformationProvider.getInstance().getInventoryType(itemid).ordinal()].countById(itemid);
@@ -4563,6 +4562,18 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             //getMap().broadcastMessage(this, MaplePacketCreator.cancelForeignBuff(getId(), Collections.singletonList(MapleBuffStat.ARIANT_PQ_SHIELD)), false);
             this.shield = false;
         }
+    }
+    
+    public void catchDelay(long time) {
+        this.catchdelay = System.currentTimeMillis() + time;
+    }
+
+    public long getCatchDelay() {
+        return catchdelay;
+    }
+    
+    public void updateAriantScore() {
+        this.getMap().broadcastMessage(MaplePacketCreator.updateAriantPQRanking(this.getName(), getAPQScore(), false));
     }
 
     public List<MapleDisease> getDiseases() {

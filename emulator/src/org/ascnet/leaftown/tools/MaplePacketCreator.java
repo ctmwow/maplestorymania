@@ -4250,6 +4250,16 @@ public class MaplePacketCreator {
 	public static MaplePacket showItemMessage(final int itemId) {
 		return showStatusInfo((byte) 0x07, (byte) 0x00, itemId, 0x00, false, 0x00, (short) 0x00, 0x00);
 	}
+	
+    public static MaplePacket catchMessage(int message) { // not done, I guess
+        // 4C 00 00 00 00 00 00 00 00 00 00
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendPacketOpcode.CATCH_MESSAGE.getValue());
+        mplew.write(message); // 1 = too strong, 2 = Elemental Rock
+        mplew.writeInt(0);
+        mplew.writeInt(0);
+        return mplew.getPacket();
+    }
 
 	public static MaplePacket showBoughtStorageSlots(short slots) {
 		final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(5);

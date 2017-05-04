@@ -83,6 +83,21 @@ public class TakeDamageHandler extends AbstractMaplePacketHandler {
         final boolean is_pg = true;
         int mpattack = 0;
         MapleMonster attacker = null;
+        
+
+        if (damagefrom != -2) {
+            monsteridfrom = slea.readInt();
+            oid = slea.readInt();
+            attacker = (MapleMonster) player.getMap().getMapObject(oid);
+            if ((player.getMap().getMonsterByOid(monsteridfrom) == null || attacker == null) && monsteridfrom != 9300166) {
+                return;
+            } else if (monsteridfrom == 9300166) {
+                if (player.haveItem(4031868)) {
+                    c.getPlayer().getMap().spawnItemDrop(c.getPlayer(), c.getPlayer(), player.getInventory(MapleInventoryType.ETC).findById(4031868), c.getPlayer().getPosition(), true, true);
+                }
+            }
+            direction = slea.readByte();
+        }
 
         if (damagefrom != -3 && damagefrom != -4) {
             monsteridfrom = slea.readInt();

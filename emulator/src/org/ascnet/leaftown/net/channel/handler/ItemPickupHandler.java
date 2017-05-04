@@ -112,6 +112,12 @@ public class ItemPickupHandler extends AbstractMaplePacketHandler {
                         c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
+                    if (mapitem.getItem().getItemId() == 4031868) {
+                        for (MapleCharacter chr : c.getPlayer().getMap().getCharacters()) {
+                             chr.getMap().broadcastMessage(MaplePacketCreator.updateAriantPQRanking(c.getPlayer().getName(), c.getPlayer().getAPQScore(), false));
+                             removeItem(c.getPlayer(), mapitem, ob);
+                        }
+                    }
                     if (ii.isPet(itemId)) {
                         MaplePet nPet = mapitem.getItem().getPet();
                         int petId = nPet != null ? nPet.getUniqueId() : -1;

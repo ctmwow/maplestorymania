@@ -193,6 +193,7 @@ public enum SendPacketOpcode implements MutableValueHolder<Integer> {
     SHOW_MONSTER_HP,
     SHOW_MAGNET,
     CATCH_MONSTER,
+    CATCH_MESSAGE,
     SPAWN_NPC,
     REMOVE_NPC,
     SPAWN_NPC_REQUEST_CONTROLLER,
