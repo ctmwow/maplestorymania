@@ -41,6 +41,7 @@ import org.ascnet.leaftown.provider.DataUtil;
 import org.ascnet.leaftown.provider.MapleData;
 import org.ascnet.leaftown.provider.MapleDataProvider;
 import org.ascnet.leaftown.server.PortalFactory;
+import org.ascnet.leaftown.server.TimerManager;
 import org.ascnet.leaftown.server.life.AbstractLoadedMapleLife;
 import org.ascnet.leaftown.server.life.MapleLifeFactory;
 import org.ascnet.leaftown.server.life.MapleMonster;
@@ -330,7 +331,9 @@ public class MapleMapFactory {
 					log.error("Loading FAEK failed", e);
 				}
 			}*/
+            addAreaBossSpawn(map);
         }
+        
         return map;
     }
 
@@ -466,4 +469,172 @@ public class MapleMapFactory {
             return mobTime;
         }
     }
+    
+    private void addAreaBossSpawn(final MapleMap map) {
+    	int monsterid = -1;
+        int mapid = -1;
+    	int mobtime = -1;
+    	String msg = null;
+    	int pos1, pos2;
+
+    	switch (map.getId()) {
+    	    case 104000400: // Mano
+	            mapid = 104000400;
+	    		mobtime = 2700;
+	    		monsterid = 2220000;
+	    		msg = "Uma brisa fria foi sentida quando Mano apareceu.";
+	    		pos1 = 439;
+	    		pos2 = -85;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 101030404: // Stumpy
+	    		mobtime = 2700;
+	    		monsterid = 3220000;
+	    		msg = "Tocoso apareceu com um som atordoante que toca na montanha de pedra.";
+	    		pos1 = 867;
+	    		pos2 = 1570;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 110040000: // King Clang
+	    		mobtime = 1200;
+	    		monsterid = 5220001;
+	    		msg = "Uma Concha de Turbante estranha apareceu na praia.";
+	    		pos1 = -355;
+	    		pos2 = -113;
+                    if(map.countMobOnMap(monsterid) == 1)
+                        return;
+                    break;
+    	    case 250010304: // Tae Roon
+	    		mobtime = 2100;
+	    		monsterid = 7220000;
+	    		msg = "Tae Roon apareceu e está crescendo para o alto...";
+	    		pos1 = -210;
+	    		pos2 = 393;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 200010300: // Eliza
+	    		mobtime = 1200;
+	    		monsterid = 8220000;
+	    		msg = "Eliza apareceu com um redemoinho preto.";
+	    		pos1 = 665;
+	    		pos2 = -217;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 250010503: // Ghost Priest
+	    		mobtime = 1800;
+	    		monsterid = 7220002;
+	    		msg = "A área se enche com uma força desagradável do mal... com um som perturbador.";
+	    		pos1 = -303;
+	    		pos2 = 543;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 222010310: // Old Fox
+	    		mobtime = 2700;
+	    		monsterid = 7220001;
+	    		msg = "Como a luz da lua escurece, um grito longo da raposa pode ser ouvido e ainda pode ser sentida.";
+	    		pos1 = -169;
+	    		pos2 = 93;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 107000300: // Dale
+	    		mobtime = 1800;
+	    		monsterid = 6220000;
+	    		msg = "O enorme crocodilo Dale saiu do pântano.";
+	    		pos1 = 710;
+	    		pos2 = 119;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 100040105: // Faust
+	    		mobtime = 1800;
+	    		monsterid = 5220002;
+	    		msg = "A névoa azul tornou-se mais escura quando Fausto apareceu.";
+	    		pos1 = 1000;
+	    		pos2 = 278;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 220050100: // Timer
+	    		mobtime = 1500;
+	    		monsterid = 5220003;
+	    		msg = "Click clock! Timer apareceu com um relógio irregular.";
+	    		pos1 = -467;
+	    		pos2 = 1032;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 221040301: // Jeno
+	    		mobtime = 2400;
+	    		monsterid = 6220001;
+	    		msg = "Jeno apareceu com um som pesado das máquinas.";
+	    		pos1 = -4134;
+	    		pos2 = 776;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 240040401: // Lev
+	    		mobtime = 7200;
+	    		monsterid = 8220003;
+	    		msg = "Leviathan apareceu com um vento frio de sobre o desfiladeiro.";
+	    		pos1 = -15;
+	    		pos2 = 1634;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 260010201: // Dewu
+	    		mobtime = 3600;
+	    		monsterid = 3220001;
+	    		msg = "Dewu apareceu lentamente a partir do pó de areia.";
+	    		pos1 = -215;
+	    		pos2 = 275;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+    	    case 261030000: // Chimera
+	    		mobtime = 2700;
+	    		monsterid = 8220002;
+	    		msg = "Chimera apareceu da escuridão do subterrâneo com um brilho nos olhos.";
+	    		pos1 = -1094;
+	    		pos2 = -116;
+                if(map.countMobOnMap(monsterid) == 1)
+                    return;
+                break;
+            /*case 209000000: //Happyville Snowman
+            	mobtime = 6000;
+			    monsterid = 9500317;
+			    msg = "O Boneco de Neve apareceu.";
+			    pos1 = 154;
+			    pos2 = 257;
+			    if(map.countMobOnMap(monsterid) == 1)
+    			break;*/
+    	    case 230020100: // Sherp
+	    		mobtime = 2700;
+	    		monsterid = 4220000;
+	    		msg = "Um escudo estranho apareceu de um bosque de algas.";
+	    		pos1 = -291;
+	    		pos2 = -272;
+	            if(map.countMobOnMap(monsterid) == 1)
+	                return;
+	            break;
+    	    default:
+    	    	return;
+    	}
+    	map.spawnMonsterOnGroundBelow(monsterid, pos1, pos2, msg);
+        addAreaBossSpawnTimer(map, mobtime);
+    }
+        
+    public void addAreaBossSpawnTimer(final MapleMap map, final int mobtime) {
+        TimerManager.getInstance().schedule(new Runnable() {           
+        	@Override
+            public void run() {
+                addAreaBossSpawn(map);
+            }           
+        }, mobtime);
+    } 
 }

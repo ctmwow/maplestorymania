@@ -494,6 +494,7 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
             switch (skillId) 
             {
                 case 3221007:
+                case 1221009:
                     maximumDamageToMonster = 199999;
                     break;
                 case 4201004:

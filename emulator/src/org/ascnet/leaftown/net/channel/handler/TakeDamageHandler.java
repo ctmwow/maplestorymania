@@ -85,7 +85,9 @@ public class TakeDamageHandler extends AbstractMaplePacketHandler {
         MapleMonster attacker = null;
         
 
-        if (damagefrom != -2) {
+        /*
+         * 
+         * if (damagefrom != -2) {
             monsteridfrom = slea.readInt();
             oid = slea.readInt();
             attacker = (MapleMonster) player.getMap().getMapObject(oid);
@@ -97,7 +99,7 @@ public class TakeDamageHandler extends AbstractMaplePacketHandler {
                 }
             }
             direction = slea.readByte();
-        }
+        }*/
 
         if (damagefrom != -3 && damagefrom != -4) {
             monsteridfrom = slea.readInt();
@@ -109,6 +111,13 @@ public class TakeDamageHandler extends AbstractMaplePacketHandler {
             attacker = (MapleMonster) player.getMap().getMapObject(oid);
             if (monsteridfrom != attacker.getId())
                 monsteridfrom = attacker.getId();
+            
+            if (attacker != null && monsteridfrom == 9300166) {
+                if (player.haveItem(4031868)) {
+                    c.getPlayer().getMap().spawnItemDrop(c.getPlayer(), c.getPlayer(), player.getInventory(MapleInventoryType.ETC).findById(4031868), c.getPlayer().getPosition(), true, true);
+                }
+            }
+            
             direction = slea.readByte();
         }
         try {

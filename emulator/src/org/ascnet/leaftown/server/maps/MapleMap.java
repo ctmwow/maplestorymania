@@ -888,76 +888,9 @@ public class MapleMap
                 }
             }
         }
-        ChannelServer cserv = ChannelServer.getInstance(channel);
-        switch (monster.getId()) {
-            case 8810018:
-                for (MapleCharacter c : chars) {
-                    c.finishAchievement(26);
-                }
-                try {
-                    cserv.getWorldInterface().broadcastMessage(null, MaplePacketCreator.serverNotice(6, "To the crew that have finally conquered Horned Tail after numerous attempts, I salute thee! You are the true heroes of Leafre!!").getBytes());
-                } catch (RemoteException re) {
-                    cserv.reconnectWorld();
-                }
-                break;
-            // This part is responsible for Area Boss respawns.
-            case 2220000:
-                cserv.getEventSM().getEventManager("AreaBossMano").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 3220000:
-                cserv.getEventSM().getEventManager("AreaBossStumpy").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 3220001:
-                cserv.getEventSM().getEventManager("AreaBossDeo").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 4220001:
-                cserv.getEventSM().getEventManager("AreaBossSeruf").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 5220001:
-                cserv.getEventSM().getEventManager("AreaBossKingClang").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 5220002:
-                if (mapId == 100040105)
-                    cserv.getEventSM().getEventManager("AreaBossFaust1").schedule("start", ((long) 60 * 1000 * 45));
-                else if (mapId == 100040106)
-                    cserv.getEventSM().getEventManager("AreaBossFaust2").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 5220003:
-                if (mapId == 220050000)
-                    cserv.getEventSM().getEventManager("AreaBossTimer2").schedule("start", ((long) 60 * 1000 * 45));
-                else if (mapId == 220050100)
-                    cserv.getEventSM().getEventManager("AreaBossTimer1").schedule("start", ((long) 60 * 1000 * 45));
-                else if (mapId == 220050200)
-                    cserv.getEventSM().getEventManager("AreaBossTimer3").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 6220000:
-                cserv.getEventSM().getEventManager("AreaBossDyle").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 6220001:
-                cserv.getEventSM().getEventManager("AreaBossZeno").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 7220000:
-                cserv.getEventSM().getEventManager("AreaBossTaeRoon").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 7220001:
-                cserv.getEventSM().getEventManager("AreaBossNineTailedFox").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 7220002:
-                cserv.getEventSM().getEventManager("AreaBossKingSageCat").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 8220000:
-                if (mapId == 200010300)
-                    cserv.getEventSM().getEventManager("AreaBossEliza1").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 8220002:
-                cserv.getEventSM().getEventManager("AreaBossKimera").schedule("start", ((long) 60 * 1000 * 45));
-                break;
-            case 8220003:
-                cserv.getEventSM().getEventManager("AreaBossLeviathan").schedule("start", ((long) 60 * 1000 * 120));
-                break;
-            case 9500365:
-                cserv.getEventSM().getEventManager("AgentBox").schedule("start", ((long) 60 * 1000 * 15));
-                break;
+        
+       if (monster.getId() == 9300166) { //ariant pq bomb animation
+            animation = 2; //
         }
 
         spawnedMonstersOnMap.decrementAndGet();
@@ -1232,6 +1165,15 @@ public class MapleMap
         spos.y -= 1;
         monster.setPosition(spos);
         spawnMonster(monster);
+    }
+    
+    public void spawnMonsterOnGroundBelow(int mobid, int x, int y, String msg) {
+        MapleMonster mob = MapleLifeFactory.getMonster(mobid);
+        if (mob != null) {
+            Point point = new Point(x, y);
+            spawnMonsterOnGroundBelow(mob, point);
+            this.broadcastMessage(MaplePacketCreator.serverNotice(6, msg));
+        }
     }
 
     public void spawnMonsterOnGroundBelowForce(final MapleMonster monster, Point pos) {

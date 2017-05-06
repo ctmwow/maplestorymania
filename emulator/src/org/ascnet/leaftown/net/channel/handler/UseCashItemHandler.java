@@ -684,15 +684,17 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                             if (targetPet.canConsume(itemId)) {
                                 targetPet.setFullness(100);
                                 final int closeGain = 100 * c.getChannelServer().getPetExpRate();
-                                if (targetPet.getCloseness() + closeGain > 30000) {
-                                    targetPet.setCloseness(30000);
-                                } else {
-                                    targetPet.setCloseness(targetPet.getCloseness() + closeGain);
-                                }
-                                while (targetPet.getCloseness() >= ExpTable.getClosenessNeededForLevel(targetPet.getLevel() + 1)) {
-                                    targetPet.setLevel(targetPet.getLevel() + 1);
-                                    c.sendPacket(MaplePacketCreator.showOwnPetLevelUp((byte) 0, c.getPlayer().getPetIndex(targetPet)));
-                                    c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.showPetLevelUp(c.getPlayer(), c.getPlayer().getPetIndex(targetPet)));
+                                if (targetPet.getCloseness() < 30000) {
+	                                if (targetPet.getCloseness() + closeGain > 30000) {
+	                                    targetPet.setCloseness(30000);
+	                                } else {
+	                                    targetPet.setCloseness(targetPet.getCloseness() + closeGain);
+	                                }
+	                                while (targetPet.getCloseness() >= ExpTable.getClosenessNeededForLevel(targetPet.getLevel() + 1)) {
+	                                    targetPet.setLevel(targetPet.getLevel() + 1);
+	                                    c.sendPacket(MaplePacketCreator.showOwnPetLevelUp((byte) 0, c.getPlayer().getPetIndex(targetPet)));
+	                                    c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.showPetLevelUp(c.getPlayer(), c.getPlayer().getPetIndex(targetPet)));
+	                                }
                                 }
                                 c.getPlayer().updatePet(targetPet);
                                 c.getPlayer().getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.commandResponse(c.getPlayer().getId(), (byte) 1, 0, true, true, targetPet.hasQuoteRing()), true);

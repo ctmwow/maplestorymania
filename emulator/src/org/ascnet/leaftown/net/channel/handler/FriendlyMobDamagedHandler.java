@@ -65,7 +65,8 @@ public class FriendlyMobDamagedHandler extends AbstractMaplePacketHandler
         
         if(mob.getId() == 9300061 || mob.getId() == 9300102)
         {
-            map.addBunnyHit();
+        	if(mob.getId() == 9300061)
+        		map.addBunnyHit();
             
             if(mob.getHp() < 1)
             {
