@@ -49,7 +49,7 @@ function action(mode, type, selection) {
                     cm.dispose();
                     return;
                 }
-                if (!cm.isLeader()) { 
+                if (!cm.isPartyLeader()) { 
                     cm.sendOk("Please ask your party leader to talk to me.");
                     cm.dispose();
                 } else { 

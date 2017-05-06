@@ -35,7 +35,7 @@ function action(mode, type, selection) {
 	    if(selection == 0) {//ENTER THE PQ
 			if (!hasParty()) {//NO PARTY
 				cm.sendOk("Tente desafiar o Labirinto com seu grupo. Se você deseja entrar, crie um grupo e recrute pelo menos 3 pessoas entre os níveis 50 e 100!");
-			} else if (!isLeader()) {//NOT LEADER
+			} else if (!isPartyLeader()) {//NOT LEADER
 				cm.sendOk("Tente desafiar o Labirinto com seu grupo. Se você deseja entrar, por favor peça que seu líder fale comigo!");
 			} else if (!checkPartySize()) {//PARTY SIZE WRONG
 				cm.sendOk("Seu grupo deve possuir pelo menos " + minPlayers + " membros para poder desafiar o labirinto.");
@@ -46,7 +46,7 @@ function action(mode, type, selection) {
 			} else if (prop.equals("1") || prop == null){
 				cm.sendOk("Há algum grupo dentro do labirinto no momento.");
 			} else {
-				em.startInstance(cm.getParty(), cm.getPlayer().getMap());
+				em.startInstance(cm.getParty(),cm.getPlayer().getMap());
 				party = cm.getPlayer().getEventInstance().getPlayers();
 				cm.removeFromParty(4001106, party);
 			}//4001106
@@ -67,7 +67,7 @@ function getPartySize(){
     }
 }
 
-function isLeader(){
+function isPartyLeader(){
     return cm.isPartyLeader();
 }
 

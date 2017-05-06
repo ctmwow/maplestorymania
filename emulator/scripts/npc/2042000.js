@@ -39,7 +39,7 @@ function action(mode, type, selection)
 			} 
 			else 
 			{
-				if (cm.isLeader()) 
+				if (cm.isPartyLeader()) 
 				{
 					if (found)
 						cm.sendSimple(selStr);

@@ -64,7 +64,7 @@ function action(mode, type, selection) {
                 eim.setProperty("leader" + nthtext + "preamble","done");
                 cm.dispose();
             }else{
-                if(!isLeader()){
+                if(!isPartyLeader()){
                     if(gaveItems == null){
                         cm.sendOk("Please tell your #bParty-Leader#k to come talk to me");
                         cm.dispose();
@@ -104,9 +104,9 @@ function action(mode, type, selection) {
     }
 }
 
-function isLeader(){
+function isPartyLeader(){
     if(cm.getParty() == null)
         return false;
     else
-        return cm.isLeader();
+        return cm.isPartyLeader();
 }

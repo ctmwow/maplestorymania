@@ -7,7 +7,7 @@ function enter(pi) {
     var eim = pi.getPlayer().getEventInstance();
     var party = pi.getPlayer().getEventInstance().getPlayers();
     var realParty = pi.getParty();
-    var playerStatus = pi.isLeader();
+    var playerStatus = pi.isPartyLeader();
     if (playerStatus) { 
         if (eim.getProperty("4stageclear") == null) {
             pi.warp(920010300, 1); 

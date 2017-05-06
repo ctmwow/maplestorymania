@@ -22,7 +22,7 @@ function action(mode, type, selection) {
 	cm.dispose();
 	return;
     }
-    if (!cm.isLeader()) {
+    if (!cm.isPartyLeader()) {
 	cm.sendOk("I only wish to speak to your leader!");
 	cm.dispose();
 	return;

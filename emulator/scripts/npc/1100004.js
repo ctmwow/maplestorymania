@@ -6,8 +6,10 @@
 
 -------Credits:-------------------------------------------------------------------
 	*MapleSanta 
+	*MapleStory Mania
 ----------------------------------------------------------------------------------
 **/
+
 var menu = new Array("Orbis");
 var method;
 
@@ -17,32 +19,46 @@ function start() {
 }
 
 function action(mode, type, selection) {
-    if (mode == -1) {
+    if (mode == -1) 
+	{
         cm.dispose();
         return;
-    } else {
-        if (mode == 0 && status == 0) {
+    } else 
+	{
+        if (mode == 0 && status == 0) 
+		{
             cm.dispose();
             return;
-        } else if (mode == 0) {
-            cm.sendNext("OK. If you ever change your mind, please let me know.");
+        } 
+		else if (mode == 0) 
+		{
+            cm.sendNext("Está bem. Se você mudar de ideia, por favor me avise.");
             cm.dispose();
             return;
         }
         status++;
-        if (status == 0) {
-            for (var i = 0; i < menu.length; i++) {
+        if (status == 0) 
+		{
+            for (var i = 0; i < menu.length; i++)
+			{
                 var display = "\r\n#L" + i + "##b Orbis (1000 mesos)#k";
             }
-            cm.sendSimple("Hmm... The winds are favorable. Are you thinking of leaving ereve and going somwhere else? This ferry sails to Orbis on the Ossyria Continent, Have you taking care of everything you needed to in Ereve? If you happen to be headed toward #bOrbis#k i can take you there. What do you day? Are you going to go to Orbis?\r\n" + display);
+            cm.sendSimple("Hmm... Os ventos são favoráveis. Você está pensando em deixar Ereve e ir para algum lugar? Este barco voa à Orbis no continente de Ossyria. Você cuidou de tudo que precisa em Ereve? Se você está indo para #bOrbis#k posso levá-lo até lá. O que você irá fazer? Irá para Orbis?\r\n" + display);
 
-        } else if (status == 1) {
-            if (cm.getMeso() < 1000) {
-                cm.sendNext("Hmm... Are you sure you have #b1000#k Mesos? Check your Inventory and make sure you have enough. You must pay the fee or I can't let you get on...");
+        } 
+		else if (status == 1) 
+		{
+            if (cm.getMeso() < 1000)
+			{
+                cm.sendNext("Hm... Tem certeza de que tem #b1000#k Mesos? Verifique o seu inventário e verifique se você tem o suficiente. Você deve pagar a taxa ou então não posso deixá-lo entrar...");
                 cm.dispose();
-            } else {
+            } 
+			else
+			{
                 cm.gainMeso(-1000);
+				cm.getPlayer().setArrivalTime(480);
                 cm.warp(200090021);
+				cm.sendClock(cm.getClient(), 480);
                 cm.dispose();
             }
         }

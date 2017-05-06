@@ -35,7 +35,7 @@ function start() {
         cm.dispose();
         return;
     }
-    if (!cm.isLeader()) {
+    if (!cm.isPartyLeader()) {
         cm.sendOk("You are not the party leader.");
         cm.dispose();
     } else {

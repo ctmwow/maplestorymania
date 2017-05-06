@@ -51,7 +51,7 @@ function action(mode, type, selection) {
         if (status == 0)
             cm.sendYesNo("Would you like to leave the bonus?");
         else if (status == 1) {
-            if(isLeader())
+            if(isPartyLeader())
                 cm.sendOk("Ok, Your loss");
             else{
                 cm.sendOk("Ask your #bParty-Leader#k to come talk to me.");
@@ -66,10 +66,10 @@ function action(mode, type, selection) {
     }
 }
      
-function isLeader(){
+function isPartyLeader(){
     if(cm.getParty() == null){
         return false;
     }else{
-        return cm.isLeader();
+        return cm.isPartyLeader();
     }
 }

@@ -36,12 +36,12 @@ var check = 0;
 
 function start() {
     if (cm.getLevel() < 25) {
-        cm.sendOk("You must be a higher level to enter the Forest of Patience.");
+        cm.sendOk("Você deve ser um level mais alto para entrar na Floresta da Paciência.");
         cm.dispose();
         check = 1;
     }
     else
-        cm.sendYesNo("Hi, i'm Shane. I can let you into the Forest of Patience for a small fee. Would you like to enter for #b5000#k mesos?");
+        cm.sendYesNo("Oi, eu sou Shane. Posso deixá-lo entrar na Floresta da Paciência por uma pequena taxa. Gostaria de entrar por #b5000#k mesos?");
 }
 
 function action(mode, type, selection) {
@@ -49,7 +49,7 @@ function action(mode, type, selection) {
         cm.dispose();
     } else {
         if (mode == 0) {
-            cm.sendOk("Alright, see you next time.");
+            cm.sendOk("Certo, vejo você da próxima vez.");
             cm.dispose();
             return;
         }
@@ -60,7 +60,7 @@ function action(mode, type, selection) {
         if (status == 1) {
             if (check != 1) {
                 if (cm.getPlayer().getMeso() < 5000) {
-                    cm.sendOk("Sorry but it doesn't like you have enough mesos!")
+                    cm.sendOk("Desculpe, mas você não tem mesos suficiente!")
                     cm.dispose();
                 }
                 else {

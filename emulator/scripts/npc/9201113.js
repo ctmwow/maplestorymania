@@ -57,7 +57,7 @@ function action(mode, type, selection) {
         } else if (expedition == null) { //Start an expedition
             cm.sendSimple("Would you like to assemble a team to attempt a #rCrimsonwood Keep Party Quest#k?\r\n#b#L1#Lets get this going!#l\r\n\#L2#No, I think I'll wait a bit...#l");
             status = 1;
-        } else if (expedition.isLeader(player)) { //If you're the leader, manage the exped
+        } else if (expedition.isPartyLeader(player)) { //If you're the leader, manage the exped
             cm.sendSimple(list);
             status = 2;
         } else if (expedition.isRegistering()) { //If the expedition is registering

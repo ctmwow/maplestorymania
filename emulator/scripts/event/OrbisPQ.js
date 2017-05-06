@@ -159,7 +159,7 @@ function playerDead(eim, player) {
 }
 
 function playerRevive(eim, player) {
-	if (eim.isLeader(player)) { //check for party leader
+	if (eim.isPartyLeader(player)) { //check for party leader
 		//boot whole party and end
 		var party = eim.getPlayers();
 		for (var i = 0; i < party.size(); i++) {
@@ -182,7 +182,7 @@ function playerRevive(eim, player) {
 }
 
 function playerDisconnected(eim, player) {
-	if (eim.isLeader(player)) { //check for party leader
+	if (eim.isPartyLeader(player)) { //check for party leader
 		//PWN THE PARTY (KICK OUT)
 		var party = eim.getPlayers();
 		for (var i = 0; i < party.size(); i++) {

@@ -86,7 +86,7 @@ function action(mode, type, selection) {
                 cm.dispose();
             }
             else if (selectedType == 2) {
-                if (cm.isLeader())
+                if (cm.isPartyLeader())
                     eim.disbandParty();
                 else
                     eim.leaveParty(cm.getPlayer());

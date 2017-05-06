@@ -58,17 +58,20 @@ var exitMap;
 var instanceId;
 var finishMap;
 
-function init() {
+function init()
+{
     instanceId = 1;
     em.setProperty("state", "0");
     em.setProperty("shuffleReactors", "true");
 }
 
-function monsterValue(eim, mobId) {
+function monsterValue(eim, mobId)
+{
     return 1;
 }
 
-function setup() {
+function setup()
+{
     em.setProperty("state", "1");
     exitMap = em.getChannelServer().getMapFactory().getMap(809050017);
     finishMap = em.getChannelServer().getMapFactory().getMap(809050016);
@@ -95,7 +98,7 @@ function playerEntry(eim, player) {
 
 function playerDead(eim, player) {
     if (player.isAlive()) { //don't trigger on death, trigger on manual revive
-        if (eim.isLeader(player)) { //check for party leader
+        if (eim.isPartyLeader(player)) { //check for party leader
             //boot whole party and end
             var party = eim.getPlayers();
             for (var i = 0; i < party.size(); i++) {
@@ -111,7 +114,7 @@ function playerDead(eim, player) {
 }
 
 function playerDisconnected(eim, player) {
-    if (eim.isLeader(player)) { //check for party leader
+    if (eim.isPartyLeader(player)) { //check for party leader
         //boot whole party and end
         var party = eim.getPlayers();
         for (var i = 0; i < party.size(); i++) {

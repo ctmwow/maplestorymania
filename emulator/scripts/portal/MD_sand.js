@@ -28,7 +28,7 @@ var dungeons = 34;
 function enter(pi) {
     if (pi.getMapId() == baseid) {
 		if (pi.getParty() != null) {
-		    if (pi.isLeader()) {
+		    if (pi.isPartyLeader()) {
 			for (var i = 0; i < dungeons; i++) {
 			    if (pi.getPlayerCount(dungeonid + i) == 0) {
 			    	pi.warpParty2(dungeonid + i);

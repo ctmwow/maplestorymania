@@ -30,7 +30,7 @@ function enter(pi) {
 	var target = eim.getMapInstance(nextMap);
 	var targetPortal = target.getPortal("sp");
 	var mobCount = pi.countMonster();
-	var playerS = pi.isLeader();
+	var playerS = pi.isPartyLeader();
 	// only let people through if the eim is ready
 	if (playerS == false) {
 		// do nothing; send message to player

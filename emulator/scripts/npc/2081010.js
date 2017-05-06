@@ -58,7 +58,7 @@ function action(mode, type, selection){
 				var eim = cm.getPlayer().getEventInstance();
 				if (eim == null)
 					cm.warp(221000300,0);
-				else if (cm.isLeader())
+				else if (cm.isPartyLeader())
 					eim.disbandParty();
 				else
 					eim.leftParty(cm.getPlayer());

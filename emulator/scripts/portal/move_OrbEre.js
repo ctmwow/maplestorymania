@@ -1,12 +1,12 @@
 /*
-* @Portal - move_RieRit
-* @description - Portal while on ship from Lith Harbor to Rien
+* @Portal - move_OrbEre
+* @description - Portal while on ship from Orbis to Ereve
 */
 
 function enter(pi) {
 	if (pi.getPlayer().isRideFinished())
 	{
-		pi.warp(140020300, 0);
+		pi.warp(130000210, 0);
 		return true;
 	}
 	else

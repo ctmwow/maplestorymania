@@ -55,7 +55,7 @@ function playerEntry(eim, player) {
     player.changeMap(map, map.getPortal(0));
     map.shuffleReactors();
 	var eventTime = 10 * 60000;
-    em.schedule("timeOut", eim, eventTime); // invokes "timeOut" in how ever many seconds.
+    eim.schedule("timeOut", eventTime); // invokes "timeOut" in how ever many seconds.
 	eim.startEventTimer(eventTime);
 }
 

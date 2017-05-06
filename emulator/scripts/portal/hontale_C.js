@@ -26,7 +26,7 @@
 */
 function enter(pi) {
 
-    if (pi.isLeader() == true) {
+    if (pi.isPartyLeader() == true) {
         var eim = pi.getPlayer().getEventInstance();
         var party = eim.getPlayers();
         var target;

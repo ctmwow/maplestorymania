@@ -49,7 +49,7 @@ function action(mode, type, selection) {
                 cm.sendOk("Hi. Welcome to the " + nthtext + " stage. This is where you fight the #bboss#k. Shall we get started?");
                 status = 9;
             }else{
-                if(!isLeader()){
+                if(!isPartyLeader()){
                     if(mobcount == null){
                         cm.sendOk("Please tell your #bParty-Leader#k to come talk to me");
                         cm.dispose();
@@ -91,10 +91,10 @@ function action(mode, type, selection) {
 }
      
      
-function isLeader(){
+function isPartyLeader(){
     if(cm.getParty() == null){
         return false;
     }else{
-        return cm.isLeader();
+        return cm.isPartyLeader();
     }
 }

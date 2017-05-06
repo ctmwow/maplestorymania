@@ -6,7 +6,7 @@ function enter(pi) {
     var eim = pi.getPlayer().getEventInstance();
     var party = pi.getPlayer().getEventInstance().getPlayers();
     var realParty = pi.getParty();
-    var playerStatus = pi.isLeader();
+    var playerStatus = pi.isPartyLeader();
     var mf = eim.getMapFactory();
     var map = mf.getMap(920010100);
     if (playerStatus) {

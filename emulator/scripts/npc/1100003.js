@@ -45,14 +45,14 @@ function action(mode, type, selection)
 			{
 				var display = "\r\n#L"+i+"##b Victoria Island (1000 mesos)#k";
 			}			
-			cm.sendSimple("Eh, Olá...novamente. Você deseja deixar Ereve e ir para outro lugar? Se sim, você veio ao lugar certo! Eu opero a balsa que vai de #bEreve#k à #bVictoria Island#k, eu posso leva-lo até #bVictoria Island#k se você quiser... Você vai ter que pagar uma taxa de #b100#k Mesos.\r\n"+display);
+			cm.sendSimple("Eh, Olá...novamente. Você deseja deixar Ereve e ir para outro lugar? Se sim, você veio ao lugar certo! Eu opero a balsa que vai de #bEreve#k à #bVictoria Island#k, eu posso leva-lo até #bVictoria Island#k se você quiser... Você vai ter que pagar uma taxa de #b1000#k Mesos.\r\n"+display);
 			
 		} 
 		else if(status == 1) 
 		{
 			 if(cm.getMeso() < 1000) 
 			 {
-				cm.sendNext("Hmm... Tem certeza que você possui #b100#k Mesos? Verifique o seu inventário e certifique-se que você possui o necessário. Você deve pagar a taxa ou eu não posso deixar você vir...");
+				cm.sendNext("Hmm... Tem certeza que você possui #b1000#k Mesos? Verifique o seu inventário e certifique-se que você possui o necessário. Você deve pagar a taxa ou eu não posso deixar você vir...");
 				cm.dispose();
 			} 
 			else

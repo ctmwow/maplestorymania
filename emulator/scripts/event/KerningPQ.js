@@ -57,7 +57,7 @@ function setup() { // Invoked from "EventManager.startInstance()"
     var eventTime = 30 * (1000 * 60); // 30 mins.
     var firstPortal = eim.getMapInstance(103000800).getPortal("next00");
     firstPortal.setScriptName("kpq0");
-    em.schedule("timeOut", eventTime); // invokes "timeOut" in how ever many seconds.
+    eim.schedule("timeOut", eventTime); // invokes "timeOut" in how ever many seconds.
     eim.startEventTimer(eventTime); // Sends a clock packet and tags a timer to the players.
     return eim; // returns the new instance.
 }
@@ -71,7 +71,7 @@ function playerDead(eim, player) {
 }
 
 function playerRevive(eim, player) { // player presses ok on the death pop up.
-    if (eim.isLeader(player) || party.size() <= minPlayers) { // Check for party leader
+    if (eim.isPartyLeader(player) || party.size() <= minPlayers) { // Check for party leader
         var party = eim.getPlayers();
         for (var i = 0; i < party.size(); i++)
             playerExit(eim, party.get(i));
@@ -82,7 +82,7 @@ function playerRevive(eim, player) { // player presses ok on the death pop up.
 
 function playerDisconnected(eim, player) {
     var party = eim.getPlayers();
-    if (eim.isLeader(player) || party.size() < minPlayers) {
+    if (eim.isPartyLeader(player) || party.size() < minPlayers) {
         var party = eim.getPlayers();
         for (var i = 0; i < party.size(); i++)
             if (party.get(i).equals(player))

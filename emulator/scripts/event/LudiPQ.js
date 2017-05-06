@@ -1,8 +1,8 @@
 
-importPackage(Packages.world);
-importPackage(Packages.client);
-importPackage(Packages.server.maps);
-importPackage(Packages.tools);
+importPackage(Packages.org.ascnet.leaftown.world);
+importPackage(Packages.org.ascnet.leaftown.client);
+importPackage(Packages.org.ascnet.leaftown.server.maps);
+importPackage(Packages.org.ascnet.leaftown.tools);
 importPackage(java.lang);
 
 var exitMap;
@@ -63,7 +63,7 @@ function playerDead(eim, player) {
 }
 
 function playerRevive(eim, player) {
-	if (eim.isLeader(player)) { 
+	if (eim.isPartyLeader(player)) { 
 		var party = eim.getPlayers();
 		for (var i = 0; i < party.size(); i++) {
 			playerExit(eim, party.get(i));
@@ -84,7 +84,7 @@ function playerRevive(eim, player) {
 }
 
 function playerDisconnected(eim, player) {
-	if (eim.isLeader(player)) { 
+	if (eim.isPartyLeader(player)) { 
 		var party = eim.getPlayers();
 		for (var i = 0; i < party.size(); i++) {
 			if (party.get(i).equals(player)) {

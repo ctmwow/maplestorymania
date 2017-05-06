@@ -62,7 +62,7 @@ function action(mode, type, selection) {
                 if (eim == null)
                     cm.sendOk("Wait, Hey! how'd you get here?\r\nOh well you can leave anyways");
                 else {
-                    if(isLeader()){
+                    if(isPartyLeader()){
                         eim.disbandParty();
                         cm.removeFromParty(4001008, eim.getPlayers());
                     } else {
@@ -86,6 +86,6 @@ function action(mode, type, selection) {
     }
 }
 
-function isLeader(){
-    return cm.getParty() == null ? false : cm.isLeader();
+function isPartyLeader(){
+    return cm.getParty() == null ? false : cm.isPartyLeader();
 }

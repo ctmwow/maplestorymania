@@ -9,7 +9,7 @@ function enter(pi) {
     var map = mf.getMap(920010100);
     var party = pi.getPlayer().getEventInstance().getPlayers();
     var realParty = pi.getParty();
-    var playerStatus = pi.isLeader();
+    var playerStatus = pi.isPartyLeader();
     if (playerStatus) {
 	for (var i = 0; i < party.size(); i++) {
             party.get(i).changeMap(map, map.getPortal(4));

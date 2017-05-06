@@ -88,7 +88,7 @@ function enter(pi) {
         }
     }
     else if (pi.getPlayer().getMapId() == 240050105) {
-        if (pi.haveItem(4001091, 6) && pi.isLeader()) {
+        if (pi.haveItem(4001091, 6) && pi.isPartyLeader()) {
             pi.gainItem(4001091, -6);
             pi.getPlayer().dropMessage(6, "The six keys break the seal for a flash...");
             pi.warp(240050100, "st00");

@@ -87,7 +87,7 @@ function action(mode, type, selection) {
 				eim.setProperty("stage" + nthtext + "combo", generateCombo());
                 cm.dispose();
             }else{
-                if(!isLeader()){
+                if(!isPartyLeader()){
                     if(gaveItems == null){
                         cm.sendOk("Please tell your #bParty-Leader#k to come talk to me");
                         cm.dispose();
@@ -159,9 +159,9 @@ function failstage(eim, cm) {
     map.broadcastMessage(MaplePacketCreator.showEffect("quest/party/wrong_kor"));
 }
 
-function isLeader(){
+function isPartyLeader(){
     if(cm.getParty() == null)
         return false;
     else
-        return cm.isLeader();
+        return cm.isPartyLeader();
 }

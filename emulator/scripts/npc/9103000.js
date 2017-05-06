@@ -55,7 +55,7 @@ function action(mode, type, selection) {
 	if (status == 0) {
 		cm.sendNext("Bom trabalho, você escapou do labirinto! Você coletou os cupons dos monstros escondidos no seu caminho no labirinto?");
 	} else if (status == 1) {
-		if (cm.getParty() != null && cm.isLeader()) {
+		if (cm.getParty() != null && cm.isPartyLeader()) {
 			if (quant >= 30) {
 				cm.sendYesNo("Até agora você coletou #b" + quant + " cupons#k com seu esforço coletivo. São estes todos os cupons que seu grupo coletou?");
 			} else {
@@ -65,7 +65,7 @@ function action(mode, type, selection) {
 			cm.sendNext("Dependendo do número de cupons que seu grupo coletou, poderá haver uma surpresa bônus!");
 		}
 	} else if (status == 2) {
-		if (cm.getParty() != null && cm.isLeader()) {
+		if (cm.getParty() != null && cm.isPartyLeader()) {
 			if (quant >= 30) {
 				var party = cm.getChar().getEventInstance().getPlayers();
 				var myParty = cm.getParty().getMembers();

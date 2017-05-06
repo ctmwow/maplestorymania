@@ -38,7 +38,7 @@ function action(mode, type, selection) {
 				cm.sendOk("You can participate in the party quest only if you are in a party.");
 				cm.dispose();
 				return;
-			} else if (!cm.getPlayer().isGM() && (cm.getParty().getMembers().size() < minPartySize || !cm.isLeader())) {
+			} else if (!cm.getPlayer().isGM() && (cm.getParty().getMembers().size() < minPartySize || !cm.isPartyLeader())) {
 				cm.sendOk("You cannot participate in the quest, because you do not have at least 3 party members.");
 				cm.dispose();
 				return;

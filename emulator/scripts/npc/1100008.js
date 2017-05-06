@@ -6,6 +6,7 @@
 
 -------Credits:-------------------------------------------------------------------
 	*MapleSanta 
+	*MapleStory Mania
 ----------------------------------------------------------------------------------
 **/
 
@@ -18,35 +19,48 @@ function start() {
 }
 
 function action(mode, type, selection) {
-	if(mode == -1) {
+	if(mode == -1) 
+	{
 		cm.dispose();
 		return;
-	} else {
-		if(mode == 0 && status == 0) {
+	}
+	else
+	{
+		if(mode == 0 && status == 0)
+		{
 			cm.dispose();
 			return;
-		} else if(mode == 0) {
-			cm.sendNext("OK. If you ever change your mind, please let me know.");
+		}
+		else if(mode == 0)
+		{
+			cm.sendNext("Está bem. Se você mudar de ideia, por favor me avise.");
 			cm.dispose();
 			return;
 		}
 		status++;
-		if (status == 0) {
-			for(var i=0; i < menu.length; i++) {
+		if (status == 0)
+		{
+			for(var i=0; i < menu.length; i++)
+			{
 					var display = "\r\n#L"+i+"##b Ereve (1000 mesos)#k";
-				}			
-				cm.sendSimple("This ship will head towards #bEreve#k, an island where you'll find crimson leaves soaking up the sun, the gentle breeze that glides past the stream, and the Empress of Maple Cygnus. If you're interested in joining the Cygnus Knights, Then you should definitly pay a visit here. Are you interested in visiting Ereve?, The Trip will cost you #b1000#k Mesos\r\n"+display);
-			
-			} else if(status == 1) {
-			{ if(cm.getMeso() < 1000) {
-					cm.sendNext("Hmm... Are you sure you have #b1000#k Mesos? Check your Inventory and make sure you have enough. You must pay the fee or I can't let you get on...");
-					cm.dispose();
-				} else {
-							cm.gainMeso(1000);
-							cm.warp(200090020);
-							cm.dispose();
-					}
-				}
+			}			
+			cm.sendSimple("Este navio irá para #bEreve#k, Uma ilha onde você encontrará as folhas carmesim absorvendo o sol, a brisa suave que desliza além do córrego, e a Imperatriz dos Cavaleiros de Cygnus. Se você está interessado em se juntar aos Cavaleiros de Cygnus, então você deve definitivamente pagar uma visita aqui. Você está interessado em visitar Ereve? A viagem vai custar-lhe #b1000#k Mesos\r\n"+display);			
+		}
+		else if(status == 1) 
+		{
+			if(cm.getMeso() < 1000)
+			{
+				cm.sendNext("Hm... Tem certeza de que tem #b1000#k Mesos? Verifique o seu inventário e verifique se você tem o suficiente. Você deve pagar a taxa ou então não posso deixá-lo entrar...");
+				cm.dispose();
+			} 
+			else
+			{
+				cm.gainMeso(1000);
+				cm.getPlayer().setArrivalTime(480);
+				cm.warp(200090020);
+				cm.sendClock(cm.getClient(), 480);
+				cm.dispose();
 			}
 		}
 	}
+}

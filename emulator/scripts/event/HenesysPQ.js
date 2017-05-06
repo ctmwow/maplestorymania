@@ -51,7 +51,7 @@ function playerEntry(eim, player) {
   
 function playerDead(eim, player) {
     if (player.isAlive()) {
-        if (eim.isLeader(player)) {
+        if (eim.isPartyLeader(player)) {
             var party = eim.getPlayers();
             for (var i = 0; i < party.size(); i++)
                 playerExit(eim, party.get(i));
@@ -69,7 +69,7 @@ function playerDead(eim, player) {
 }
 
 function playerRevive(eim, player) { 
-    if (eim.isLeader(player) || party.size() <= minPlayers) { 
+    if (eim.isPartyLeader(player) || party.size() <= minPlayers) { 
         var party = eim.getPlayers();
         for (var i = 0; i < party.size(); i++)
             playerExit(eim, party.get(i));
@@ -80,7 +80,7 @@ function playerRevive(eim, player) {
 
 function playerDisconnected(eim, player) {
     var party = eim.getPlayers();
-    if (eim.isLeader(player) || party.size() < minPlayers) {
+    if (eim.isPartyLeader(player) || party.size() < minPlayers) {
         var party = eim.getPlayers();
         for (var i = 0; i < party.size(); i++)
             if (party.get(i).equals(player))
