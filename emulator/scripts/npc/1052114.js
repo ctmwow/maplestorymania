@@ -1,10 +1,10 @@
 /*
 NPC: Power B. Fore
-Entrance to Bowman Training Center
+Entrance to Thief Training Center
 MapleStory Mania
 */
 var status = -1;
-var map = 910060000;
+var map = 910310000;
 var num = 5;
 var maxp = 5;
 

@@ -1,3 +1,8 @@
+/*
+NPC: Power B. Fore
+Entrance to Warrior Training Center
+MapleStory Mania
+*/
 var status = -1;
 var map = 910220000;
 var num = 5;
