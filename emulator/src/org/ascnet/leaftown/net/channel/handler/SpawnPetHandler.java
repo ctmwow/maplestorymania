@@ -74,7 +74,7 @@ public class SpawnPetHandler extends AbstractMaplePacketHandler
 		{
 			if (player.haveItem(petid + 1, 1, false, false)) 
 			{
-				player.dropMessage(5, "Você não pode chocar o seu " + (petid == 5000028 ? "Dragon egg" : "Robo egg") + " se você já tem um Baby " + (petid == 5000028 ? "Dragon." : "Robo."));
+				player.dropMessage(5, "Você não pode chocar o seu " + (petid == 5000028 ? "Ovo de Dragão" : "Robô") + " se você já tem um " + (petid == 5000028 ? "Dragão" : "Robo" + " Bebê."));
 				c.sendPacket(MaplePacketCreator.enableActions());
 				return;
 			} 
