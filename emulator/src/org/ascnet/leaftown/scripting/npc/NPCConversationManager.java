@@ -76,6 +76,7 @@ import org.ascnet.leaftown.server.life.MapleMonster;
 import org.ascnet.leaftown.server.life.MapleMonsterStats;
 import org.ascnet.leaftown.server.maps.MapleMap;
 import org.ascnet.leaftown.server.maps.MapleMapFactory;
+import org.ascnet.leaftown.server.playerinteractions.MapleShopFactory;
 import org.ascnet.leaftown.server.quest.MapleQuest;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.Pair;
@@ -1223,5 +1224,9 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public final MapleCarnivalChallenge getNextCarnivalRequest() 
     {
         return c.getPlayer().getNextCarnivalRequest();
+    }
+    
+    public void openShop(int id) {
+        MapleShopFactory.getInstance().getShop(id).sendShop(c);
     }
 }
