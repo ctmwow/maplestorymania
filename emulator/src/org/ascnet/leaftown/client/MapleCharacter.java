@@ -3846,6 +3846,14 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
         client.sendPacket(MaplePacketCreator.petStatUpdate(this));
     }
+    
+    public final void unequipAllPets() {
+        for (final MaplePet pet : pets) {
+            if (pet != null) {
+                unequipPet(pet, false);
+            }
+        }
+    }
 
     public void unequipPet(MaplePet pet, boolean hunger) 
     {
