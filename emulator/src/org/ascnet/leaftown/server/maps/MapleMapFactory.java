@@ -188,6 +188,7 @@ public class MapleMapFactory {
                 }
             }
             ArrayList<CustomLifeSpawn> customSpawns = new ArrayList<>();
+            /* ADD CUSTOM NPCS
             switch (mapid) {
                 case 100000000:
                     customSpawns.add(new CustomLifeSpawn(9201114, new Point(321, 65)));
@@ -236,6 +237,7 @@ public class MapleMapFactory {
                     customSpawns.add(new CustomLifeSpawn(9000037, new Point(121, -168)));
                     break;
             }
+            */
             customSpawns.trimToSize();
             for (CustomLifeSpawn cSpawn : customSpawns) {
                 if (cSpawn.getMobTime() == -1) {
