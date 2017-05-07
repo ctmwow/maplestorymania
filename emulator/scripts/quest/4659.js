@@ -47,7 +47,7 @@ function end(mode, type, selection) {
         qm.sendNext("Great job on finding your evolution materials. I will now give you a dragon.");
     else if (status == 1) {
         if (qm.isQuestCompleted(4659))
-            qm.dropMessage(1, "how did this get here?");
+            qm.dropMessage(1, "How did this get here?");
         else if (qm.canHold(5000033)){
 //            var closeness = qm.getPlayer().getPet(0).getCloseness();
 //            var level = qm.getPlayer().getPet(0).getLevel();
@@ -60,7 +60,7 @@ function end(mode, type, selection) {
 //            if (petId == -1) return;
 //            MapleInventoryManipulator.addById(qm.getClient(), rand+5000030, 1, null, petId);
         } else
-            qm.dropMessage(1,"Your inventory is full");
+			qm.dropMessage(1,"Your inventory is full");
         qm.dispose();
     }
 }

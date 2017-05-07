@@ -36,18 +36,18 @@ function end(mode, type, selection) {
 		else
 			status--;
 		if (status == 0) {
-			qm.sendNextPrev("#e#bHey, you did it!#n#k \r\n#rWow!#k Now I could complete my studies on your pet!");
+			qm.sendNextPrev("#e#bHey, você conseguiu!#n#k \r\n#rUau!#k Agora eu posso terminar meus estudos em seu mascote!");
 		} else if (status == 1) {
 			if (mode == 0) {
-				qm.sendOk("I see... Come back when you wish to do it. I'm really excited to do this.");
+				qm.sendOk("Eu vejo... Volte quando quiser. Estou muito animado para fazer isso.");
 				qm.dispose();
 			} else {
-				qm.sendNextPrev("Just saying, your new dragon's color is gonna be #e#rrandom#k#n! It's either gonna be #ggreen, #bblue, #rred, #dor very rarely#k, black. \r\n\r\n#fUI/UIWindow.img/QuestIcon/5/0# \r\n\r If you happen to not like your pet's new color, or if you ever wish to change your pet color again, #eyou can change it!#n Simply just #dbuy another Rock of Evolution, 10,000 mesos, #kand #dequip your new pet#k before talking to me again, but of course, I cannot return your pet as a baby dragon, only to another adult dragon.");
+				qm.sendNextPrev("Lembrando: a cor do seu novo dragão será #e#raleatória#k#n! As cores são #gverde, #bazul, #rvermelho, #dou muito raramente#k, preto. \r\n\r\n#fUI/UIWindow.img/QuestIcon/5/0# \r\n\r Se você não gostar da cor nova do seu animal de estimação, ou se você desejar mudar a cor do mascote outra vez, #evocê pode mudá-la!#n Simplesmente #dcompre outra Rocha da Evolução, junte 10,000 mesos, #ke #dequipe seu novo mascote#k antes de falar comigo novamente, mas é claro, eu não posso devolver o seu mascote como um dragão bebê, apenas para outro dragão adulto.");
 			}
 		} else if (status == 2) {
-			qm.sendYesNo("Now let me try to evolve your pet. You ready? Wanna see your cute baby dragon turn into either a matured dark black, blue, calm green, or fiery red adult dragon? It'll still have the same closeness, level, name, fullness, hunger, and equipment in case you're worried. \r\n\r #b#eDo you wish to continue or do you have some last-minute things to do first?#k#n");
+			qm.sendYesNo("Agora deixe-me tentar evoluir seu mascote. Está pronto? Quer ver seu dragão bebê tornar=se em um dragão adulto preto, azul, verde calmo ou vermelho impetuoso? Ele ainda terá a mesma proximidade, level, nome, plenitude, fome e equipamentos, caso você esteja preocupado. \r\n\r #b#eVocê deseja continuar ou tem algumas coisas de última hora para fazer primeiro?#k#n");
                 } else if (status == 3) {
-			qm.sendNextPrev("Alright, here we go...! #rHYAHH!#k");
+			qm.sendNextPrev("Tudo bem, aqui vamos nós! #rHYAHH!#k");
 		} else if (status == 4) {
 			var rand = 1 + Math.floor(Math.random() * 10);
 			var after = 0;
@@ -60,12 +60,12 @@ function end(mode, type, selection) {
 			} else if (rand == 10) {
 				after = 5000033;
 			} else {
-				qm.sendOk("Something wrong. Try again.");
+				qm.sendOk("Algo errado. Tente novamente.");
 				qm.dispose();
 			}
 			qm.getPlayer().unequipAllPets(); //IMPORTANT, you can bug/crash yourself if you don't unequip the pet to be deleted
 			SpawnPetHandler.evolve(qm.getPlayer().getClient(), 5000029, after);
-			qm.sendOk("#bSWEET! IT WORKED!#k Your dragon has grown beautifully! #rYou may find your new pet under your 'CASH' inventory.\r It used to be a #i" + id + "##t" + id + "#, and now it's \r a #i" + after + "##t" + after + "#!#k \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#\r\n\r\n#fUI/UIWindow.img/QuestIcon/8/0# 1000 EXP\r\n#fUI/UIWindow.img/QuestIcon/9/0# 2 Closeness\r\n#fUI/UIWindow.img/QuestIcon/6/0# 1 Fame\r\n#fUI/UIWindow.img/QuestIcon/7/0# 100 Mesos");
+			qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu dragão cresceu maravilhosamente! #rVocê pode encontrar seu novo mascote no inventário 'CASH'.\r Ele costumava a ser um #i" + id + "##t" + id + "#, e agora é \r um #i" + after + "##t" + after + "#!#k \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#\r\n\r\n#fUI/UIWindow.img/QuestIcon/8/0# 1000 EXP\r\n#fUI/UIWindow.img/QuestIcon/9/0# 2 Closeness\r\n#fUI/UIWindow.img/QuestIcon/6/0# 1 Fame\r\n#fUI/UIWindow.img/QuestIcon/7/0# 100 Mesos");
 			qm.dispose();
 		}
 	}
