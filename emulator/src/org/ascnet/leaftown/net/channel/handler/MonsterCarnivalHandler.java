@@ -47,7 +47,10 @@ public class MonsterCarnivalHandler extends AbstractMaplePacketHandler
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) 
     {
     	if(c.getPlayer().getMonsterCarnival() == null)
+    	{
+    		c.sendPacket(MaplePacketCreator.enableActions());
     		return;
+    	}
     	
         int tab = slea.readByte();
         int num = slea.readByte();
@@ -72,6 +75,10 @@ public class MonsterCarnivalHandler extends AbstractMaplePacketHandler
         	
             c.getPlayer().getMap().spawnMonsterOnGroundBelow(monster, randomizePosition(c.getPlayer().getMapId(), 0x00000001));
             c.sendPacket(MaplePacketCreator.enableActions());
+        }
+        else if (tab == 0x00000001) // SKILL TAB
+        {
+        	
         }
     }
 
