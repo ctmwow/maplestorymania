@@ -19,13 +19,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/* guild emblem npc */
+
+/**
+ * Guild Emblem NPC
+ */
 
 var status = 0;
 var sel;
 
 function start() {
-    cm.sendSimple("What would you like to do?\r\n#b#L0#Create/Change your Guild Emblem#l#k");
+    cm.sendSimple("O que você gostaria de fazer?\r\n#b#L0#Criar/Mudar seu Emblema de Clã#l#k");
 }
 
 function action(mode, type, selection) {
@@ -37,9 +40,9 @@ function action(mode, type, selection) {
             sel = selection;
             if (sel == 0) {
                 if (cm.getPlayer().getGuildRank() == 1)
-                    cm.sendYesNo("Creating or changing Guild Emblem costs #b 5000000 mesos#k, are you sure you want to continue?");
+                    cm.sendYesNo("Para você criar ou alterar um Emblema de Clã lhe custa #b" + cm.getPlayer().emblemCost() + " mesos#k, você tem certeza de que quer continuar?");
                 else
-                    cm.sendOk("You must be the Guild Leader to change the Emblem. Please tell your leader to speak with me.");
+                    cm.sendOk("Você deve ser o Mestre do Clã para mudar o Emblema. Por favor, diga ao seu mestre para falar comigo.");
             }
         }
         else if (status == 2 && sel == 0) {

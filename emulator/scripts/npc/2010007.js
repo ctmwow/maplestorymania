@@ -19,12 +19,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/* guild creation npc */
+
+/**
+ * Guild Creation NPC
+ */
 var status = 0;
 var sel;
 
 function start() {
-    cm.sendSimple("What would you like to do?\r\n#b#L0#Create a Guild#l\r\n#L1#Disband your Guild#l\r\n#L2#Increase your Guild's capacity#l#k");
+    cm.sendSimple("O que você gostaria de fazer?\r\n#b#L0#Criar um Clã#l\r\n#L1#Desfazer seu Clã#l\r\n#L2#Aumentar a Capacidade do Clã#l#k");
 }
 
 function action(mode, type, selection) {
@@ -43,22 +46,22 @@ function action(mode, type, selection) {
             sel = selection;
             if (selection == 0) {
                 if (cm.getPlayer().getGuildId() > 0) {
-                    cm.sendOk("You may not create a new Guild while you are in one.");
+                    cm.sendOk("Você não pode criar umo novo clã enquanto estiver em um.");
                     cm.dispose();
                 } else
-                    cm.sendYesNo("Creating a Guild costs #b 1500000 mesos#k, are you sure you want to continue?");
+                    cm.sendYesNo("Criar um Clã custa #b" + cm.getPlayer().guildCost() + " mesos#k, você tem certeza de que quer continuar?");
             } else if (selection == 1) {
                 if (cm.getPlayer().getGuildId() < 1 || cm.getPlayer().getGuildRank() != 1) {
-                    cm.sendOk("You can only disband a Guild if you are the leader of that Guild.");
+                    cm.sendOk("Você só pode desfazer um clã se você for o mestre daquele clã.");
                     cm.dispose();
                 } else
-                    cm.sendYesNo("Are you sure you want to disband your Guild? You will not be able to recover it afterward and all your GP will be gone.");
+                    cm.sendYesNo("Tem certeza de que deseja desfazer a seu clã? Você não será capaz de recuperá-la depois e todos os GPs terão desaparecido.");
             } else if (selection == 2) {
                 if (cm.getPlayer().getGuildId() < 1 || cm.getPlayer().getGuildRank() != 1) {
-                    cm.sendOk("You can only increase your Guild's capacity if you are the leader.");
+                    cm.sendOk("Você só pode aumentar a capacidade de seu clã se você for o mestre.");
                     cm.dispose();
                 } else
-                    cm.sendYesNo("Increasing your Guild capacity by #b5#k costs #b " + cm.getPlayer().getGuild().getIncreaseGuildCost(cm.getPlayer().getGuild().getCapacity()) +" mesos#k, are you sure you want to continue?");
+                    cm.sendYesNo("Aumentar a capacidade de seu clã em mais #b5 jogadores#k custa #b" + cm.getPlayer().capacityCost() +" mesos#k, você tem certeza de que quer continuar?");
             }
         } else if (status == 2) {
             if (sel == 0 && cm.getPlayer().getGuildId() <= 0) {
