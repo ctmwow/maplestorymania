@@ -39,6 +39,7 @@ import java.util.List;
 public class MapleAlliance implements java.io.Serializable {
 
     private static final long serialVersionUID = 5875666601310345395L;
+    public static final int CHANGE_CAPACITY_COST = 10000000;
     private final int[] guilds = new int[5];
     private int allianceId = -1;
     private int capacity;

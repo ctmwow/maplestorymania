@@ -403,6 +403,20 @@ public class AbstractPlayerInteraction
         }
         return null;
     }
+    
+    public MapleGuild getGuild(int guildId) 
+    {
+        try 
+        {
+            return c.getChannelServer().getWorldInterface().getGuild(guildId);
+        }
+        catch (RemoteException ex) 
+        {
+            Logger.getLogger(AbstractPlayerInteraction.class.getName()).log(Level.SEVERE, null, ex);
+            c.getChannelServer().reconnectWorld();
+        }
+        return null;
+    }
 
     public void gainGP(int amount) 
     {

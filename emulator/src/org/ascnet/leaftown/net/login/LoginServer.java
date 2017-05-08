@@ -169,9 +169,7 @@ public class LoginServer implements Runnable, LoginServerMBean {
                         lwi = new LoginWorldInterfaceImpl();
                         wli = worldRegistry.registerLoginServer(initialProp.getProperty("org.ascnet.leaftown.login.key"), lwi);
                         Properties dbProp = new Properties();
-                        fileReader = new FileReader("db.properties");
-                        dbProp.load(fileReader);
-                        fileReader.close();
+                        dbProp.load(new FileReader(System.getProperty("br.com.maplestorymania.db.properties")));
                         DatabaseConnection.setProps(dbProp);
                         DatabaseConnection.getConnection();
                         prop = wli.getWorldProperties();

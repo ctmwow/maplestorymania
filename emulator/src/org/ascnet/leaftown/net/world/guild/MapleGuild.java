@@ -405,9 +405,9 @@ public class MapleGuild implements java.io.Serializable {
         Connection con = DatabaseConnection.getConnection();
         try {
             Properties dbProp = new Properties();
-            InputStreamReader is = new FileReader("db.properties");
-            dbProp.load(is);
-            is.close();
+            FileReader fileReader = new FileReader(System.getProperty("br.com.maplestorymania.db.properties"));
+            dbProp.load(fileReader);
+            fileReader.close();
 
             PreparedStatement ps = con.prepareStatement("SELECT guildid FROM guilds WHERE name = ?");
             ps.setString(1, name);

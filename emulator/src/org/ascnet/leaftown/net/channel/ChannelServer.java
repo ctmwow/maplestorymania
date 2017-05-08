@@ -681,7 +681,9 @@ public class ChannelServer implements Runnable, ChannelServerMBean
         	BasicConfigurator.configure();
         	
             final Properties dbProp = new Properties();
-            dbProp.load(new FileReader(System.getProperty("br.com.maplestorymania.db.properties")));
+            FileReader fileReader = new FileReader(System.getProperty("br.com.maplestorymania.db.properties"));
+            dbProp.load(fileReader);
+            fileReader.close();
             
             DatabaseConnection.setProps(dbProp);
             DatabaseConnection.getConnection();

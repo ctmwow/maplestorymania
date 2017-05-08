@@ -1183,6 +1183,23 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         }
         return alliance;
     }
+    
+    /* FALTA IMPLEMENTAR O LÍDER DA ALIANÇA DE CLÃ
+    public boolean increaseAllianceCapacity() {
+        try {
+        	WorldChannelInterface wci = c.getChannelServer().getWorldInterface();
+            final MapleGuild gs = wci.getGuild(c.getPlayer().getGuildId());
+            if (gs != null && c.getPlayer().getGuildRank() == 1 && c.getPlayer().getAllianceRank() == 1) {
+                if (wci.getAllianceLeader(gs.getAllianceId()) == c.getPlayer().getId() && wci.increaseAllianceCapacity(gs.getAllianceId(), 1)) {
+                    gainMeso(-MapleAlliance.CHANGE_CAPACITY_COST);
+                    return true;
+                }
+            }
+        } catch (Exception re) {
+            re.printStackTrace();
+        }
+        return false;
+    }*/
 
     public void removeNPC(MapleMap map) {
         map.getNPC(npc).sendDestroyData(c);
