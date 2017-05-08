@@ -717,7 +717,10 @@ public class MapleMonster extends AbstractLoadedMapleLife {
             return false;
         }
 
-        if (isBoss() && !status.getStati().containsKey(MonsterStatus.SPEED)) {
+        if (isBoss() && 
+        		!status.getStati().containsKey(MonsterStatus.SPEED) && 
+        		!status.getStati().containsKey(MonsterStatus.NINJA_AMBUSH) && 
+        		!status.getStati().containsKey(MonsterStatus.WATK)) {
             return false;
         }
 

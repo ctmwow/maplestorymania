@@ -227,6 +227,7 @@ public class MapleStatEffect implements Serializable {
                 case 4001003: // darksight
                 case 13101006:
                 case 14001003:
+                case 9001004: //GM HIDE
                     statups.add(new Pair<>(MapleBuffStat.DARKSIGHT, x));
                     break;
                 case 4211003: // pickpocket
@@ -490,7 +491,7 @@ public class MapleStatEffect implements Serializable {
                     break;
                 case 4121004: // Ninja ambush
                 case 4221004:
-                    monsterStatus.put(MonsterStatus.NINJA_AMBUSH, 1);
+                    monsterStatus.put(MonsterStatus.NINJA_AMBUSH, (int) ret.damage);
                     break;
                 case 2201004: // cold beam
                 case 2211002: // ice strike
