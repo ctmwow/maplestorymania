@@ -60,6 +60,10 @@ public class FriendlyMobDamagedHandler extends AbstractMaplePacketHandler
         }
         
         int damage = Randomizer.nextInt(((c.getPlayer().getMap().getMonsterByOid(damaged).getMaxHp() / 13 + c.getPlayer().getMap().getMonsterByOid(attacker).getPADamage() * 10)));
+       
+        if (damaged == 9300102)
+            damage /= 2.1;
+        
         c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.MobDamageMobFriendly(c.getPlayer(), mob, damage), mob.getPosition());
         
         

@@ -99,7 +99,8 @@ public enum MapleBuffStat implements ValueHolder<Long>, Serializable
     PUPPET(0x800000000000000L), // HACK - shares buffmask with pickpocket - odin special ^.-
     MESOGUARD(0x1000000000000000L),
     THAW(0x2000000000000000L), // from v0.88 - No clue if its correct in v0.83 but it works
-    WEAKEN(0x4000000000000000L);
+    WEAKEN(0x4000000000000000L),
+    SPARK(0x20000000);
     //SWITCH_CONTROLS(0x8000000000000L);
 
     static final long serialVersionUID = 0L;

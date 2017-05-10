@@ -1390,15 +1390,7 @@ public class MapleMap
         }, null);
     }
 
-    public void spawnMist(final MapleMist mist, final int duration, boolean fake) {
-    	spawnAndAddRangedMapObject(mist, new DelayedPacketCreation() {
-
-            @Override
-            public void sendPackets(MapleClient c) {
-                mist.sendSpawnData(c);
-            }
-        }, null);
-    	
+    public void spawnMist(final MapleMist mist, final int duration, boolean fake) {    	
         if (hasEvent) {
             return;
         }

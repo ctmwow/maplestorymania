@@ -58,6 +58,11 @@ public class NPCTalkHandler extends AbstractMaplePacketHandler
             return;
         }
         
+        if (c.getLastNPCTalk() > System.currentTimeMillis() - 1000) { // 1 sec de espera pra falar com npc novamente
+            return;
+        }
+        c.setLastNPCTalk();
+        
         final MapleNPC npc = (MapleNPC) chr.getMap().getMapObject(oid);
         
         if (npc.hasShop()) 

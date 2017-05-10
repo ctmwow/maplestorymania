@@ -160,6 +160,7 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
     private ScheduledFuture<?> idleDisconnect = null;
     private CountDownLatch disconnectLatch = null;
     public final static short CLIENT_VERSION = 83;
+    private long lastNPCTalk;
     
     public MapleClient() 
     {
@@ -1466,6 +1467,14 @@ public class MapleClient extends ChannelInboundHandlerAdapter {
 
     public void setLastAction(int action) {
         lastAction = action;
+    }
+    
+    public long getLastNPCTalk() {
+        return lastNPCTalk;
+    }
+
+    public void setLastNPCTalk() {
+        lastNPCTalk = System.currentTimeMillis();
     }
 
     public static void changeChannel(MapleClient c, int channel, boolean gm) {

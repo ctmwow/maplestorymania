@@ -115,6 +115,9 @@ public class Skill implements ISkill {
                 case 21000000: // Aran Combo
                 case 21101003: // Body Pressure
                 case 9101004: //hide é um BUFF!!!!!
+                case 15111005: //speed infusion
+                case 15101006: //spark
+                case 15111006: //spark
                     isBuff = true;
                     break;
             }

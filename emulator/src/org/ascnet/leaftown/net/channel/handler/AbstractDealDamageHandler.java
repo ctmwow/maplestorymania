@@ -277,6 +277,7 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                     case 4101005: // Drain
                     case 5111004: // Energy Drain
                     case 15111001: // Energy Drain
+                    case 14101006: // Vampire                    	
                         int gainhp = (int) ((double) totDamageToOneMonster * (double) theSkill.getEffect(player.getSkillLevel(theSkill)).getX() / 100.0);
                         gainhp = Math.min(monster.getMaxHp(), Math.min(gainhp, player.getMaxHp() / 2));
                         player.addHP(gainhp);
