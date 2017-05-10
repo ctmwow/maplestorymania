@@ -24,6 +24,9 @@
 	Map(s): 		New Leaf City : Town Center
 	Description: 		Quest - Pet Evolution2
 */
+importPackage(Packages.org.ascnet.leaftown.client);
+importPackage(Packages.org.ascnet.leaftown.server);
+importPackage(Packages.org.ascnet.leaftown.tools);
 
 var status = -1;
 
@@ -51,22 +54,48 @@ function end(mode, type, selection) {
 		} else if (status == 4) {
 			var rand = 1 + Math.floor(Math.random() * 10);
 			var after = 0;
-			if (rand >= 1 && rand <= 3) {
-				after = 5000030;
-			} else if (rand >= 4 && rand <= 6) {
-				after = 5000031;
-			} else if (rand >= 7 && rand <= 9) {
-				after = 5000032;
-			} else if (rand == 10) {
-				after = 5000033;
+			
+			var pet = 0;
+			if (qm.getPlayer().getPet(0).getItemId() >= 5000029 && qm.getPlayer().getPet(0).getItemId() <= 5000033) {
+				var pet = 0;
+			} else if (qm.getPlayer().getPet(1).getItemId() >= 5000029 && qm.getPlayer().getPet(0).getItemId() <= 5000033) {
+				var pet = 1;
+			} else if (qm.getPlayer().getPet(2).getItemId() >= 5000029 && qm.getPlayer().getPet(0).getItemId() <= 5000033) {
+				var pet = 2;
 			} else {
-				qm.sendOk("Algo errado. Tente novamente.");
+				qm.sendOk("Something wrong, try again.");
 				qm.dispose();
 			}
-			qm.getPlayer().unequipAllPets(); //IMPORTANT, you can bug/crash yourself if you don't unequip the pet to be deleted
-			SpawnPetHandler.evolve(qm.getPlayer().getClient(), 5000029, after);
-			qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu dragão cresceu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.\r Ele costumava a ser um #i" + id + "##t" + id + "#, e agora é \r um #i" + after + "##t" + after + "#!#k \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#\r\n\r\n#fUI/UIWindow.img/QuestIcon/8/0# 1000 EXP\r\n#fUI/UIWindow.img/QuestIcon/9/0# 2 Closeness\r\n#fUI/UIWindow.img/QuestIcon/6/0# 1 Fame\r\n#fUI/UIWindow.img/QuestIcon/7/0# 100 Mesos");
-			qm.dispose();
+			
+			if (pet == null || !cm.haveItem(5380000,1)) {
+				cm.sendOk("You do not meet the requirements. You need #i5380000##t5380000#, as well as either one of #d#i5000029##t5000029##k, #g#i5000030##t5000030##k, #r#i5000031##t5000031##k, #b#i5000032##t5000032##k, or #e#i5000033##t5000033##n equipped at level 15 or higher. Please come back when you do.");
+				cm.dispose();
+			}else {
+				var after = id;	
+				var rand = 1 + Math.floor(Math.random() * 10);
+				
+				var petInfo = qm.getPlayer().getPet(pet);
+				
+				
+				if (rand >= 1 && rand <= 3) {
+					after = 5000030;
+				} else if (rand >= 4 && rand <= 6) {
+					after = 5000031;
+				} else if (rand >= 7 && rand <= 9) {
+					after = 5000032;
+				} else if (rand == 10) {
+					after = 5000033;
+				} else {
+					qm.sendOk("Algo errado. Tente novamente.");
+					qm.dispose();
+				}
+				
+				qm.gainItem(petInfo.getItemId(), -1);
+				qm.gainItem(5380000, -1);
+				qm.gainPet(qm.getPlayer(), petInfo, after);
+				qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu dragão cresceu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.\r Ele costumava a ser um #i" + id + "##t" + id + "#, e agora é \r um #i" + after + "##t" + after + "#!#k \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#\r\n\r\n#fUI/UIWindow.img/QuestIcon/8/0# 1000 EXP\r\n#fUI/UIWindow.img/QuestIcon/9/0# 2 Closeness\r\n#fUI/UIWindow.img/QuestIcon/6/0# 1 Fame\r\n#fUI/UIWindow.img/QuestIcon/7/0# 100 Mesos");
+				qm.dispose();
+			}
 		}
 	}
 }

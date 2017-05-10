@@ -27,4 +27,9 @@
 function act() {
     rm.mapMessage(5, "As the light flickers, someone appears out of the light.");
     rm.spawnNpc(2013001);
+	var em = rm.getEventManager("OrbisPQ");
+	if (em != null) {
+		rm.givePartyExp(6000);
+		em.setProperty("pre", "1");
+	}
 }

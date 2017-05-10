@@ -23,5 +23,5 @@
  * @author Traitor
  */
 function start(ms) {
-
+	c.getPlayer().writeMulungEnergy();
 }

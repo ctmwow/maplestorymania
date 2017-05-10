@@ -9,7 +9,7 @@ var mySelection = -1;
 var foodSelection = -1;
 var minLevel = 51;
 var maxLevel = 200;
-var minPlayers = 2;
+var minPlayers = 1;
 var maxPlayers = 6;
 var blessingArray = Array(2022090, 2022091, 2022092, 2022093); //Blessing IDs
 var warriors = Array(100, 110, 111, 112, 120, 121, 122, 130, 131, 132);
@@ -103,7 +103,7 @@ function action(mode, type, selection) {
                                     var randmm = Math.floor(Math.random() * blessingArray.length);
                                     var buffToGivee = blessingArray[randmm];
                                     party.get(ii).giveItemBuff(buffToGivee);
-				}
+								}
                             }
                             cm.dispose();
                         }
