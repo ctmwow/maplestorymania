@@ -10,7 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import org.ascnet.leaftown.provider.MapleDaData;
+import org.ascnet.leaftown.provider.MapleData;
 import org.ascnet.leaftown.provider.MapleDataProvider;
 import org.ascnet.leaftown.provider.MapleDataProviderFactory;
 
