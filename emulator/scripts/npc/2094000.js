@@ -18,6 +18,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+importPackage(Packages.org.ascnet.leaftown.server.maps);
 
 var status = 0;
 var minLevel = 55;
@@ -44,12 +45,12 @@ function action(mode, type, selection) {
             status--;
         if (status == 0) {
             if (cm.getParty() == null) {
-                cm.sendOk("Please come back to me after you've formed a party.");
+                cm.sendOk("Por favor, volte quando formar um grupo.");
                 cm.dispose();
                 return;
             }
             if (!cm.isPartyLeader()) {
-                cm.sendSimple("You are not the party leader.");
+                cm.sendSimple("Você não é o líder do grupo.");
                 cm.dispose();
             } else {
                 var party = cm.getParty().getMembers();
@@ -63,7 +64,7 @@ function action(mode, type, selection) {
                     for (var i = 0; i < party.size() && next; i++) {
                         if ((party.get(i).getLevel() >= minLevel) && (party.get(i).getLevel() <= maxLevel))
                             levelValid += 1;
-                        if (party.get(i).getMapid() == mapId)
+                        if (party.get(i).getMapId() == mapId)
                             inMap += 1;
                     }
                     if (levelValid < minPlayers || inMap < minPlayers)
@@ -72,26 +73,25 @@ function action(mode, type, selection) {
                 if (next) {
                     var em = cm.getEventManager("PiratePQ");
                     if (em == null) {
-                        cm.sendOk("PiratePQ does not work.");
+                        cm.sendOk("A missão de grupo do Lorde Pirata não está disponível.");
                         cm.dispose();
                     }
                     else {
                         em.startInstance(cm.getParty(),cm.getPlayer().getMap());
-                        party = cm.getPlayer().getEventInstance().getPlayers();
+						party = cm.getPlayer().getEventInstance().getPlayers();
+						cm.dispose();
                     }
                     cm.dispose();
                 }
                 else {
-                    cm.sendOk("Your party is not a party of six.  Make sure all your members are present and qualified to participate in this quest.  I see #b" + levelValid.toString() + " #kmembers are in the right level range, and #b" + inMap.toString() + "#k are in my map. If this seems wrong, #blog out and log back in,#k or reform the party.");
+                    cm.sendOk("Seu grupo não é possui seis pessoas. Verifique se todos seus membros estão presentes para participar na missão. Vejo que #b" + levelValid.toString() + " #kmembros estão no level correto, e #b" + inMap.toString() + "#k estão em meu mapa. Se estiver errado, #brelogue#k ou crie o grupo novamente.");
                     cm.dispose();
                 }
             }
         }
         else {
-            cm.sendOk("PiratePQ does not exist.");
+            cm.sendOk("A missão de grupo do Lorde Pirata não existe.");
             cm.dispose();
         }
     }
 }
-					
-					
