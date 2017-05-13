@@ -50,7 +50,7 @@ public class MapleMonsterCarnival
     private MapleCharacter leader1, leader2;
     private int redCP, blueCP, redTotalCP, blueTotalCP;
     
-    private static final int MONSTER_CARNIVAL_TIME = 2;
+    private static final int MONSTER_CARNIVAL_TIME = 10;
 
     public MapleMonsterCarnival(MapleParty p1, MapleParty p2, int mapid) 
     {

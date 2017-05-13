@@ -66,22 +66,22 @@ function action(mode, type, selection)
         if (carnivalparty.getTotalCP(cm.getPlayer().getTeam()) >= 501) 
         {
             rank = "A";
-            exp = 7500;
+            exp = 30000;
         } 
         else if (carnivalparty.getTotalCP(cm.getPlayer().getTeam()) >= 251) 
         {
             rank = "B";
-            exp = 6000;
+            exp = 25000;
         } 
         else if (carnivalparty.getTotalCP(cm.getPlayer().getTeam()) >= 101) 
         {
             rank = "C";
-            exp = 3000;
+            exp = 15000;
         } 
         else if (carnivalparty.getTotalCP(cm.getPlayer().getTeam()) >= 0) 
         {
             rank = "D";
-            exp = 1000;
+            exp = 7500;
         }
         
         if (carnivalparty.isWinner(cm.getPlayer().getTeam()))
@@ -96,8 +96,19 @@ function action(mode, type, selection)
         if (carnivalparty.isWinner(cm.getPlayer().getTeam()))
             cm.gainExp(exp);
         else 
-            cm.gainExp(exp / 2);
-        
+		{
+			switch (rank)
+            {
+				case "A": // 10000
+				case "B": // 8500
+					cm.gainExp(exp / 3);
+					break;
+				case "C": // 7500
+					cm.gainExp(exp / 2);
+				case "D": // 1000
+					cm.gainExp(1000);
+			}
+		}
         cm.warp(980000000, "st00");
 		cm.dispose();
     }
