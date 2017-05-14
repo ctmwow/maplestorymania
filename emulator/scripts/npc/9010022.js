@@ -4,56 +4,50 @@ function start() {
 
 function action(mode, type, selection) {
     if (mode == 1) {
-	switch (selection) {
-	    case 1:
-		if (cm.getPlayer().getLevel() >= 25) {
-			cm.saveLocation("MULUNG_TC");
-			cm.warp(925020000, 0);
+		switch (selection) {
+			case 1:
+				if (cm.getPlayer().getLevel() >= 25) {
+					cm.getPlayer().saveLocation("MIRROR");
+					cm.warp(925020000, 0);
+				}
+				break;
+			case 2:
+				if (cm.getPlayer().getLevel() >= 30) {
+					cm.getPlayer().saveLocation("MIRROR"); // h4x
+					cm.warp(980000000, 4);
+				}
+				break;
+			case 3:
+				if (cm.getPlayer().getLevel() >= 51) {
+					cm.getPlayer().saveLocation("MIRROR"); // h4x
+					cm.warp(980030000, 4);
+				}
+				break;
+			case 4:
+				if (cm.getPlayer().getLevel() >= 60) {
+					cm.getPlayer().saveLocation("MIRROR"); // h4x
+					cm.warp(923020000, 0);
+				}
+				break;
+			case 5:
+				if (cm.getPlayer().getLevel() >= 40) {
+					cm.getPlayer().saveLocation("MIRROR"); // h4x
+					cm.warp(926010000, 4);
+				}
+				break;
+			case 6:
+				cm.getPlayer().saveLocation("MIRROR"); // h4x
+				cm.warp(209000000, 0);
+				break;
+			case 7:
+				cm.getPlayer().saveLocation("MIRROR"); // h4x
+				cm.warp(950100000, 9);
+				break;
+			case 8:
+				cm.getPlayer().saveLocation("MIRROR"); // h4x
+				cm.warp(610010000, 0);
+			break;
 		}
-		break;
-	    case 2:
-		if (cm.getPlayer().getLevel() >= 30) {
-		    cm.saveLocation("MULUNG_TC"); // h4x
-		    cm.warp(980000000, 4);
-		}
-		break;
-	    case 3:
-		if (cm.getPlayer().getLevel() >= 51) {
-		    cm.saveLocation("MULUNG_TC"); // h4x
-		    cm.warp(980030000, 4);
-		}
-		break;
-	    case 4:
-		if (cm.getPlayer().getLevel() >= 60) {
-		    cm.saveLocation("MULUNG_TC"); // h4x
-		    cm.warp(923020000, 0);
-		}
-		break;
-	    case 5:
-		if (cm.getPlayer().getLevel() >= 40) {
-		    cm.saveLocation("MULUNG_TC"); // h4x
-		    cm.warp(926010000, 4);
-		}
-		break;
-	    case 6:
-		if (cm.getPlayer().getLevel() >= 25 && cm.getPlayer().getLevel() <= 30) {
-		    cm.saveLocation("MULUNG_TC"); // h4x
-		    cm.warp(910320000, 2);
-		}
-		break;
-	    case 7:
-		    cm.saveLocation("MULUNG_TC"); // h4x
-		    cm.warp(209000000, 0);
-		    break;
-	    case 8:
-		    cm.saveLocation("MULUNG_TC"); // h4x
-		    cm.warp(950100000, 9);
-		    break;
-	    case 9:
-		    cm.saveLocation("MULUNG_TC"); // h4x
-		    cm.warp(610010000, 0);
-		break;
-	}
     }
     cm.dispose();
 }

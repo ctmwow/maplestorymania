@@ -1248,6 +1248,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
     
     public void askMapSelection(final String sel) {
-        c.sendPacket(MaplePacketCreator.getMapSelection(npc, sel));
+        c.sendPacket(MaplePacketCreator.getDimensionalMirror(sel));
     }
 }

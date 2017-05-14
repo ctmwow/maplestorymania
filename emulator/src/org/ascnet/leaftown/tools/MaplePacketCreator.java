@@ -2750,17 +2750,15 @@ public class MaplePacketCreator {
 		}
 	}
 	
-    public static MaplePacket getMapSelection(final int npcid, final String sel) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        
+    public static MaplePacket getDimensionalMirror(String talk) {
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.writeShort(SendPacketOpcode.NPC_TALK.getValue());
-        mplew.write(4);
-        mplew.writeInt(npcid);
-        mplew.writeShort(0x11);
-        mplew.writeInt(npcid == 2083006 ? 1 : 0); //neo city
-        mplew.writeInt(npcid == 9010022 ? 1 : 0); //dimensional
-        mplew.writeMapleAsciiString(sel);
-        
+        mplew.write(8); // ?
+        mplew.writeInt(9010022);
+        mplew.write(0x0E);
+        mplew.write(0);
+        mplew.writeInt(0);
+        mplew.writeMapleAsciiString(talk);
         return mplew.getPacket();
     }
 

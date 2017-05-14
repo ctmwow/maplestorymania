@@ -24,17 +24,17 @@ function action(mode, type, selection) {
 	    break;
 	case 930000400:
 	    if (cm.haveItem(4001169,20)) {
-		cm.warpParty(930000500);
-		cm.gainItem(4001169,-20);
+			cm.warpParty(930000500);
+			cm.gainItem(4001169,-20);
 	    } else if (!cm.haveItem(2270004)) {
 			cm.gainItem(2270004,10);
 			cm.sendOk("Boa sorte em purificar esses monstros!");
 	    } else {
-			cm.sendOk("Temos que purificar todos esses monstros contaminados! Me traga 20 Monster Marbles deles!");
+			cm.sendOk("Temos que purificar todos esses monstros contaminados! Me traga 20 Mármores de Monstro deles!");
 	    }
 	    break;
 	case 930000600:
-	    cm.sendNext("É isso! Coloque a pedra mágica no altar!");
+	    cm.sendNext("É isso! Coloque a Pedra Mágica no altar!");
 	    break;
 	case 930000700:
 	    cm.removeAll(4001163);
