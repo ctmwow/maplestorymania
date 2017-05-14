@@ -2749,6 +2749,20 @@ public class MaplePacketCreator {
 			}
 		}
 	}
+	
+    public static MaplePacket getMapSelection(final int npcid, final String sel) {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        
+        mplew.writeShort(SendPacketOpcode.NPC_TALK.getValue());
+        mplew.write(4);
+        mplew.writeInt(npcid);
+        mplew.writeShort(0x11);
+        mplew.writeInt(npcid == 2083006 ? 1 : 0); //neo city
+        mplew.writeInt(npcid == 9010022 ? 1 : 0); //dimensional
+        mplew.writeMapleAsciiString(sel);
+        
+        return mplew.getPacket();
+    }
 
 	public static MaplePacket getNPCShop(MapleClient c, int sid, List<MapleShopItem> items) {
 		MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
@@ -8068,6 +8082,15 @@ public class MaplePacketCreator {
         
         mplew.writeInt(remainingHp);
         mplew.writeInt(mob.getMaxHp());
+        return mplew.getPacket();
+    }
+    
+    public static MaplePacket showSpecialEffect(int effect) {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.writeShort(SendPacketOpcode.SHOW_ITEM_GAIN_INCHAT.getValue());
+        mplew.write(effect);
+
         return mplew.getPacket();
     }
 }

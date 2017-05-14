@@ -1246,4 +1246,8 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public void openShop(int id) {
         MapleShopFactory.getInstance().getShop(id).sendShop(c);
     }
+    
+    public void askMapSelection(final String sel) {
+        c.sendPacket(MaplePacketCreator.getMapSelection(npc, sel));
+    }
 }

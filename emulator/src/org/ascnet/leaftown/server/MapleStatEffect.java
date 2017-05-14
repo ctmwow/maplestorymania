@@ -98,6 +98,7 @@ public class MapleStatEffect implements Serializable {
     private int mastery, range;
     private String remark;
     private short thaw;
+    private int expinc; //item que dá experiência
 
     public MapleStatEffect() {
     }
@@ -137,6 +138,7 @@ public class MapleStatEffect implements Serializable {
         ret.cooldown = DataUtil.toInt(source.resolve("cooltime"), 0);
         ret.morphId = DataUtil.toInt(source.resolve("morph"), 0);
         ret.itemConsume = DataUtil.toInt(source.resolve("itemConsume"), 0);
+        ret.expinc = DataUtil.toInt(source.resolve("expinc"), 0); //item que dá experiência
         ret.remark = remarrk;
         ret.sourceid = sourceid;
         ret.skill = skill;
@@ -673,6 +675,13 @@ public class MapleStatEffect implements Serializable {
             hpmpupdate.add(new Pair<>(MapleStat.MP, applyto.getMp()));
         }
         applyto.getClient().sendPacket(MaplePacketCreator.updatePlayerStats(hpmpupdate, true));
+        
+        //aplica o buff do item de experiência
+        if (expinc != 0) {
+            applyto.gainExp(expinc, true, true, false, false);
+            applyto.getClient().sendPacket(MaplePacketCreator.showSpecialEffect(17));
+        }
+        
         if (moveTo != -1) {
             MapleMap target = null;
             boolean nearest = false;
