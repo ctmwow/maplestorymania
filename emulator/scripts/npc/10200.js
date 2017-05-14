@@ -32,13 +32,13 @@ function action(mode, type, selection)
     if (mode != 1)
     {
         if(mode == 0)
-           cm.sendNext("Se você quiser experimentar o que é como ser um Arqueiro, venha me ver novamente.");
+           cm.sendNext("Se você quiser experimentar o que é como ser um arqueiro, venha me ver novamente.");
         cm.dispose();
         return;
     }
     if (status == 0) 
     {
-        cm.sendYesNo("Gostaria de experimentar o que é ser um Arqueiro?");
+        cm.sendYesNo("Gostaria de experimentar o que é ser um arqueiro?");
     }
 	else if (status == 1)
 	{	

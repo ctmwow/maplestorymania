@@ -23,7 +23,7 @@ var status = -1;
 
 function start() 
 {
-    cm.sendNext("Ladrões são uma mistura perfeita de sorte, habilidade e poder que estão vocacionadas para os ataques de surpresa contra os inimigos indefesos. Um alto nível de evitabilidade e velocidade permite que ladrões para atacar os inimigos de vários ângulos.");
+    cm.sendNext("Gatunos são uma mistura perfeita de sorte, habilidade e poder que estão vocacionadas para os ataques de surpresa contra os inimigos indefesos. Um alto nível de evitabilidade e velocidade permite que gatunos para atacar os inimigos de vários ângulos.");
 }
 
 function action(mode, type, selection) 
@@ -32,13 +32,13 @@ function action(mode, type, selection)
     if (mode != 1)
     {
         if(mode == 0)
-           cm.sendNext("Se você deseja experimentar o que é ser um Ladrão, venha me ver novamente.");
+           cm.sendNext("Se você deseja experimentar o que é ser um gatuno, venha me ver novamente.");
         cm.dispose();
         return;
     }
     if (status == 0) 
     {
-        cm.sendYesNo("Gostaria de experimentar o que é ser um Ladrão?");
+        cm.sendYesNo("Gostaria de experimentar o que é ser um gatuno?");
     }
      else if (status == 1)
     {

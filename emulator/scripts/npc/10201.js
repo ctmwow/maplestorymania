@@ -23,7 +23,7 @@ var status = -1;
 
 function start() 
 {
-    cm.sendNext("Mágicos estão armados com magias baseadas em elementos chamativos e magia secundária que ajuda o grupo como um todo. Após o 2ª Job., A magia elementar base irá fornecer uma ampla quantidade de danos aos inimigos do elemento oposto.");
+    cm.sendNext("Bruxos estão armados com magias baseadas em elementos chamativos e magia secundária que ajuda o grupo como um todo. Após o 2ª Job., A magia elementar base irá fornecer uma ampla quantidade de danos aos inimigos do elemento oposto.");
 }
 
 function action(mode, type, selection) 
@@ -32,14 +32,14 @@ function action(mode, type, selection)
     if (mode != 1)
     {
         if(mode == 0)
-           cm.sendNext("Se você quiser experimentar o que é como ser um mágico, venha me ver novamente.");
+           cm.sendNext("Se você quiser experimentar o que como é ser um bruxo, venha me ver novamente.");
            
         cm.dispose();
         return;
     }
     if (status == 0) 
     {
-        cm.sendYesNo("Gostaria de experimentar o que é ser um mágico?");
+        cm.sendYesNo("Gostaria de experimentar o que é ser um bruxo?");
     } 
     else if (status == 1)
     {

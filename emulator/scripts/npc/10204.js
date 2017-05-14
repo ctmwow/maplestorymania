@@ -23,7 +23,7 @@ var status = -1;
 
 function start() 
 {
-	cm.sendNext("Piratas são abençoados com destreza e poder excepcional, utilizando suas armas para ataques de longo alcance ao usar seu poder em situações de combate corpo a corpo. Pistoleiros usam balas elementares para aumentar seu dano, enquanto os Infighters se transformam em um ser diferente para o efeito máximo.");
+	cm.sendNext("Piratas são abençoados com destreza e poder excepcional, utilizando suas armas para ataques de longo alcance ao usar seu poder em situações de combate corpo a corpo. Pistoleiros usam balas elementares para aumentar seu dano, enquanto os Lutadores se transformam em um ser diferente para o efeito máximo.");
 }
 
 function action(mode, type, selection) 

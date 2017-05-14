@@ -114,9 +114,9 @@ function disbandParty(eim) {
 function playerExit(eim, player) {
 	eim.unregisterPlayer(player);
 	player.changeMap(mapaSaida, mapaSaida.getPortal(0));
-        if (eim.getPlayerCount() == 0) {
-	 em.setProperty("state", "0");
-     }
+	if (eim.getPlayerCount() == 0) {
+		em.setProperty("state", "0");
+	}
 }
 
 function removePlayer(eim, player) {
