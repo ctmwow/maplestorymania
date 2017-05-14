@@ -30,11 +30,18 @@ function action(mode, type, selection)
 		{
 			case 980000000:
 			case 103000000:
+			case 200000000:
+			case 220000000:
 				cm.sendSimple("O que você gostaria de fazer? Se você nunca participou do Festival de Monstros, você precisará saber uma coisa ou duas sobre antes de entrar.\r\n#b#L0# Vá para o Monster Carnival Field #l");
 				break;
 			default:
 				status = 998;
 				break;
+		}			
+		if (status == 998)
+		{
+			cm.sendOk("Ops! Parece que o Festival de Monstros se encerrou.");
+			cm.dispose();
 		}
     } 
     else if (status == 1) 
@@ -47,7 +54,10 @@ function action(mode, type, selection)
                 if (level < 30 || level > 50)
                     cm.sendOk("Desculpe-me, mas somente jogadores de entre os leveis 30 e 50 podem participar do Festival de Monstros.");
                 else
+				{					
+					cm.getPlayer().saveLocation("MIRROR"); //salvar o local que o jogador estava antes de teleportar
                     cm.warp(980000000, "st00");
+				}
                 cm.dispose();
             }
             default: 
@@ -108,13 +118,11 @@ function action(mode, type, selection)
 					cm.gainExp(1000);
 			}
 		}
-		cm.saveLocation("MIRROR"); //salvar o local que o jogador estava antes de teleportar
         cm.warp(980000000, "st00");
 		cm.dispose();
     }
-	else if (status == 998)
+	else
 	{
-		cm.sendOk("Ops! Parece que o Festival de Monstros se encerrou.");
 		cm.dispose();
 	}
 }

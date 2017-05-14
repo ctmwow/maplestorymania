@@ -31,7 +31,7 @@ function action(mode, type, selection) {
 	    cm.sendSimple("Esta é a entrada do Labirinto de Ludibrium. Divirta-se!\r\n#b#L0#Entrar no Labirinto de Lubidrium#l\r\n#L1#O que é o Labirinto de Ludibrium?"); 	
 	} else if (status == 1) {
 	    var em = cm.getEventManager("LudiMazePQ");
-            var prop = em.getProperty("state");
+		var prop = em.getProperty("state");
 	    if(selection == 0) {//ENTER THE PQ
 			if (!hasParty()) {//NO PARTY
 				cm.sendOk("Tente desafiar o Labirinto com seu grupo. Se você deseja entrar, crie um grupo e recrute pelo menos 3 pessoas entre os níveis 50 e 100!");
@@ -92,7 +92,7 @@ function checkPartyLevels(){
 		pass = false;
     } else {
 		for (var i = 0; i < party.size() && pass; i++) {
-			if ((party.get(i).getLevel() < 51) || (party.get(i).getLevel() > 200) || (party.get(i).getMapid() != cm.getMapId())) {
+			if ((party.get(i).getLevel() < minlvl) || (party.get(i).getLevel() > maxlvl) || (party.get(i).getMapid() != cm.getMapId())) {
 				pass = false;
 			}
 		}
