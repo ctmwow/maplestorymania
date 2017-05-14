@@ -1,87 +1,197 @@
-/*/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/* Mu Young
+	Boss Balrog
 */
-//@Author FateJiki
-//@Author Even (modifier)
-importPackage(Packages.org.ascnet.leaftown.server.expeditions);
-importPackage(Packages.org.ascnet.leaftown.tools);
-importPackage(Packages.org.ascnet.leaftown.scripting.event);
 
+var balrogMode; // false = easy, true = hard
 
-var status = 0;
-var expedition;
-var player;
-var em;
-var barlog_easy = MapleExpeditionType.BALROG_EASY;
-var barlog_hard = MapleExpeditionType.BALROG_HARD;
-
-function start(){
-    status = 0;
+function start() {	
+    status = -1;
     action(1, 0, 0);
 }
 
 function action(mode, type, selection) {
-    if (mode <= 0) {
-        cm.dispose();
-    } else if (status == 0) {
-        cm.sendNext("Hi there. I am #b#nMu Young#n#k, the temple Keeper.");
-        status++;
-    } else if (BalrogPQ.partyLeader == "undefined") {
-        if (status == 1) {
-        var text = "This temple is currently under siege by the Balrog troops. We currently do not know who gave the orders. " +
-            "For a few weeks now, the #e#b Order of the Altair#n#k has been sending mercenaries, but they were eliminated every time." +
-            " So, traveler, would you like to try your luck at defeating this unspeakable horror? \r\n\r\n " +
-            "#L0#Yes. Please register me as party leader\r\n#L1#What is the #eOrder of the Altair?";
-        cm.sendSimple(text);
-        status++;
-        } else if (selection == 0) {
-            if (cm.getPlayer().getLevel() >= 70) {
-                BalrogPQ.partyLeader = cm.getPlayer().getName();
-                cm.sendOk("Success. Your name has been registered and you may enter the battlefield. Come speak to me when you're ready!");
-                cm.getPlayer().getMap().broadcastMessage(Packages.org.ascnet.leaftown.tools.MaplePacketCreator.serverNotice(0, cm.getPlayer().getName() + " is currently fighting the balrog on CH" + cm.getPlayer().getClient().getChannel() + ". To join, do @balrogpq."))
-                BalrogPQ.open(cm.getPlayer());
-                cm.dispose();
-            } else if (cm.getPlayer().getLevel() < 70) {
-                cm.sendOk("You must be at least level 70 to even consider battling the monster.");
-                cm.dispose();
-            }
-        } else if (selection == 1) {
-            cm.sendOk("The Order of the Altair is a group of elite mercenaries that oversee the world's economy and battle operations. It was founded 40 years ago right after Black Mage was defeated in hopes of forseeing the next possible attack.");
-            cm.dispose();
-        } else if (status == 3) {
-            cm.warp(105100300);
-            cm.dispose();
-        }
-        } else {
-            if (status == 1) {
-            cm.sendYesNo(BalrogPQ.partyLeader + "'s party is currently battling the Balrog. Would you like to assist?");
-            status++;
-            } else if(status == 2){
-                if (cm.getPlayer().getLevel() > 60 && cm.getPlayer().getClient().getChannel() == BalrogPQ.channel){
-                cm.warp(105100300);
-                cm.dispose();
-                } else {
-                    cm.sendOk("You may not battle the balrog when you are below Lv60! \r\n\r\n Or maybe you are not on the right channel.. Try CH" + BalrogPQ.channel + ".");
-                    cm.dispose();
-                }
-            }
-        }
+    switch (status) {
+	case -1:
+	    status = 0;
+	    switch (cm.getChannelNumber()) {
+		case 5:
+		    balrogMode = true;
+		    cm.sendNext("The channel you are currently staying is available for #bNormal Balrog Expedition Squad#k. If you wish to join a different mode, please select the correct channel. \n\r #b#i3994116# Ch.5 / Level 50 and above / 6 ~ 15 users \n#b#i3994115# The rest of the channel  / Level 50 ~ Level 70 / 3 ~ 6 users.");
+		    break;
+		default:
+		    balrogMode = false;
+		    cm.sendNext("The channel you are currently staying is available for #bEasy Balrog Expedition Squad#k. If you wish to join a different mode, please select the correct channel. \n\r #b#i3994116# Ch.5 / Level 50 and above / 6 ~ 15 users \n#b#i3994115# The rest of the channel  / Level 50 ~ Level 70 / 3 ~ 6 users.");
+		    break;
+	    }
+	    break;
+	case 0:
+	    var em = cm.getEventManager(balrogMode ? "BossBalrog_NORMAL" : "BossBalrog_EASY");
+
+	    if (em == null) {
+		cm.sendOk("The event isn't started, please contact a GM.");
+		cm.safeDispose();
+		return;
+	    }
+
+	    if (cm.getParty() != null) {
+	var prop = em.getProperty("state");
+	if (prop == null || prop.equals("0")) {
+		var squadAvailability = cm.getSquadAvailability("BossBalrog");
+		if (squadAvailability == -1) {
+		    status = 1;
+		    cm.sendYesNo("Would you like to become the leader of the Balrog Expedition Squad?");
+
+		} else if (squadAvailability == 1) {
+		    // -1 = Cancelled, 0 = not, 1 = true
+		    var type = cm.isSquadLeader("BossBalrog");
+		    if (type == -1) {
+			cm.sendOk("The squad has ended, please re-register.");
+			cm.safeDispose();
+		    } else if (type == 0) {
+			var memberType = cm.isSquadMember("BossBalrog");
+			if (memberType == 2) {
+			    cm.sendOk("You been banned from the squad.");
+			    cm.safeDispose();
+			} else if (memberType == 1) {
+			    status = 5;
+			    cm.sendSimple("What do you want to do? \r\n#b#L0#Check out members#l \r\n#b#L1#Join the squad#l \r\n#b#L2#Withdraw from squad#l");
+			} else if (memberType == -1) {
+			    cm.sendOk("The squad has ended, please re-register.");
+			    cm.safeDispose();
+			} else {
+			    status = 5;
+			    cm.sendSimple("What do you want to do? \r\n#b#L0#Check out members#l \r\n#b#L1#Join the squad#l \r\n#b#L2#Withdraw from squad#l");
+			}
+		    } else { // Is leader
+			status = 10;
+			cm.sendSimple("What do you want to do? \r\n#b#L0#Check out members#l \r\n#b#L1#Remove member#l \r\n#b#L2#Edit restricted list#l \r\n#r#L3#Enter map#l");
+		    // TODO viewing!
+		    }
+	    } else {
+			var eim = cm.getDisconnected(balrogMode ? "BossBalrog_NORMAL" : "BossBalrog_EASY");
+			if (eim == null) {
+				cm.sendOk("The squad's battle against the boss has already begun.");
+				cm.safeDispose();
+			} else {
+				cm.sendYesNo("Ah, you have returned. Would you like to join your squad in the fight again?");
+				status = 2;
+			}
+	    }
+	} else {
+			var eim = cm.getDisconnected(balrogMode ? "BossBalrog_NORMAL" : "BossBalrog_EASY");
+			if (eim == null) {
+				cm.sendOk("The battle against the boss has already begun.");
+				cm.safeDispose();
+			} else {
+				cm.sendYesNo("Ah, you have returned. Would you like to join your squad in the fight again?");
+				status = 2;
+			}
+	}
+	    } else {
+		cm.sendPrev("You need a party.");
+		cm.safeDispose();
+	    }
+	    break;
+	case 1:
+	    if (mode == 1) {
+		if (!balrogMode) { // Easy Mode
+		    var lvl = cm.getPlayerStat("LVL");
+		    if (lvl >= 50 && lvl <= 70) {
+			if (cm.registerSquad("BossBalrog", 5, " has been named the Leader of the squad. If you would you like to join please register for the Expedition Squad within the time period.")) {
+				cm.sendOk("You have been named the Leader of the Squad. For the next 5 minutes, you can add the members of the Expedition Squad.");
+			} else {
+				cm.sendOk("Error, try again.");
+			}
+		    } else {
+			cm.sendNext("A member of the party is not within the range of Levels 50 and 70. Please set up your party so that everyone fits the level limit.");
+		    }
+		} else { // Normal Mode
+			if (cm.registerSquad("BossBalrog", 5, " has been named the Leader of the squad. If you would you like to join please register for the Expedition Squad within the time period.")) {
+				cm.sendOk("You have been named the Leader of the Squad. For the next 5 minutes, you can add the members of the Expedition Squad.");
+			} else {
+				cm.sendOk("Error, try again.");
+			}
+		}
+	    } else {
+		cm.sendOk("Talk to me if you want to become the leader of the Expedition squad.")
+	    }
+	    cm.safeDispose();
+	    break;
+	case 2:
+		if (!cm.reAdd(balrogMode ? "BossBalrog_NORMAL" : "BossBalrog_EASY", "BossBalrog")) {
+			cm.sendOk("Error... please try again.");
+		}
+		cm.safeDispose();
+		break;
+	case 5:
+	    if (selection == 0) {
+		if (!cm.getSquadList("BossBalrog", 0)) {
+		    cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		    cm.safeDispose();
+		} else {
+		    cm.dispose();
+		}
+	    } else if (selection == 1) { // join
+		var ba = cm.addMember("BossBalrog", true);
+		if (ba == 2) {
+		    cm.sendOk("The squad is currently full, please try again later.");
+		    cm.safeDispose();
+		} else if (ba == 1) {
+		    cm.sendOk("You have joined the squad successfully");
+		    cm.safeDispose();
+		} else {
+		    cm.sendOk("You are already part of the squad.");
+		    cm.safeDispose();
+		}
+	    } else {// withdraw
+		var baa = cm.addMember("BossBalrog", false);
+		if (baa == 1) {
+		    cm.sendOk("You have withdrawed from the squad successfully");
+		    cm.safeDispose();
+		} else {
+		    cm.sendOk("You are not part of the squad.");
+		    cm.safeDispose();
+		}
+	    }
+	    break;
+	case 10:
+	    if (selection == 0) {
+		if (!cm.getSquadList("BossBalrog", 0)) {
+		    cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		}
+		cm.safeDispose();
+	    } else if (selection == 1) {
+		status = 11;
+		if (!cm.getSquadList("BossBalrog", 1)) {
+		    cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		}
+		cm.safeDispose();
+	    } else if (selection == 2) {
+		status = 12;
+		if (!cm.getSquadList("BossBalrog", 2)) {
+		    cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		}
+		cm.safeDispose();
+	    } else if (selection == 3) { // get insode
+		if (cm.getSquad("BossBalrog") != null) {
+		    var dd = cm.getEventManager(balrogMode ? "BossBalrog_NORMAL" : "BossBalrog_EASY");
+		    dd.startInstance(cm.getSquad("BossBalrog"), cm.getMap());
+		    cm.dispose();
+		} else {
+		    cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		    cm.safeDispose();
+		}
+	    }
+	    break;
+	case 11:
+	    cm.banMember("BossBalrog", selection);
+	    cm.dispose();
+	    break;
+	case 12:
+	    if (selection != -1) {
+		cm.acceptMember("BossBalrog", selection);
+	    }
+	    cm.dispose();
+	    break;
+    }
 }
