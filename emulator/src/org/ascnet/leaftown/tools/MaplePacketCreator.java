@@ -2753,7 +2753,7 @@ public class MaplePacketCreator {
     public static MaplePacket getDimensionalMirror(String talk) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.writeShort(SendPacketOpcode.NPC_TALK.getValue());
-        mplew.write(8); // ?
+        mplew.write(4); // ?
         mplew.writeInt(9010022);
         mplew.write(0x0E);
         mplew.write(0);
