@@ -29,11 +29,11 @@ function action(mode, type, selection)
 		switch(cm.getPlayer().getMapId()) 
 		{
 			case 980000000:
-				cm.sendSimple("O que você gostaria de fazer? Se você nunca participou do Monster Carnival, você precisará saber uma coisa ou duas sobre antes de entrar.\r\n#b#L0# Vá para o Monster Carnival Field #l");
+			case 103000000:
+				cm.sendSimple("O que você gostaria de fazer? Se você nunca participou do Festival de Monstros, você precisará saber uma coisa ou duas sobre antes de entrar.\r\n#b#L0# Vá para o Monster Carnival Field #l");
 				break;
 			default:
 				status = 998;
-			    cm.sendOk("Ops! Parece que o Festival de Monstros se encerrou.");
 				break;
 		}
     } 
@@ -43,10 +43,9 @@ function action(mode, type, selection)
         {
             case 0: 
             {
-                var level = cm.getPlayerStat("LVL");
-                
-                if ( level < 30)
-                    cm.sendOk("I'm sorry, but only the users Level 30+ may participate in Monster Carnival.");
+                var level = cm.getPlayer().getLevel();                
+                if (level < 30 || level > 50)
+                    cm.sendOk("Desculpe-me, mas somente jogadores de entre os leveis 30 e 50 podem participar do Festival de Monstros.");
                 else
                     cm.warp(980000000, "st00");
                 cm.dispose();
@@ -109,7 +108,13 @@ function action(mode, type, selection)
 					cm.gainExp(1000);
 			}
 		}
+		cm.saveLocation("MIRROR"); //salvar o local que o jogador estava antes de teleportar
         cm.warp(980000000, "st00");
 		cm.dispose();
     }
+	else if (status == 998)
+	{
+		cm.sendOk("Ops! Parece que o Festival de Monstros se encerrou.");
+		cm.dispose();
+	}
 }
