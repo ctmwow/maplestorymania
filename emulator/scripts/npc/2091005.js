@@ -102,7 +102,7 @@ function action(mode, type, selection) {
 						}
 					}
                     cm.getClient().getChannelServer().getMapFactory().getMap(925020100).resetReactors();
-                    cm.getClient().getChannelServer().getMapFactory().getMap(925020100).killAllMonsters();
+                    cm.getClient().getChannelServer().getMapFactory().getMap(925020100).killAllMonsters(false);
                     cm.warp(925020100, 0);
                     cm.dispose();
                 }
@@ -138,8 +138,8 @@ function action(mode, type, selection) {
 							return;
 						}
 					}
-                    cm.getClient().getChannelServer().getMapFactory().getMap(925020100).resetReactors();
-                    cm.getClient().getChannelServer().getMapFactory().getMap(925020100).killAllMonsters();
+                    cm.getClient().getChannelServer().getMapFactory().getMap(925020100).resetReactors(false);
+                    cm.getClient().getChannelServer().getMapFactory().getMap(925020100).killAllMonsters(false);
                     cm.warpParty(925020100);
                     cm.dispose();
                 }

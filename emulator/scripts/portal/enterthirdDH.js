@@ -6,7 +6,7 @@ function enter(pi) {
     if (pi.isQuestStarted(20601) || pi.isQuestStarted(20602) || pi.isQuestStarted(20603) || pi.isQuestStarted(20604) || pi.isQuestStarted(20605)) {    	
 		if (pi.getPlayerCount(913010200) == 0) {
 		    var map = pi.getMap(913010200);
-		    map.killAllMonsters();  
+		    map.killAllMonsters(false);  
 		    pi.warp(913010200, 0);
 		    pi.spawnMonster(9300289, 0, 0);
 		} else {

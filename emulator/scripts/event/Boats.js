@@ -125,8 +125,8 @@ function arrived() {
     while(temp4.hasNext()) {
         temp4.next().changeMap(Ellinia_docked, Ellinia_docked.getPortal(0));
     }
-    Boat_to_Orbis.killAllMonsters();
-    Boat_to_Ellinia.killAllMonsters();
+    Boat_to_Orbis.killAllMonsters(false);
+    Boat_to_Ellinia.killAllMonsters(false);
     scheduleNew();
 }
 

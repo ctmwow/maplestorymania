@@ -23,7 +23,7 @@ function enter(pi) {
     pi.removeAll(4031507);
     pi.removeAll(4031508);
     if (pi.getClient().getChannelServer().getMapFactory().getMap(923010000).getCharacters().size() < 1)
-        pi.getClient().getChannelServer().getMapFactory().getMap(923010000).killAllMonsters();
+        pi.getClient().getChannelServer().getMapFactory().getMap(923010000).killAllMonsters(false);
     pi.warp(230000003, "out00");
     return true;
 }

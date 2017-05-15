@@ -4,6 +4,9 @@ function start() {
 
 function action(mode, type, selection) {
     if (mode == 1) {
+	var eim = cm.getPlayer().getEventInstance();
+	if (eim != null)
+		eim.unregisterPlayer(cm.getPlayer());
 	if (cm.getMapId() == 674030200) { //boss map
 		cm.warp(674030100,0);
 	} else {

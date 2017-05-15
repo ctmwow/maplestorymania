@@ -41,7 +41,7 @@ function action(mode, type, selection) {
         cm.dispose();
     else {
         if (cm.getPlayer().getMap().getCharacters().size() < 2){
-            cm.getPlayer().getMap().killAllMonsters();
+            cm.getPlayer().getMap().killAllMonsters(false);
             cm.getPlayer().getMap().resetReactors();
 			if (expedition != null){
 				cm.endExpedition(expedition);

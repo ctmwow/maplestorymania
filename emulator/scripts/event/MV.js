@@ -1,18 +1,21 @@
 var minPlayers = 1;
 
 function init() {
-em.setProperty("state", "0");
+	em.setProperty("state", "0");
 	em.setProperty("leader", "true");
 }
 
 function setup(eim, leaderid) {
-em.setProperty("state", "1");
+	em.setProperty("state", "1");
 	em.setProperty("leader", "true");
+	mapaSaida = em.getChannelServer().getMapFactory().getMap(674030100); 
     var eim = em.newInstance("MV" + leaderid);
-        eim.setInstanceMap(674030000).resetFully();
-        eim.setInstanceMap(674030200).resetFully();
-        eim.setInstanceMap(674030300).resetFully();
-    eim.startEventTimer(1800000); //30 mins
+	eim.setInstanceMap(674030000).resetFully();
+	eim.setInstanceMap(674030200).resetFully();
+	eim.setInstanceMap(674030300).resetFully();
+    var eventTime = 1800000;
+    eim.schedule("timeOut", eventTime); // invokes "timeOut" in how ever many seconds.
+    eim.startEventTimer(eventTime);
     return eim;
 }
 
@@ -24,30 +27,37 @@ function playerEntry(eim, player) {
 function playerRevive(eim, player) {
 }
 
-function scheduledTimeout(eim) {
-    end(eim);
+function timeOut(eim) {
+    if (eim != null) {
+        if (eim.getPlayerCount() > 0) {
+            var pIter = eim.getPlayers().iterator();
+            while (pIter.hasNext())
+                playerExit(eim, pIter.next());
+        }
+        eim.dispose();
+    }
 }
 
 function changedMap(eim, player, mapid) {
     if (mapid != 674030000 && mapid != 674030200 && mapid != 674030300) {
-	eim.unregisterPlayer(player);
+		eim.unregisterPlayer(player);
 
-	if (eim.disposeIfPlayerBelow(0, 0)) {
-		em.setProperty("state", "0");
-		em.setProperty("leader", "true");
-	}
+		if (eim.getPlayerCount() == 0) {
+			em.setProperty("state", "0");
+			em.setProperty("leader", "true");
+		}
     }
 }
 
 function playerDisconnected(eim, player) {
-    return 0;
+    playerExit(eim, player);
 }
 
 function monsterValue(eim, mobId) {
     if (mobId == 9400589) { //MV
-	eim.broadcastPlayerMsg(6, "MV has been beaten!");
+		eim.broadcastPlayerMsg(6, "MV foi eliminado!");
     	eim.restartEventTimer(60000); //1 mins
-	eim.schedule("warpWinnersOut", 55000);
+		eim.schedule("warpWinnersOut", 55000);
     }
     return 1;
 }
@@ -62,18 +72,24 @@ function warpWinnersOut(eim) {
 }
 
 function playerExit(eim, player) {
-    eim.unregisterPlayer(player);
-
-    if (eim.disposeIfPlayerBelow(0, 0)) {
-	em.setProperty("state", "0");
+	eim.unregisterPlayer(player);
+	player.changeMap(mapaSaida, mapaSaida.getPortal(0));
+	if (eim.getPlayerCount() == 0) {
+		em.setProperty("state", "0");
 		em.setProperty("leader", "true");
 	}
 }
 
 function end(eim) {
-    eim.disposeIfPlayerBelow(100, 674030100);
+    var iter = eim.getPlayers().iterator();
+	while (iter.hasNext()) {
+		var player = iter.next();
+		eim.unregisterPlayer(player);
+		player.changeMap(mapaSaida, mapaSaida.getPortal(0));
+	}
+	eim.dispose();
 	em.setProperty("state", "0");
-		em.setProperty("leader", "true");
+	em.setProperty("leader", "true");
 }
 
 function clearPQ(eim) {
@@ -84,16 +100,18 @@ function allMonstersDead(eim) {
 }
 
 function leftParty (eim, player) {
-    // If only 2 players are left, uncompletable:
     var party = eim.getPlayers();
     if (party.size() < minPlayers) {
-	end(eim);
-    }
-    else
-	playerExit(eim, player);
+        for (var i = 0; i < party.size(); i++)
+            playerExit(eim,party.get(i));
+        eim.dispose();
+    } else
+        playerExit(eim, player);
 }
 function disbandParty (eim) {
 	end(eim);
 }
-function playerDead(eim, player) {}
+function playerDead(eim, player) {
+	playerExit(eim, player);
+}
 function cancelSchedule() {}

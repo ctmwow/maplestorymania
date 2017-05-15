@@ -9,8 +9,8 @@ function action(mode, type, selection) {
     } else {
 		status--;
     }
-    if (!cm.isLeader()) {
-		cm.sendNext("Desejo que o seu líder fale comigo.");
+    if (!cm.isPartyLeader()) {
+		cm.sendOk("Desejo que o seu líder fale comigo.");
 		cm.dispose();
 		return;
     }
@@ -18,7 +18,7 @@ function action(mode, type, selection) {
 		cm.warpParty(674030200);
 		cm.gainItem(4032248,-17);
     } else {
-		cm.sendOk("Hey! Find the 17 Maps to MV's Lair from the rocks here!");
+		cm.sendOk("Hey! Encontre 17 Maps to MV's Lair que estão nas rochas por aqui!");
     }
     cm.dispose();
 }
