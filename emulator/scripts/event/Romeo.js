@@ -68,7 +68,7 @@ em.setProperty("state", "1");
 	eim.setInstanceMap(926100301);
 	eim.setInstanceMap(926100302);
 	eim.setInstanceMap(926100303);
-	eim.setInstanceMap(926100304).;
+	eim.setInstanceMap(926100304);
 	eim.setInstanceMap(926100400);
 	eim.setInstanceMap(926100401);
 	eim.setInstanceMap(926100500); //spawn urete based on properties ?????

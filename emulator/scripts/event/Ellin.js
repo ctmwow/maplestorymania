@@ -62,7 +62,7 @@ function changedMap(eim, player, mapid) {
 }
 
 function playerDisconnected(eim, player) {
-    return 0;
+    playerExit(eim, player);
 }
 
 function playerExit(eim, player) {
@@ -89,10 +89,10 @@ function end(eim) {
 function playerExit(eim, player) {
 	eim.unregisterPlayer(player);
 	player.changeMap(mapaSaida, mapaSaida.getPortal(0));
-		if (eim.getPlayerCount() == 0) {
-			em.setProperty("state", "0");
-			em.setProperty("leader", "true");
-		}
+	if (eim.getPlayerCount() == 0) {
+		em.setProperty("state", "0");
+		em.setProperty("leader", "true");
+	}
 }
 
 function clearPQ(eim) {
