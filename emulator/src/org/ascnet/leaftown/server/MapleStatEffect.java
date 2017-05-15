@@ -99,6 +99,7 @@ public class MapleStatEffect implements Serializable {
     private String remark;
     private short thaw;
     private int expinc; //item que dá experiência
+    private int expBuff; //item que dá buff de experiência
 
     public MapleStatEffect() {
     }
@@ -139,6 +140,7 @@ public class MapleStatEffect implements Serializable {
         ret.morphId = DataUtil.toInt(source.resolve("morph"), 0);
         ret.itemConsume = DataUtil.toInt(source.resolve("itemConsume"), 0);
         ret.expinc = DataUtil.toInt(source.resolve("expinc"), 0); //item que dá experiência
+        ret.expBuff = DataUtil.toInt(source.resolve("expBuff"), 0); //item que dá experiência
         ret.remark = remarrk;
         ret.sourceid = sourceid;
         ret.skill = skill;
@@ -171,6 +173,7 @@ public class MapleStatEffect implements Serializable {
             addBuffStatPairToListIfNotZero(statups, MapleBuffStat.JUMP, (int) ret.jump);
             addBuffStatPairToListIfNotZero(statups, MapleBuffStat.MORPH, ret.morphId);
             addBuffStatPairToListIfNotZero(statups, MapleBuffStat.THAW, (int) ret.thaw);
+            addBuffStatPairToListIfNotZero(statups, MapleBuffStat.EXPRATE, Integer.valueOf(ret.expBuff)); // EXP
         }
 
         MapleData ltd = source.getChild("lt");

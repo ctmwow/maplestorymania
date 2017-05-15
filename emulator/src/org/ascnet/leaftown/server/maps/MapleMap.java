@@ -155,7 +155,7 @@ public class MapleMap
 
     public final void resetFully(final boolean respawn) 
     {
-        killAllMonsters(false);
+    	killAllMonsters(false);
         resetReactors();
         removeDrops();
         resetSpawn();

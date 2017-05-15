@@ -306,6 +306,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private long arrivalTime = 0x00;
     private boolean shield = false;
     private long catchdelay = System.currentTimeMillis();
+    private double expBuff;
 
     private MapleCharacter(boolean channelServ) 
     {
@@ -3629,6 +3630,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         localluk = luk;
         int speed = 100;
         int jump = 100;
+        expBuff = 1;
         magic = localint_;
         watk = 0;
         for (IItem item : getInventory(MapleInventoryType.EQUIPPED)) {
@@ -3735,9 +3737,20 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             if (buff != null)
                 watk += buff / 10;
             localmaxbasedamage = calculateMaxBaseDamage(watk);
+            
+            buff = getBuffedValue(MapleBuffStat.EXPRATE);
+            if (buff != null) {
+                expBuff = buff.doubleValue() / 100.0;
+            }
+            
             if (oldmaxhp != 0 && oldmaxhp != localmaxhp)
                 updatePartyMemberHP();
         }
+    }
+    
+    public double getExpBuff()
+    {
+    	return expBuff;
     }
 
     public void equipChanged() {

@@ -417,6 +417,9 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         }
         if (attacker.getHp() > 0) {
             int personalExp = exp;
+            
+        	personalExp *= (int) attacker.getExpBuff();
+        	
             if (exp > 0) {
                 if (stati.containsKey(MonsterStatus.TAUNT)) {
                     int alterExp = stati.get(MonsterStatus.TAUNT).getStati().get(MonsterStatus.TAUNT);
@@ -719,8 +722,8 @@ public class MapleMonster extends AbstractLoadedMapleLife {
 
         if (isBoss() && 
         		!status.getStati().containsKey(MonsterStatus.SPEED) && 
-        		!status.getStati().containsKey(MonsterStatus.NINJA_AMBUSH) && 
-        		!status.getStati().containsKey(MonsterStatus.WATK)) {
+        		status.getStati().containsKey(MonsterStatus.NINJA_AMBUSH) && 
+        		status.getStati().containsKey(MonsterStatus.WATK)) {
             return false;
         }
 
