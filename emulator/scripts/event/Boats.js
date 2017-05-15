@@ -139,8 +139,8 @@ function invasion() {
         numspawn = 2;
     if(numspawn > 0) {
         for(var i=0; i < numspawn; i++) {
-            Boat_to_Orbis.spawnMonsterOnGroudBelow(MapleLifeFactory.getMonster(8150000), new java.awt.Point(485, -221));
-            Boat_to_Ellinia.spawnMonsterOnGroudBelow(MapleLifeFactory.getMonster(8150000), new java.awt.Point(-590, -221));
+            Boat_to_Orbis.spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(8150000), new java.awt.Point(485, -221));
+            Boat_to_Ellinia.spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(8150000), new java.awt.Point(-590, -221));
         }
         Boat_to_Orbis.setDocked(true);
         Boat_to_Ellinia.setDocked(true);

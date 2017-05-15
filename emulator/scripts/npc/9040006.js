@@ -258,5 +258,5 @@ function randX() {
 
 function spawnMob(id, x, y, map) {
 	var mob = Packages.org.ascnet.leaftown.server.life.MapleLifeFactory.getMonster(id);
-	map.spawnMonsterOnGroudBelow(mob, new Packages.org.ascnet.leaftown.java.awt.Point(x, y));
+	map.spawnMonsterOnGroundBelow(mob, new Packages.org.ascnet.leaftown.java.awt.Point(x, y));
 }

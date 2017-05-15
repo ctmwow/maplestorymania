@@ -76,7 +76,7 @@ function playerEntry(eim, player) {
 	eim.startEventTimer(eventTime);
     var mob = MapleLifeFactory.getMonster(monsterId);
     eim.registerMonster(mob);
-    //map.spawnMonsterOnGroudBelow(mob, new java.awt.Point(200, 20));
+    //map.spawnMonsterOnGroundBelow(mob, new java.awt.Point(200, 20));
 }
 
 function playerDead(eim, player) {
