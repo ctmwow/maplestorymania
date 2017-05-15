@@ -232,7 +232,8 @@ public class PlayerLoggedinHandler extends AbstractMaplePacketHandler
             log.info("REMOTE THROW", e);
             channelServer.reconnectWorld();
         }
-
+        
+        player.receivePartyMemberHP();
         player.updatePartyMemberHP();
 
         final CharacterNameAndId pendingBuddyRequest = player.getBuddylist().pollPendingRequest();

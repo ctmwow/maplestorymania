@@ -61,7 +61,7 @@ public class MapleSummon extends AbstractAnimatedMapleMapObject
 
     public void sendSpawnData(MapleClient client) 
     {
-        client.sendPacket(MaplePacketCreator.spawnSpecialMapObject(this, skillLevel, false));
+    	if (this != null) client.sendPacket(MaplePacketCreator.spawnSpecialMapObject(this, skillLevel, false));
     }
 
     public void sendDestroyData(MapleClient client) 

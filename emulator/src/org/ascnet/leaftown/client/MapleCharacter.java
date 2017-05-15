@@ -2244,6 +2244,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                     {
                         silentPartyUpdate();
                         getClient().sendPacket(MaplePacketCreator.updateParty(getClient().getChannel(), party, PartyOperation.SILENT_UPDATE, null));
+                        receivePartyMemberHP();
                         updatePartyMemberHP();
                     }
                     
@@ -2673,27 +2674,28 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         client.sendPacket(MaplePacketCreator.enableActions());
     }
 
-    public void updatePartyMemberHP() {
-        if (party != null) {
-            int channel = client.getChannel();
-            for (MaplePartyCharacter partychar : party.getMembers()) {
-                if (partychar.getMapId() == getMapId() && partychar.getChannel() == channel) {
-                    MapleCharacter other = client.getChannelServer().getPlayerStorage().getCharacterByName(partychar.getName());
-                    if (other != null)
-                        other.client.sendPacket(MaplePacketCreator.updatePartyMemberHP(id, hp, localmaxhp));
-                }
-            }
-        }
+    public void receivePartyMemberHP() {
+        PartyMemberHP(false);
     }
 
-    public void receivePartyMemberHP() {
-        if (party != null) {
-            int channel = client.getChannel();
-            for (MaplePartyCharacter partychar : party.getMembers()) {
-                if (partychar.getMapId() == getMapId() && partychar.getChannel() == channel) {
-                    MapleCharacter other = client.getChannelServer().getPlayerStorage().getCharacterByName(partychar.getName());
-                    if (other != null)
+    public void updatePartyMemberHP() {
+        PartyMemberHP(true);
+    }
+    
+    private void PartyMemberHP(boolean update) {
+        if (party == null) {
+            return;
+        }
+        final int channel = client.getChannel();
+        for (MaplePartyCharacter partychar : party.getMembers()) {
+            if (partychar.getMapId() == getMapId() && partychar.getChannel() == channel) {
+                final MapleCharacter other = client.getChannelServer().getPlayerStorage().getCharacterByName(partychar.getName());
+                if (other != null) {
+                    if (update) {
+                        other.getClient().sendPacket(MaplePacketCreator.updatePartyMemberHP(id, hp, localmaxhp));
+                    } else {
                         client.sendPacket(MaplePacketCreator.updatePartyMemberHP(other.id, other.hp, other.localmaxhp));
+                    }
                 }
             }
         }

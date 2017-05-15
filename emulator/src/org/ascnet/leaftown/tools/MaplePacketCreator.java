@@ -1241,8 +1241,7 @@ public class MaplePacketCreator {
 		mplew.writeInt(summon.getSkill());
 		mplew.write(10);
 		mplew.write(skillLevel);
-		mplew.writeShort(summon.getPosition().x);
-		mplew.writeShort(summon.getPosition().y);
+		mplew.writePos(summon.getPosition());
 		mplew.write(3); // test
 		mplew.write(0); // test
 		mplew.write(0); // test
@@ -2640,6 +2639,7 @@ public class MaplePacketCreator {
 		mplew.writeInt(cid);
 		mplew.writeInt(summonSkillId);
 		mplew.writeShort(newStance);
+		mplew.write(4);
 		mplew.write(allDamage.size());
 		for (SummonAttackEntry attackEntry : allDamage) {
 			mplew.writeInt(attackEntry.getMonsterOid()); // oid
@@ -4613,7 +4613,7 @@ public class MaplePacketCreator {
 	}
 
 	public static MaplePacket updatePartyMemberHP(int cid, int curhp, int maxhp) {
-		MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+		MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(14);
 
 		mplew.writeShort(SendPacketOpcode.UPDATE_PARTYMEMBER_HP.getValue());
 		mplew.writeInt(cid);
@@ -4823,14 +4823,15 @@ public class MaplePacketCreator {
 		MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
 		mplew.writeShort(SendPacketOpcode.DAMAGE_MONSTER.getValue());
-		mplew.writeInt(oid);
-		mplew.write(0);
-		mplew.writeInt(damage);
-		mplew.write(0);
-		mplew.write(0);
-		mplew.write(0);
+        mplew.writeInt(oid);
+        mplew.write(0);
+        if (damage > Integer.MAX_VALUE) {
+            mplew.writeInt(Integer.MAX_VALUE);
+        } else {
+            mplew.writeInt((int) damage);
+        }
 
-		return mplew.getPacket();
+        return mplew.getPacket();
 	}
 
 	public static MaplePacket healMonster(int oid, int heal) {
@@ -6558,14 +6559,10 @@ public class MaplePacketCreator {
 		return mplew.getPacket();
 	}
 
-	public static MaplePacket boatPacket(int effect) {
+	public static MaplePacket boatPacket(boolean type) {
 		MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
 		mplew.writeShort(SendPacketOpcode.BOAT_EFFECT.getValue());
-		mplew.writeShort(effect); // 1034: balrog boat comes, 1548: boat comes
-									// in ellinia/orbis station, 520: boat
-									// leaves ellinia/orbis station
-
+		mplew.writeShort(type ? 1 : 2);
 		return mplew.getPacket();
 	}
 

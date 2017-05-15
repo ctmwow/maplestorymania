@@ -869,7 +869,7 @@ public class MapleMap
             MapleStatEffect statEffect = mii.getItemEffect(monster.getBuffToGive());
             for (MapleCharacter character : chars) {
                 if (character.isAlive()) {
-                    statEffect.applyTo(character);
+                	statEffect.applyTo(character);
                     broadcastMessage(MaplePacketCreator.showBuffeffect(character.getId(), monster.getBuffToGive(), 11, (byte) character.getLevel(), (byte) 3));
                 }
             }
@@ -1384,8 +1384,11 @@ public class MapleMap
         spawnAndAddRangedMapObject(summon, new DelayedPacketCreation() {
 
             public void sendPackets(MapleClient c) {
-                int skillLevel = summon.getOwner().getSkillLevel(SkillFactory.getSkill(summon.getSkill()));
-                c.sendPacket(MaplePacketCreator.spawnSpecialMapObject(summon, skillLevel, true));
+            	if (summon != null)
+            	{
+	                int skillLevel = summon.getOwner().getSkillLevel(SkillFactory.getSkill(summon.getSkill()));
+	                c.sendPacket(MaplePacketCreator.spawnSpecialMapObject(summon, skillLevel, true));
+            	}
             }
         }, null);
     }
@@ -1689,9 +1692,8 @@ public class MapleMap
         {
             final MapleSummon summon = chr.getSummons().get(summonStat.getSourceId());
             summon.setPosition(chr.getPosition());
-            summon.sendSpawnData(chr.getClient());
-            chr.addVisibleMapObject(summon);
-            addMapObject(summon);
+            chr.getMap().spawnSummon(summon);
+            updateMapObjectVisibility(chr, summon);
         }
         
         if (mapEffect != null)
@@ -1720,9 +1722,9 @@ public class MapleMap
         }
 
         if (hasBoat() == 0x00000002) 
-            chr.getClient().sendPacket(MaplePacketCreator.boatPacket(0x0000060C));
+            chr.getClient().sendPacket(MaplePacketCreator.boatPacket(true));
         else if (hasBoat() == 0x00000001 && (chr.getMapId() != 200090000 || chr.getMapId() != 200090010)) 
-            chr.getClient().sendPacket(MaplePacketCreator.boatPacket(0x00000208));
+            chr.getClient().sendPacket(MaplePacketCreator.boatPacket(false));
 
         chr.receivePartyMemberHP();
         
