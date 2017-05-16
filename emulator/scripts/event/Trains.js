@@ -48,28 +48,35 @@ var Orbis_docked;
 var Ludibrium_btf;
 var Train_to_Ludibrium;
 var Ludibrium_docked;
+var Orbis_Station;
+var Ludibrium_Station;
+
+//Time Setting is in millisecond
+var closeTime = 50 * 1000; //The time to close the gate
+var beginTime = 60 * 1000; //The time to begin the ride
+var rideTime = 60 * 1000; //The time that require move to destination
 
 function init() {
     Orbis_btf = em.getChannelServer().getMapFactory().getMap(200000122);
     Ludibrium_btf = em.getChannelServer().getMapFactory().getMap(220000111);
     Train_to_Orbis = em.getChannelServer().getMapFactory().getMap(200090110);
     Train_to_Ludibrium = em.getChannelServer().getMapFactory().getMap(200090100);
-    Orbis_docked = em.getChannelServer().getMapFactory().getMap(200000100);
-    Ludibrium_docked = em.getChannelServer().getMapFactory().getMap(220000100);
-    Orbis_Station = em.getChannelServer().getMapFactory().getMap(200000121);
-    Ludibrium_Station = em.getChannelServer().getMapFactory().getMap(220000110);
+    Orbis_docked = em.getChannelServer().getMapFactory().getMap(200000121);
+    Ludibrium_docked = em.getChannelServer().getMapFactory().getMap(220000110);
+    Orbis_Station = em.getChannelServer().getMapFactory().getMap(200000100);
+    Ludibrium_Station = em.getChannelServer().getMapFactory().getMap(220000100);
+    
     scheduleNew();
 }
 
 function scheduleNew() {
-    Ludibrium_Station.setDocked(true);
-    Orbis_Station.setDocked(true);
-    Ludibrium_Station.broadcastMessage(MaplePacketCreator.boatPacket(true));
-    Orbis_Station.broadcastMessage(MaplePacketCreator.boatPacket(true));
     em.setProperty("docked", "true");
+    Orbis_docked.setDocked(true);
+    Ludibrium_docked.setDocked(true);
+    
     em.setProperty("entry", "true");
-    em.schedule("stopEntry", 240000);
-    em.schedule("takeoff", 300000);
+    em.schedule("stopEntry", closeTime); //The time to close the gate
+    em.schedule("takeoff", beginTime); //The time to begin the ride
 }
 
 function stopEntry() {
@@ -77,27 +84,23 @@ function stopEntry() {
 }
 
 function takeoff() {
-    Ludibrium_Station.setDocked(false);
-    Orbis_Station.setDocked(false);
-    Ludibrium_Station.broadcastMessage(MaplePacketCreator.boatPacket(false));
-    Orbis_Station.broadcastMessage(MaplePacketCreator.boatPacket(false));
+    Orbis_btf.warpEveryone(Train_to_Ludibrium.getId());
+    Ludibrium_btf.warpEveryone(Train_to_Orbis.getId());
+    Orbis_docked.broadcastShip(false);
+    Ludibrium_docked.broadcastShip(false);
+    
     em.setProperty("docked","false");
-    var temp1 = Orbis_btf.getCharacters().iterator();
-    while(temp1.hasNext())
-        temp1.next().changeMap(Train_to_Ludibrium, Train_to_Ludibrium.getPortal(0));
-    var temp2 = Ludibrium_btf.getCharacters().iterator();
-    while(temp2.hasNext())
-        temp2.next().changeMap(Train_to_Orbis, Train_to_Orbis.getPortal(0));
-    em.schedule("arrived", 600000);
+    Orbis_docked.setDocked(false);
+    Ludibrium_docked.setDocked(false);
+    
+    em.schedule("arrived", rideTime); //The time that require move to destination
 }
 
 function arrived() {
-    var temp1 = Train_to_Orbis.getCharacters().iterator();
-    while(temp1.hasNext())
-        temp1.next().changeMap(Orbis_docked, Orbis_docked.getPortal(0));
-    var temp2 = Train_to_Ludibrium.getCharacters().iterator();
-    while(temp2.hasNext())
-        temp2.next().changeMap(Ludibrium_docked, Ludibrium_docked.getPortal(0));
+    Train_to_Orbis.warpEveryone(Orbis_Station.getId());
+    Train_to_Ludibrium.warpEveryone(Ludibrium_Station.getId());
+    Orbis_docked.broadcastShip(true);
+    Ludibrium_docked.broadcastShip(true);
     scheduleNew();
 }
 

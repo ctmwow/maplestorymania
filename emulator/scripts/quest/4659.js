@@ -19,48 +19,88 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/* 	Author: Moogra
-	NPC Name: 		?????????????
-	Map(s): 		New Leaf City
+/* 	Author: 		Blue
+	Name:	 		Garnox
+	Map(s): 		New Leaf City : Town Center
 	Description: 		Quest - Pet Evolution
 */
 importPackage(Packages.org.ascnet.leaftown.client);
 importPackage(Packages.org.ascnet.leaftown.server);
+importPackage(Packages.org.ascnet.leaftown.tools);
 
 var status = -1;
 
-function start(mode, type, selection) {
-//nothing here?
-}
-
 function end(mode, type, selection) {
-    status++;
-    if (mode != 1) {
-        if(type == 1 && mode == 0)
-            status -= 2;
-        else{
-            qm.dispose();
-            return;
-        }
-    }
-    if (status == 0)
-        qm.sendNext("Great job on finding your evolution materials. I will now give you a dragon.");
-    else if (status == 1) {
-        if (qm.isQuestCompleted(4659))
-            qm.dropMessage(1, "How did this get here?");
-        else if (qm.canHold(5000033)){
-//            var closeness = qm.getPlayer().getPet(0).getCloseness();
-//            var level = qm.getPlayer().getPet(0).getLevel();
-//            var fullness = qm.getPlayer().getPet(0).getFullness();
-            qm.gainItem(5380000, -1);
-            qm.gainItem(5000029, -1);
-            var rand = (Math.random() * 4) | 0;
-            qm.gainItem(5000029 + rand);
-//            var petId = MaplePet.createPet(rand + 5000030, level, closeness, fullness);
-//            if (petId == -1) return;
-//            MapleInventoryManipulator.addById(qm.getClient(), rand+5000030, 1, null, petId);
-        } else
-			qm.dropMessage(1,"Your inventory is full");
-        qm.dispose();
-    }
+	if (mode == -1) {
+		qm.dispose();
+	} else {
+		if (mode == 1)
+			status++;
+		else
+			status--;
+		if (status == 0) {
+			qm.sendNextPrev("#e#bHey, você conseguiu!#n#k \r\n#rUau!#k Agora eu posso terminar meus estudos em seu bicho de estimação!");
+		} else if (status == 1) {
+			if (mode == 0) {
+				qm.sendOk("Eu vejo... Volte quando quiser. Estou muito animado para fazer isso.");
+				qm.dispose();
+			} else {
+				qm.sendNextPrev("Lembrando: a cor do seu novo robô será #e#raleatória#k#n! As cores são #gverde, #bazul, #rvermelho, #dou muito raramente#k, dourado. \r\n\r\n#fUI/UIWindow.img/QuestIcon/5/0# \r\n\r Se você não gostar da cor nova do seu animal de estimação, ou se você desejar mudar a cor do bicho de estimação outra vez, #evocê pode mudá-la!#n Simplesmente #dcompre outra Rocha da Evolução, junte 10,000 mesos, #ke #dequipe seu novo bicho de estimação#k antes de falar comigo novamente, mas é claro, eu não posso devolver o seu bicho de estimação como um dragão bebê, apenas para outro dragão adulto.");
+			}
+		} else if (status == 2) {
+			qm.sendYesNo("Agora deixe-me tentar evoluir seu bicho de estimação. Está pronto? Quer ver seu dragão bebê tornar=se em um dragão adulto preto, azul, verde calmo ou vermelho impetuoso? Ele ainda terá a mesma proximidade, level, nome, plenitude, fome e equipamentos, caso você esteja preocupado. \r\n\r #b#eVocê deseja continuar ou tem algumas coisas de última hora para fazer primeiro?#k#n");
+                } else if (status == 3) {
+			qm.sendNextPrev("Tudo bem, aqui vamos nós! #rHYAHH!#k");
+		} else if (status == 4) {
+			
+			var pet = 0;
+			if (qm.getPlayer().getPet(0).getItemId() >= 5000048 && qm.getPlayer().getPet(0).getItemId() <= 5000052) {
+				var pet = 0;
+			} else if (qm.getPlayer().getPet(1).getItemId() >= 5000048 && qm.getPlayer().getPet(0).getItemId() <= 5000052) {
+				var pet = 1;
+			} else if (qm.getPlayer().getPet(2).getItemId() >= 5000048 && qm.getPlayer().getPet(0).getItemId() <= 5000052) {
+				var pet = 2;
+			} else {
+				qm.sendOk("Algo deu errado.");
+				qm.dispose();
+			}
+			
+			if (pet == null || !qm.haveItem(5380000,1)) {
+				cm.sendOk("Você não atende aos requisitos. Você precisa de #i5380000##t5380000#, Bem como qualquer um dos #d#i5000029##t5000029##k, #g#i5000030##t5000030##k, #r#i5000031##t5000031##k, #b#i5000032##t5000032##k, ou #e#i5000033##t5000033##n equipados com level 15 acima. Por favor, volte quando estiver pronto.");
+				cm.dispose();
+			}else {
+				
+				var after = 0;
+				
+				var id = qm.getPlayer().getPet(pet).getItemId();
+				
+				if (id < 5000048 || id > 5000052) {
+					qm.sendOk("Algo deu errado.");
+					qm.dispose();
+				}
+				
+				var rand = 1 + Math.floor(Math.random() * 10);
+				
+				var petInfo = qm.getPlayer().getPet(pet);				
+				
+				if (rand >= 1 && rand <= 3) {
+					after = 5000051;
+				} else if (rand >= 4 && rand <= 6) {
+					after = 5000050;
+				} else if (rand >= 7 && rand <= 9) {
+					after = 5000049;
+				} else if (rand == 10) {
+					after = 5000052;
+				} else {
+					qm.sendOk("Algo errado. Tente novamente.");
+					qm.dispose();
+				}
+				qm.gainItem(5380000, -1);
+				qm.gainMeso(-10000);
+				qm.evolvePet(pet, after);
+				qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu robô evoluiu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.\r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#");
+				qm.dispose();
+			}
+		}
+	}
 }

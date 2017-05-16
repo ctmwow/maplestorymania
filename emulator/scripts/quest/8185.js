@@ -52,8 +52,6 @@ function end(mode, type, selection) {
                 } else if (status == 3) {
 			qm.sendNextPrev("Tudo bem, aqui vamos nós! #rHYAHH!#k");
 		} else if (status == 4) {
-			var rand = 1 + Math.floor(Math.random() * 10);
-			var after = 0;
 			
 			var pet = 0;
 			if (qm.getPlayer().getPet(0).getItemId() >= 5000029 && qm.getPlayer().getPet(0).getItemId() <= 5000033) {
@@ -63,19 +61,27 @@ function end(mode, type, selection) {
 			} else if (qm.getPlayer().getPet(2).getItemId() >= 5000029 && qm.getPlayer().getPet(0).getItemId() <= 5000033) {
 				var pet = 2;
 			} else {
-				qm.sendOk("Something wrong, try again.");
+				qm.sendOk("Algo deu errado.");
 				qm.dispose();
 			}
 			
-			if (pet == null || !cm.haveItem(5380000,1)) {
-				cm.sendOk("You do not meet the requirements. You need #i5380000##t5380000#, as well as either one of #d#i5000029##t5000029##k, #g#i5000030##t5000030##k, #r#i5000031##t5000031##k, #b#i5000032##t5000032##k, or #e#i5000033##t5000033##n equipped at level 15 or higher. Please come back when you do.");
+			if (pet == null || !qm.haveItem(5380000,1)) {
+				cm.sendOk("Você não atende aos requisitos. Você precisa de #i5380000##t5380000#, Bem como qualquer um dos #d#i5000029##t5000029##k, #g#i5000030##t5000030##k, #r#i5000031##t5000031##k, #b#i5000032##t5000032##k, ou #e#i5000033##t5000033##n equipados com level 15 acima. Por favor, volte quando estiver pronto.");
 				cm.dispose();
 			}else {
-				var after = id;	
+				
+				var after = 0;
+				
+				var id = qm.getPlayer().getPet(pet).getItemId();
+				
+				if (id < 5000029 || id > 5000033) {
+					qm.sendOk("Algo deu errado.");
+					qm.dispose();
+				}
+				
 				var rand = 1 + Math.floor(Math.random() * 10);
 				
-				var petInfo = qm.getPlayer().getPet(pet);
-				
+				var petInfo = qm.getPlayer().getPet(pet);				
 				
 				if (rand >= 1 && rand <= 3) {
 					after = 5000030;
@@ -89,11 +95,11 @@ function end(mode, type, selection) {
 					qm.sendOk("Algo errado. Tente novamente.");
 					qm.dispose();
 				}
-				
-				qm.gainItem(petInfo.getItemId(), -1);
 				qm.gainItem(5380000, -1);
-				qm.gainPet(qm.getPlayer(), petInfo, after);
-				qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu dragão cresceu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.\r Ele costumava a ser um #i" + id + "##t" + id + "#, e agora é \r um #i" + after + "##t" + after + "#!#k \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#\r\n\r\n#fUI/UIWindow.img/QuestIcon/8/0# 1000 EXP\r\n#fUI/UIWindow.img/QuestIcon/9/0# 2 Closeness\r\n#fUI/UIWindow.img/QuestIcon/6/0# 1 Fame\r\n#fUI/UIWindow.img/QuestIcon/7/0# 100 Mesos");
+				qm.gainMeso(-10000);
+				qm.evolvePet(pet, after);
+				//qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu dragão cresceu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.\r Ele costumava a ser um #i" + id + "##t" + id + "#, e agora é \r um #i" + after + "##t" + after + "#!#k \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#\r\n\r\n#fUI/UIWindow.img/QuestIcon/8/0# 1000 EXP\r\n#fUI/UIWindow.img/QuestIcon/9/0# 2 Closeness\r\n#fUI/UIWindow.img/QuestIcon/6/0# 1 Fame");
+				qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu dragão cresceu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.\r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#");
 				qm.dispose();
 			}
 		}

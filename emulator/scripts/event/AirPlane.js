@@ -33,9 +33,9 @@
 importPackage(Packages.org.ascnet.leaftown.tools);
 
 //Time Setting is in millisecond
-var closeTime = 240000; //The time to close the gate
-var beginTime = 300000; //The time to begin the ride
-var rideTime = 60000; //The time that require move to destination
+var closeTime = 24 * 1000; //The time to close the gate
+var beginTime = 30 * 1000; //The time to begin the ride
+var rideTime = 15 * 1000; //The time that require move to destination
 var KC_bfd;
 var Plane_to_CBD;
 var CBD_docked;
@@ -54,6 +54,8 @@ function init() {
 }
 
 function scheduleNew() {
+    em.setProperty("docked", "true");
+    em.setProperty("entry", "true");
     em.schedule("stopEntry", closeTime);
     em.schedule("takeoff", beginTime);
 }
@@ -63,28 +65,17 @@ function stopEntry() {
 }
 
 function takeoff() {
-    em.setProperty("entry", "true");
-    var temp1 = KC_bfd.getCharacters().iterator();
-    while(temp1.hasNext()) {
-        temp1.next().changeMap(Plane_to_KC, Plane_to_KC.getPortal(0));
-    }
-    var temp2 = CBD_bfd.getCharacters().iterator();
-    while(temp2.hasNext()) {
-        temp2.next().changeMap(Plane_to_CBD, Plane_to_CBD.getPortal(0));
-    }
-    em.schedule("arrived", rideTime);
-    scheduleNew();
+    em.setProperty("docked","false");
+    KC_bfd.warpEveryone(Plane_to_CBD.getId());
+    CBD_bfd.warpEveryone(Plane_to_KC.getId());
+    em.schedule("arrived", rideTime); //The time that require move to destination
 }
 
 function arrived() {
-    var temp1 = Plane_to_CBD.getCharacters().iterator();
-    while(temp1.hasNext()) {
-        temp1.next().changeMap(CBD_docked, CBD_docked.getPortal(0));
-    }
-    var temp2 = Plane_to_KC.getCharacters().iterator();
-    while(temp2.hasNext()) {
-        temp2.next().changeMap(KC_docked, KC_docked.getPortal(0));
-    }
+    Plane_to_CBD.warpEveryone(CBD_docked.getId());
+    Plane_to_KC.warpEveryone(KC_docked.getId());
+        
+    scheduleNew();
 }
 
 function cancelSchedule() {
