@@ -6550,20 +6550,20 @@ public class MaplePacketCreator {
 		return mplew.getPacket();
 	}
 
-	public static MaplePacket boatDockStatus() {
-		MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-		mplew.writeShort(SendPacketOpcode.BOAT_DOCK.getValue());
-		mplew.writeShort(1); // 1 = almost about to leave, 3 = not here
-
-		return mplew.getPacket();
+    public static MaplePacket onContiMove(boolean type) {
+	    final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+	    mplew.writeShort(SendPacketOpcode.CONTI_MOVE.getValue());
+	    mplew.write(10);
+	    mplew.write(type ? 4 : 5);
+	    return mplew.getPacket();
 	}
 
-	public static MaplePacket boatPacket(boolean type) {
-		MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-		mplew.writeShort(SendPacketOpcode.BOAT_EFFECT.getValue());
-		mplew.writeShort(type ? 1 : 2);
-		return mplew.getPacket();
+	public static MaplePacket onContiState(boolean type) {
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendPacketOpcode.CONTI_STATE.getValue());
+        mplew.write(type ? 1 : 2);
+        mplew.write(0);
+        return mplew.getPacket();
 	}
 
 	public static MaplePacket startMonsterCarnival(int team) 

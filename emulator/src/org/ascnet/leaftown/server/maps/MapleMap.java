@@ -1722,9 +1722,9 @@ public class MapleMap
         }
 
         if (hasBoat() == 0x00000002) 
-            chr.getClient().sendPacket(MaplePacketCreator.boatPacket(true));
+            chr.getClient().sendPacket(MaplePacketCreator.onContiState(true));
         else if (hasBoat() == 0x00000001 && (chr.getMapId() != 200090000 || chr.getMapId() != 200090010)) 
-            chr.getClient().sendPacket(MaplePacketCreator.boatPacket(false));
+            chr.getClient().sendPacket(MaplePacketCreator.onContiState(false));
 
         chr.receivePartyMemberHP();
         
@@ -2841,5 +2841,23 @@ public class MapleMap
 
     public MapleBuffZone getBuffZone() {
         return buffZone;
+    }
+    
+    public void broadcastShip(final boolean state) {
+        broadcastMessage(MaplePacketCreator.onContiState(state));
+        this.setDocked(state);
+    }
+    
+    public void broadcastEnemyShip(final boolean state) {
+        broadcastMessage(MaplePacketCreator.onContiMove(state));
+        this.setDocked(state);
+    }
+    
+    public void warpEveryone(int to) {
+        List<MapleCharacter> players = new ArrayList<>(getCharacters());
+        
+        for (MapleCharacter chr : players) {
+            chr.changeMap(to, 0);
+        }
     }
 }

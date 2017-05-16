@@ -66,7 +66,7 @@ public class QuestActionHandler extends AbstractMaplePacketHandler
                 if (slea.available() >= 0x02) 
                 { 
                     final int selection = slea.readShort();
-                    MapleQuest.getInstance(quest).complete(player, npc, selection, false, true);
+                    MapleQuest.getInstance(quest).complete(player, npc, selection, true, true); //first true to show quest completion effect
                 }
                 else 
                 {

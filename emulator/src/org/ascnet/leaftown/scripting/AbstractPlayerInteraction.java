@@ -29,6 +29,7 @@ package org.ascnet.leaftown.scripting;
 
 import org.ascnet.leaftown.client.Equip;
 import org.ascnet.leaftown.client.IItem;
+import org.ascnet.leaftown.client.Item;
 import org.ascnet.leaftown.client.MapleCharacter;
 import org.ascnet.leaftown.client.MapleClient;
 import org.ascnet.leaftown.client.MapleInventory;
@@ -207,12 +208,12 @@ public class AbstractPlayerInteraction
 
     public void gainItem(int id, short quantity) 
     {
-        gainItem(id, quantity, false, getPlayer());
+        gainItem(id, quantity, false, getPlayer(), null);
     }
 
     public void gainItem(int id, short quantity, boolean r) 
     {
-        gainItem(id, quantity, r, getPlayer());
+        gainItem(id, quantity, r, getPlayer(), null);
     }
 
     public int getQuestInfoInt(int id) 
@@ -301,7 +302,7 @@ public class AbstractPlayerInteraction
      * @param quantity
      * @param randomStats
      */
-    public void gainItem(int id, short quantity, boolean randomStats, MapleCharacter player) 
+    public void gainItem(int id, short quantity, boolean randomStats, MapleCharacter player, MaplePet from) 
     {
         if (quantity >= 0x00) 
         {
@@ -315,6 +316,32 @@ public class AbstractPlayerInteraction
             logInfo.append(toString());
             logInfo.append(")");
             
+            
+            MaplePet evolved = null;
+            int petId = -1;
+			if (id >= 5000000 && id <= 5000100) {
+                petId = MaplePet.createPet(getPlayer().getId(), id).getUniqueId();
+		                    
+	            if(from != null) {
+	                evolved = MaplePet.loadFromDb(id, petId);
+	                
+	                Point pos = getPlayer().getPosition();
+	                pos.y -= 12;
+	                evolved.setPos(pos);
+	                evolved.setFh(getPlayer().getMap().getFootholds().findBelow(evolved.getPos()).getId());
+	                evolved.setStance(0);
+	                evolved.setSummoned(true);
+	
+	                evolved.setName(from.getName());
+	                evolved.setCloseness(from.getCloseness());
+	                evolved.setFullness(from.getFullness());
+	                evolved.setLevel(from.getLevel());
+	                evolved.saveToDb();
+	            }
+		                    
+				//MapleInventoryManipulator.addById(c, id, (short) 1, null, petId, expires == -1 ? -1 : System.currentTimeMillis() + expires);
+			}
+		            
             if (!MapleInventoryManipulator.checkSpace(player.getClient(), id, quantity, "")) 
             {
                 c.sendPacket(MaplePacketCreator.serverNotice(0x01, "O seu inventário está cheio. Por favor, remova um item do seu " + type.name() + " inventory."));
@@ -329,7 +356,12 @@ public class AbstractPlayerInteraction
                     c.sendPacket(MaplePacketCreator.modifyInventory(true, MapleInventoryManipulator.addByItem(player.getClient(), item, logInfo.toString(), false)));
             }
             else 
-                MapleInventoryManipulator.addById(player.getClient(), id, quantity, logInfo.toString(), null, null);
+            {
+            	if (petId == -1)
+            		MapleInventoryManipulator.addById(player.getClient(), id, quantity, logInfo.toString(), null, null);
+            	else          
+            		MapleInventoryManipulator.addById(player.getClient(), id, quantity, logInfo.toString(), getPlayer().getName(), evolved);
+            }
         }
         else 
             MapleInventoryManipulator.removeById(player.getClient(), MapleItemInformationProvider.getInstance().getInventoryType(id), id, -quantity, true, false);
@@ -870,5 +902,25 @@ public class AbstractPlayerInteraction
     public final void openNpc(final MapleClient client, final int npc, final String filename) 
     {
         NPCScriptManager.getInstance().start(client, npc, filename);
+    }
+    
+    public void evolvePet(byte slot, int afterId) {
+        MaplePet target = null;
+        
+        /*long period = 90;    //refreshes expiration date: 90 days
+        period *= 24;
+        period *= 60;
+        period *= 60;
+        period *= 1000;*/
+        
+        target = getPlayer().getPet(slot);
+        
+        if(target == null) {
+            getPlayer().dropMessage("Pet could not be evolved...");
+            return;
+        }
+        
+        gainItem(afterId, (short)1, false, getPlayer(), target);
+        MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.CASH, getPlayer().getInventory(MapleInventoryType.CASH).findById(target.getItemId()).getPosition(), (short) 1, false);
     }
 }
