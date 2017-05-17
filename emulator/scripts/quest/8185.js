@@ -99,7 +99,7 @@ function end(mode, type, selection) {
 				qm.gainMeso(-10000);
 				qm.evolvePet(pet, after);
 				//qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu dragão cresceu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.\r Ele costumava a ser um #i" + id + "##t" + id + "#, e agora é \r um #i" + after + "##t" + after + "#!#k \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#\r\n\r\n#fUI/UIWindow.img/QuestIcon/8/0# 1000 EXP\r\n#fUI/UIWindow.img/QuestIcon/9/0# 2 Closeness\r\n#fUI/UIWindow.img/QuestIcon/6/0# 1 Fame");
-				qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu dragão cresceu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.\r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#");
+				qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu dragão cresceu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.#k\r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#");
 				qm.dispose();
 			}
 		}

@@ -98,7 +98,7 @@ function end(mode, type, selection) {
 				qm.gainItem(5380000, -1);
 				qm.gainMeso(-10000);
 				qm.evolvePet(pet, after);
-				qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu robô evoluiu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.\r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#");
+				qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu robô evoluiu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.#k\r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#");
 				qm.dispose();
 			}
 		}

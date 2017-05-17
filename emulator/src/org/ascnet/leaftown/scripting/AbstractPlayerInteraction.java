@@ -333,6 +333,13 @@ public class AbstractPlayerInteraction
 	                evolved.setSummoned(true);
 	
 	                evolved.setName(from.getName());
+	                
+	                if (from.getName().equals(MapleItemInformationProvider.getInstance().getName(from.getItemId())))
+	                	evolved.setName(MapleItemInformationProvider.getInstance().getName(id));
+	                else
+	                	evolved.setName(from.getName());
+	                
+	                
 	                evolved.setCloseness(from.getCloseness());
 	                evolved.setFullness(from.getFullness());
 	                evolved.setLevel(from.getLevel());

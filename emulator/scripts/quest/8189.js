@@ -71,7 +71,7 @@ function end(mode, type, selection) {
 				qm.dispose();
 			}
 			qm.evolvePet(pet, after);
-			qm.sendOk("Wow! Funcionou novamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.\r Volte aqui com 10,000 mesos e outra Rocha da Evolução se você não gostou!\r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#");
+			qm.sendOk("Wow! Funcionou novamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.#k\r Volte aqui com 10,000 mesos e outra Rocha da Evolução se você não gostou!\r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#");
 			qm.dispose();
 		}
 	}
