@@ -1684,7 +1684,7 @@ public class MapleMap
             chr.getClient().sendPacket(MaplePacketCreator.showPet(chr, pet, false, false, true));
         } 
         
-        chr.updatePetPositions(0x00000000, null);
+        chr.updatePetPositions(null);
 
         final MapleStatEffect summonStat = chr.getStatForBuff(MapleBuffStat.SUMMON);
         

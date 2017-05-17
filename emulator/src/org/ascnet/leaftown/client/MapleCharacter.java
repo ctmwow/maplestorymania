@@ -2192,16 +2192,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         changeMapInternal(to, pto.getPosition(), warpPacket);
     }
     
-    public void changeMap(int map, int portal) {        
-        MapleMap warpMap;
-        if (getEventInstance() != null) {
-            warpMap = getEventInstance().getMapInstance(map);
-        } else {
-            warpMap = client.getChannelServer().getMapFactory().getMap(map);
-        }
-
-        changeMap(warpMap, warpMap.getPortal(portal));
-    }
+	public void changeMap(int map, int portal) {
+		MapleMap warpMap = client.getChannelServer().getMapFactory().getMap(map);
+		changeMap(warpMap, warpMap.getPortal(portal));
+	}
 
     public boolean changeMapOffline(String victim, int mapId) 
     {
@@ -3865,7 +3859,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         client.sendPacket(MaplePacketCreator.modifyInventory(false, petChanges));
     }
 
-    public void updatePetPositions(int size, MaplePet removePet) 
+    public void updatePetPositions(MaplePet removePet) 
     {
         if (removePet != null)
             pets.remove(removePet);
@@ -3890,7 +3884,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         pet.setQuoteRing(false);
         pet.saveToDb();
         map.broadcastMessage(this, MaplePacketCreator.showPet(this, pet, true, hunger, false), true);
-        updatePetPositions(pets.size(), pet);
+        updatePetPositions(pet);
         client.sendPacket(MaplePacketCreator.enableActions());
     }
 
