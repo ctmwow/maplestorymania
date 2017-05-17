@@ -53,12 +53,6 @@ public class Item implements IItem
     private byte storagePosition = 0x00;
     private String giftFrom = ""; 
     private MaplePet pet = null;
-    
-    public Item(int id)
-    {
-    	super();
-    	this.id = id;
-    }
 
     public Item(int id, short position, short quantity) 
     {

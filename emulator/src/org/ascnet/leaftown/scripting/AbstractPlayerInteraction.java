@@ -920,6 +920,8 @@ public class AbstractPlayerInteraction
             return;
         }
         
+        getPlayer().unequipPet(target, false);
+        
         gainItem(afterId, (short)1, false, getPlayer(), target);
         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.CASH, getPlayer().getInventory(MapleInventoryType.CASH).findById(target.getItemId()).getPosition(), (short) 1, false);
     }
