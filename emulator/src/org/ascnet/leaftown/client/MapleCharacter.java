@@ -2194,7 +2194,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     
 	public void changeMap(int map, int portal) {
 		MapleMap warpMap = client.getChannelServer().getMapFactory().getMap(map);
-		changeMap(warpMap, warpMap.getPortal(portal));
+		MaplePortal pto = warpMap.getPortal(portal);
+		MaplePacket warpPacket = MaplePacketCreator.getWarpToMap(warpMap, pto.getId(), this);
+		changeMapInternal(warpMap, pto.getPosition(), warpPacket);
 	}
 
     public boolean changeMapOffline(String victim, int mapId) 
