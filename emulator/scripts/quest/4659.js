@@ -45,10 +45,10 @@ function end(mode, type, selection) {
 				qm.sendOk("Eu vejo... Volte quando quiser. Estou muito animado para fazer isso.");
 				qm.dispose();
 			} else {
-				qm.sendNextPrev("Lembrando: a cor do seu novo robô será #e#raleatória#k#n! As cores são #gverde, #bazul, #rvermelho, #dou muito raramente#k, dourado. \r\n\r\n#fUI/UIWindow.img/QuestIcon/5/0# \r\n\r Se você não gostar da cor nova do seu animal de estimação, ou se você desejar mudar a cor do bicho de estimação outra vez, #evocê pode mudá-la!#n Simplesmente #dcompre outra Rocha da Evolução, junte 10,000 mesos, #ke #dequipe seu novo bicho de estimação#k antes de falar comigo novamente, mas é claro, eu não posso devolver o seu bicho de estimação como um dragão bebê, apenas para outro dragão adulto.");
+				qm.sendNextPrev("Lembrando: a cor do seu novo Robo será #e#raleatória#k#n! As cores são #gverde, #bazul, #rvermelho, #dou muito raramente#k, dourado. \r\n\r\n#fUI/UIWindow.img/QuestIcon/5/0# \r\n\r Se você não gostar da cor nova do seu animal de estimação, ou se você desejar mudar a cor do bicho de estimação outra vez, #evocê pode mudá-la!#n Simplesmente #dcompre outra Rocha da Evolução, junte 10,000 mesos, #ke #dequipe seu novo bicho de estimação#k antes de falar comigo novamente, mas é claro, eu não posso devolver o seu bicho de estimação como um Robo bebê, apenas para outro Robo adulto.");
 			}
 		} else if (status == 2) {
-			qm.sendYesNo("Agora deixe-me tentar evoluir seu bicho de estimação. Está pronto? Quer ver seu dragão bebê tornar=se em um dragão adulto preto, azul, verde calmo ou vermelho impetuoso? Ele ainda terá a mesma proximidade, level, nome, plenitude, fome e equipamentos, caso você esteja preocupado. \r\n\r #b#eVocê deseja continuar ou tem algumas coisas de última hora para fazer primeiro?#k#n");
+			qm.sendYesNo("Agora deixe-me tentar evoluir seu bicho de estimação. Está pronto? Quer ver seu Robo Bebê tornar=se em um robô adulto dourado, azul, verde calmo ou vermelho impetuoso? Ele ainda terá a mesma proximidade, level, nome, plenitude, fome e equipamentos, caso você esteja preocupado. \r\n\r #b#eVocê deseja continuar ou tem algumas coisas de última hora para fazer primeiro?#k#n");
                 } else if (status == 3) {
 			qm.sendNextPrev("Tudo bem, aqui vamos nós! #rHYAHH!#k");
 		} else if (status == 4) {
@@ -56,9 +56,9 @@ function end(mode, type, selection) {
 			var pet = 0;
 			if (qm.getPlayer().getPet(0).getItemId() >= 5000048 && qm.getPlayer().getPet(0).getItemId() <= 5000052) {
 				var pet = 0;
-			} else if (qm.getPlayer().getPet(1).getItemId() >= 5000048 && qm.getPlayer().getPet(0).getItemId() <= 5000052) {
+			} else if (qm.getPlayer().getPet(1).getItemId() >= 5000048 && qm.getPlayer().getPet(1).getItemId() <= 5000052) {
 				var pet = 1;
-			} else if (qm.getPlayer().getPet(2).getItemId() >= 5000048 && qm.getPlayer().getPet(0).getItemId() <= 5000052) {
+			} else if (qm.getPlayer().getPet(2).getItemId() >= 5000048 && qm.getPlayer().getPet(2).getItemId() <= 5000052) {
 				var pet = 2;
 			} else {
 				qm.sendOk("Algo deu errado.");
@@ -98,7 +98,7 @@ function end(mode, type, selection) {
 				qm.gainItem(5380000, -1);
 				qm.gainMeso(-10000);
 				qm.evolvePet(pet, after);
-				qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu robô evoluiu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.#k\r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#");
+				qm.sendOk("#bESPLÊNDIDO! FUNCIONOU!#k Seu Robo evoluiu maravilhosamente! #rVocê pode encontrar seu novo bicho de estimação no inventário 'CASH'.#k\r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0#\r\n#v"+after+"# #t"+after+"#");
 				qm.dispose();
 			}
 		}

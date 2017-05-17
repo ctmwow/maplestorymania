@@ -56,9 +56,9 @@ function end(mode, type, selection) {
 			var pet = 0;
 			if (qm.getPlayer().getPet(0).getItemId() >= 5000029 && qm.getPlayer().getPet(0).getItemId() <= 5000033) {
 				var pet = 0;
-			} else if (qm.getPlayer().getPet(1).getItemId() >= 5000029 && qm.getPlayer().getPet(0).getItemId() <= 5000033) {
+			} else if (qm.getPlayer().getPet(1).getItemId() >= 5000029 && qm.getPlayer().getPet(1).getItemId() <= 5000033) {
 				var pet = 1;
-			} else if (qm.getPlayer().getPet(2).getItemId() >= 5000029 && qm.getPlayer().getPet(0).getItemId() <= 5000033) {
+			} else if (qm.getPlayer().getPet(2).getItemId() >= 5000029 && qm.getPlayer().getPet(2).getItemId() <= 5000033) {
 				var pet = 2;
 			} else {
 				qm.sendOk("Algo deu errado.");
