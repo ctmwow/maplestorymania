@@ -87,6 +87,7 @@ import org.ascnet.leaftown.server.life.MobSkillFactory;
 import org.ascnet.leaftown.server.life.SpawnPoint;
 import org.ascnet.leaftown.server.playerinteractions.IMaplePlayerShop;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
+import org.ascnet.leaftown.tools.Pair;
 import org.ascnet.leaftown.tools.Randomizer;
 import org.ascnet.leaftown.tools.StringUtil;
 
@@ -1636,7 +1637,11 @@ public class MapleMap
             }
         } 
         else 
+        {
         	chr.getClient().sendPacket(MaplePacketCreator.giveGMHide(true));
+        	final List<Pair<MapleBuffStat, Integer>> stat = Collections.singletonList(new Pair<>(MapleBuffStat.DARKSIGHT, 1));
+        	chr.getClient().sendPacket(MaplePacketCreator.giveBuff(chr, 9101004, 99999, stat)); // rever buff HIDE GM
+        }
         
         sendObjectPlacement(chr);
         

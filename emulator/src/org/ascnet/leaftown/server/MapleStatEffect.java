@@ -796,10 +796,14 @@ public class MapleStatEffect implements Serializable {
             {
                 applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.removePlayerFromMap(applyto.getId()), false);
                 applyto.getClient().sendPacket(MaplePacketCreator.giveGMHide(true));
+                final List<Pair<MapleBuffStat, Integer>> stat = Collections.singletonList(new Pair<>(MapleBuffStat.DARKSIGHT, 1));
+                applyto.getClient().sendPacket(MaplePacketCreator.giveBuff(applyto, 9101004, 99999, stat)); // rever buff HIDE GM
             }
             else 
             {
                 applyto.getClient().sendPacket(MaplePacketCreator.giveGMHide(false));
+                final List<MapleBuffStat> stat = Collections.singletonList(MapleBuffStat.DARKSIGHT); // rever buff HIDE GM
+                applyto.getClient().sendPacket(MaplePacketCreator.cancelBuff(stat));
                 applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.spawnPlayerMapobject(applyto, false), false);
                 applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.playerGuildName(applyto), false);
                 applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.playerGuildInfo(applyto), false);
