@@ -1685,8 +1685,11 @@ public class MapleMap
         
         for (final MaplePet pet : pets) 
         {
-        	pet.setPos(getGroundBelow(chr.getPosition()));
-            chr.getClient().sendPacket(MaplePacketCreator.showPet(chr, pet, false, false, true));
+        	if (pet.isSummoned()) //verificação	
+        	{
+        		pet.setPos(getGroundBelow(chr.getPosition()));
+        		chr.getClient().sendPacket(MaplePacketCreator.showPet(chr, pet, false, false, true));
+        	}
         } 
         
         chr.updatePetPositions(null);

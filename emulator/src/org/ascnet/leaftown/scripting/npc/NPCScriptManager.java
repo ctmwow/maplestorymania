@@ -187,7 +187,7 @@ public class NPCScriptManager extends AbstractScriptManager
             } 
             catch (Exception e) 
             {
-                if (c.getCM() != null && c.getCM().getNpc() != 9103001)
+                if (c.getCM() != null)
                     log.error("Error executing NPC script in action " + c.getCM().getNpc() + ". " + e.getMessage(), e);
                 
     	    	c.sendPacket(MaplePacketCreator.boxMessage("Ocorreu um erro na execução desse NPC. Por favor, contate os Administradores."));

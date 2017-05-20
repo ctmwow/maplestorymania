@@ -6058,7 +6058,7 @@ public class MaplePacketCreator {
 
 		mplew.writeShort(SendPacketOpcode.SHOW_FOREIGN_EFFECT.getValue());
 		mplew.writeInt(chr.getId());
-		mplew.write(4);
+		mplew.write(6);
 		mplew.write(0);
 		mplew.write(index);
 
@@ -6093,7 +6093,7 @@ public class MaplePacketCreator {
 
 			if (pet != null) {
 				mplew.writeInt(pet.getUniqueId());
-				mplew.writeInt(0x00); // unknow
+				mplew.writeInt(0x00); // unknows
 			} else
 				mplew.writeLong(0x00);
 		}
