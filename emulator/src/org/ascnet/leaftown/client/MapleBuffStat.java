@@ -45,7 +45,7 @@ public enum MapleBuffStat implements ValueHolder<Long>, Serializable
     DASH_JUMP(0x10000000000000L, true), // 0x200000 in v0.90
     MONSTER_RIDING(0x20000000000000L, true),
     HOMING_BEACON(0x80000000000000L, true),
-    SPEED_INFUSION(0x100000000000000L, true),
+    SPEED_INFUSION(0x40000000000000L, true),
     MORPH(0x2),
     RECOVERY(0x4),
     MAPLE_WARRIOR(0x8),
@@ -100,7 +100,7 @@ public enum MapleBuffStat implements ValueHolder<Long>, Serializable
     MESOGUARD(0x1000000000000000L),
     THAW(0x2000000000000000L), // from v0.88 - No clue if its correct in v0.83 but it works
     WEAKEN(0x4000000000000000L),
-    SPARK(0x20000000),
+    SPARK(0x20000000L),
     EXPRATE(0x400000); //item de experiência
     //SWITCH_CONTROLS(0x8000000000000L);
 
