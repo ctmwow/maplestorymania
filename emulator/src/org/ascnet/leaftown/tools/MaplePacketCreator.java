@@ -6102,6 +6102,18 @@ public class MaplePacketCreator {
 
 		return mplew.getPacket();
 	}
+	
+    public static MaplePacket showPetUpdate(final MapleCharacter chr, final int uniqueId, final byte index) {
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.writeShort(SendPacketOpcode.PET_EXCEPTION_LIST.getValue());
+        mplew.writeInt(chr.getId());
+        mplew.write(index);
+        mplew.writeLong(uniqueId);
+        mplew.write(0); // for each: int here
+
+        return mplew.getPacket();
+    }
 
 	public static MaplePacket weirdStatUpdate() {
 		MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

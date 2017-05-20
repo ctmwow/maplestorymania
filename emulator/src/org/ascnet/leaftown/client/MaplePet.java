@@ -345,6 +345,10 @@ public class MaplePet
     {
     	summoned = summoned_ ? (byte) 0x01 : (byte) 0x00;
     }
+    
+    public final byte getSummonedValue() {
+        return summoned;
+    }
 
     public boolean canConsume(int itemId) 
     {

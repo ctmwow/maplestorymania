@@ -1688,7 +1688,9 @@ public class MapleMap
         	if (pet.isSummoned()) //verificação	
         	{
         		pet.setPos(getGroundBelow(chr.getPosition()));
+        		chr.updatePetEquips(pet);
         		chr.getClient().sendPacket(MaplePacketCreator.showPet(chr, pet, false, false, true));
+        		chr.getClient().sendPacket(MaplePacketCreator.showPetUpdate(chr, pet.getUniqueId(), (byte) (pet.getSummonedValue() - 1)));
         	}
         } 
         

@@ -142,6 +142,7 @@ public enum SendPacketOpcode implements MutableValueHolder<Integer> {
     MOVE_PET,
     PET_CHAT,
     PET_NAMECHANGE,
+    PET_EXCEPTION_LIST,
     PET_COMMAND,
     SPAWN_SPECIAL_MAPOBJECT,
     REMOVE_SPECIAL_MAPOBJECT,

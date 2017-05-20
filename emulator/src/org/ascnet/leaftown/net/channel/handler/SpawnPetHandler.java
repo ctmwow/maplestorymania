@@ -128,6 +128,7 @@ public class SpawnPetHandler extends AbstractMaplePacketHandler
             player.addPet(pet, lead);
             player.getMap().broadcastMessage(player, MaplePacketCreator.showPet(player, pet, false, false, true), true);
             c.sendPacket(MaplePacketCreator.petStatUpdate(player));
+            c.sendPacket(MaplePacketCreator.showPetUpdate(player, pet.getUniqueId(), (byte) (pet.getSummonedValue() - 1)));
             c.sendPacket(MaplePacketCreator.enableActions());
             player.startFullnessSchedule(PetDataFactory.getHunger(pet.getItemId()), pet, player.getPetIndex(pet));
         }
