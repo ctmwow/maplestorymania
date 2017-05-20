@@ -697,7 +697,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
 	                                }
                                 }
                                 c.getPlayer().updatePet(targetPet);
-                                c.getPlayer().getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.commandResponse(c.getPlayer().getId(), (byte) 1, 0, true, true, targetPet.hasQuoteRing()), true);
+                                c.getPlayer().getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.commandResponse(c.getPlayer().getId(), (byte) 1, c.getPlayer().getPetIndex(targetPet), true, true, targetPet.hasQuoteRing()), true);
                                 MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
                             }
                         } else {
