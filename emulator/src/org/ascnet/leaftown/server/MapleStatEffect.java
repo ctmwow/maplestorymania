@@ -1170,6 +1170,7 @@ public class MapleStatEffect implements Serializable {
             case 9101001:
             case 9101002:
             case 9101003:
+            case 9101004:
             case 9101005:
             case 9101008:
                 return true;
