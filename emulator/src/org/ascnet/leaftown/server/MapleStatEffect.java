@@ -513,17 +513,11 @@ public class MapleStatEffect implements Serializable {
                     break;
                 case 2221003:
                     monsterStatus.put(MonsterStatus.FREEZE, 1);
-                case 2121003: // fire demon
-                    monsterStatus.put(MonsterStatus.POISON, 1);
                     break;
                 case 2101003: // fp slow
                 case 2201003: // il slow
                 case 12101001: // FW Slow
                     monsterStatus.put(MonsterStatus.SPEED, ret.x);
-                    break;
-                case 2101005: // poison breath
-                case 2111006: // fp elemental compo
-                    monsterStatus.put(MonsterStatus.POISON, 1);
                     break;
                 case 2311005:
                     monsterStatus.put(MonsterStatus.DOOM, 1);
@@ -567,6 +561,10 @@ public class MapleStatEffect implements Serializable {
                     statups.add(new Pair<>(MapleBuffStat.CYGFINALATTACK, 1));
                     break;
             }
+        }
+        
+        if (ret.isPoison()) {
+            monsterStatus.put(MonsterStatus.POISON, 1);
         }
 
         if (ret.isMorph() && !ret.isPirateMorph()) {
