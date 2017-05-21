@@ -62,6 +62,8 @@ public class MapleMist extends AbstractMapleMapObject {
         } else {
             switch (source.getSourceId()) {
                 case 2111003:
+                case 12111005:
+                case 14111006:
                     isMobMist = false;
                     isPoisonMist = true;
                     skillDelay = 8;
@@ -69,12 +71,6 @@ public class MapleMist extends AbstractMapleMapObject {
                 case 4221006:
                     isMobMist = false;
                     isPoisonMist = false;
-                    skillDelay = 8;
-                    break;
-                case 12111005:
-                case 14111006:
-                    isMobMist = false;
-                    isPoisonMist = true;
                     skillDelay = 8;
                     break;
             }

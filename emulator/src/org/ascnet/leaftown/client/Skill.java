@@ -97,6 +97,7 @@ public class Skill implements ISkill {
                 case 5201006: // Recoil Shot
                 case 9101000: // Heal + Dispel
                 case 14111001: // Shadow Web
+                case 12111005:
                     isBuff = false;
                     break;
                 case 1320008: // Aura of the Beholder

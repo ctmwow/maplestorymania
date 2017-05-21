@@ -4783,13 +4783,20 @@ public class MaplePacketCreator {
 		mplew.writeInt(oid);
 		mplew.writeInt(mist.isMobMist() ? 0 : mist.isPoisonMist() ? 1 : 2);
 		mplew.writeInt(ownerCid);
-		mplew.writeInt(skill);
+		//mplew.writeInt(skill);
+		//substituido para monstros que spawnam skills de fumaça tb
+		if (mist.getMobSkill() == null) {
+            mplew.writeInt(mist.getSourceSkill().getId());
+        } else {
+            mplew.writeInt(mist.getMobSkill().getSkillId());
+        }
 		mplew.write(level);
 		mplew.writeShort(mist.getSkillDelay());
 		mplew.writeInt(position.x);
 		mplew.writeInt(position.y);
 		mplew.writeInt(position.x + position.width);
 		mplew.writeInt(position.y + position.height);
+		mplew.writeInt(0);
 		mplew.writeInt(0);
 
 		return mplew.getPacket();

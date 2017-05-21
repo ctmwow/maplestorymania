@@ -1391,15 +1391,41 @@ public class MapleStatEffect implements Serializable {
     }
 
     public boolean isCharge() {
-        return skill && sourceid >= 1211003 && sourceid <= 1211008;
+    	switch (sourceid) {
+        case 1211003:
+        case 1211008:
+        case 11111007:
+        case 12101005:
+        case 15101006:
+        case 21111005:
+            return skill;
+	    }
+	    return false;
     }
 
     public boolean isPoison() {
-        return skill && (sourceid == 2111003 || sourceid == 2101005 || sourceid == 2111006 || sourceid == 12111005 || sourceid == 14111006);
+    	 switch (sourceid) {
+	         case 2111003:
+	         case 2101005:
+	         case 2111006:
+	         case 2121003:
+	         case 2221003:
+	         case 12111005: // Flame Gear
+	         case 3111003: // Inferno
+	             return skill;
+	     }
+	     return false;
     }
 
-    private boolean isMist() {
-        return skill && (sourceid == 2111003 || sourceid == 4221006 || sourceid == 12111005 || sourceid == 14111006); // poison mist and smokescreen
+    private boolean isMist() {        
+        switch (sourceid) {
+	        case 2111003:
+	        case 4221006:
+	        case 12111005:
+	        case 14111006:
+	            return skill;
+        }	    
+        return false;
     }
 
     private boolean isSoulArrow() {
@@ -1415,7 +1441,23 @@ public class MapleStatEffect implements Serializable {
     }
 
     private boolean isHeroWill() {
-        return skill && (sourceid == 1121011 || sourceid == 1221012 || sourceid == 1321010 || sourceid == 2121008 || sourceid == 2221008 || sourceid == 2321009 || sourceid == 3121009 || sourceid == 3221008 || sourceid == 4121009 || sourceid == 4221008 || sourceid == 5121008 || sourceid == 5221010);
+    	switch (sourceid) {
+	        case 1121011:
+	        case 1221012:
+	        case 1321010:
+	        case 2121008:
+	        case 2221008:
+	        case 2321009:
+	        case 3121009:
+	        case 3221008:
+	        case 4121009:
+	        case 4221008:
+	        case 5121008:
+	        case 5221010:
+	        case 21121008:
+	            return skill;
+	    }
+	    return false;
     }
 
     private boolean isDash() {
