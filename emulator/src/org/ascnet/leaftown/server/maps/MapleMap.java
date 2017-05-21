@@ -1732,9 +1732,9 @@ public class MapleMap
         }
 
         if (hasBoat() == 0x00000002) 
-            chr.getClient().sendPacket(MaplePacketCreator.onContiState(true));
+            chr.getClient().sendPacket(MaplePacketCreator.onContiMove(true, false));
         else if (hasBoat() == 0x00000001 && (chr.getMapId() != 200090000 || chr.getMapId() != 200090010)) 
-            chr.getClient().sendPacket(MaplePacketCreator.onContiState(false));
+            chr.getClient().sendPacket(MaplePacketCreator.onContiMove(false, false));
 
         chr.receivePartyMemberHP();
         
@@ -2615,13 +2615,7 @@ public class MapleMap
     }
 
     public int hasBoat() {
-        if (boat && docked) {
-            return 2;
-        } else if (boat) {
-            return 1;
-        } else {
-            return 0;
-        }
+    	return docked ? 2 : (boat ? 1 : 0);
     }
 
     public void setBoat(boolean hasBoat) {
@@ -2854,12 +2848,14 @@ public class MapleMap
     }
     
     public void broadcastShip(final boolean state) {
-        broadcastMessage(MaplePacketCreator.onContiState(state));
+        broadcastMessage(MaplePacketCreator.onContiState(state, false));
+        broadcastMessage(MaplePacketCreator.onContiMove(state, false));
         this.setDocked(state);
     }
     
     public void broadcastEnemyShip(final boolean state) {
-        broadcastMessage(MaplePacketCreator.onContiMove(state));
+    	broadcastMessage(MaplePacketCreator.onContiState(state, true));
+        broadcastMessage(MaplePacketCreator.onContiMove(state, true));
         this.setDocked(state);
     }
     

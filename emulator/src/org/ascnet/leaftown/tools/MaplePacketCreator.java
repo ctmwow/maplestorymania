@@ -6569,19 +6569,25 @@ public class MaplePacketCreator {
 		return mplew.getPacket();
 	}
 
-    public static MaplePacket onContiMove(boolean type) {
+    public static MaplePacket onContiState(boolean type, boolean invasion) {
 	    final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-	    mplew.writeShort(SendPacketOpcode.CONTI_MOVE.getValue());
+	    mplew.writeShort(SendPacketOpcode.CONTI_STATE.getValue());
 	    mplew.write(10);
-	    mplew.write(type ? 4 : 5);
+	    mplew.write(invasion ? (type ? 4 : 5) : (type ? 1 : 3));  // 1 = almost about to leave, 3 = not here
 	    return mplew.getPacket();
 	}
 
-	public static MaplePacket onContiState(boolean type) {
+	public static MaplePacket onContiMove(boolean type, boolean invasion) {
+		/*
+		 * VALUES
+		 *	8,2 = boat leaves 0208 -> 520
+		 *	10, 4 = balrog boat appears 040A -> 1034
+		 *	10, 5 = balrog boat leaves -> 050A -> 1290
+		 *	12, 6 = boat arrives 060C -> 1548
+		 */
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-        mplew.writeShort(SendPacketOpcode.CONTI_STATE.getValue());
-        mplew.write(type ? 1 : 2);
-        mplew.write(0);
+        mplew.writeShort(SendPacketOpcode.CONTI_MOVE.getValue());        
+        mplew.writeShort(invasion ? (type ? 1034 : 520) : (type ? 1548 : 520));
         return mplew.getPacket();
 	}
 
