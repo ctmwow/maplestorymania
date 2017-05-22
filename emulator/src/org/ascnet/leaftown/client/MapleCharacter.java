@@ -508,7 +508,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 if (!inSquad)
                     ret.map = mapFactory.getMap(rMap);
             }
-            if (ret.map.isDojoMap() || ret.map.isDojoRestMap())
+            if (ret.map.isDojoMap()) //|| ret.map.isDojoRestMap())
                 ret.map = mapFactory.getMap(925020001);
             MaplePortal portal = ret.map.getPortal(ret.initialSpawnPoint);
             if (portal == null) 

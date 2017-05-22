@@ -49,6 +49,7 @@ import org.ascnet.leaftown.net.world.MaplePartyCharacter;
 import org.ascnet.leaftown.server.MapleSquad;
 import org.ascnet.leaftown.server.MapleSquadType;
 import org.ascnet.leaftown.server.TimerManager;
+import org.ascnet.leaftown.server.life.MapleLifeFactory;
 import org.ascnet.leaftown.server.life.MapleMonster;
 import org.ascnet.leaftown.server.maps.MapleMap;
 import org.ascnet.leaftown.server.maps.MapleMapFactory;
@@ -490,5 +491,9 @@ public class EventInstanceManager
     public void saveBossQuestPoints(int bossPoints, MapleCharacter character) 
     {
         character.setBossPoints(character.getBossPoints() + bossPoints);
+    }
+    
+    public MapleMonster getMonster(int id) {
+        return MapleLifeFactory.getMonster(id);
     }
 }

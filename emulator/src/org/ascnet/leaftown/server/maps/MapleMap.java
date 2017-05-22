@@ -2772,7 +2772,8 @@ public class MapleMap
     }
 
     public boolean isDojoMap() {
-        return mapId / 1000000 == 925 && getDojoStage() != 0 && getDojoStage() % 6 != 0;
+        //return mapId / 1000000 == 925 && getDojoStage() != 0 && getDojoStage() % 6 != 0;
+    	return mapId >= 925020000 && mapId < 925040000;
     }
 
     public int getDojoStage() {
@@ -2781,10 +2782,6 @@ public class MapleMap
 
     public int getDojoBoss() {
         return 9300183 + getDojoStage() - getDojoStage() / 6;
-    }
-
-    public boolean isDojoRestMap() {
-        return mapId / 1000000 == 925 && getDojoStage() != 0 && getDojoStage() % 6 == 0;
     }
 
     public int getNextDojoMap() {
