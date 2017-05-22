@@ -279,7 +279,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                     c.sendPacket(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true));
                                     return;
                                 }
-                                int maxMP = c.getPlayer().getMaxMp();
+                                int maxMP = c.getPlayer().getMaxMp();                                
                                 if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE)
                                     maxMP -= 8;
                                 else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1))
@@ -302,7 +302,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                 else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1))
                                     maxMP -= 16;
                                 else if (job.isA(MapleJob.ARAN))
-                                	maxHP -= 5;
+                                	maxMP -= 5;
                         
                                 c.getPlayer().setMpApUsed(c.getPlayer().getMpApUsed() - 1);
                                 c.getPlayer().setMaxMp(maxMP);
@@ -388,7 +388,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                     maxMP += Randomizer.nextInt(4, 9);
                                 else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1)) 
                                     maxMP += Randomizer.nextInt(32, 36);
-                                else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1) || job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1 || job.isA()))
+                                else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1) || job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1))
                                     maxMP += Randomizer.nextInt(8, 10);
 
                                 maxMP = Math.min(30000, Math.abs(maxMP));
