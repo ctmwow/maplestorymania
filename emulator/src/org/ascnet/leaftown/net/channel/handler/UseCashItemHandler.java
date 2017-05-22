@@ -65,6 +65,7 @@ import org.ascnet.leaftown.server.playerinteractions.MapleShopFactory;
 import org.ascnet.leaftown.tools.FileTimeUtil;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.Pair;
+import org.ascnet.leaftown.tools.Randomizer;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 public class UseCashItemHandler extends AbstractMaplePacketHandler 
@@ -263,6 +264,9 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                     if (improvingMaxHPLevel >= 1)
                                         maxHP -= improvingMaxHP.getEffect(improvingMaxHPLevel).getY();
                                 }
+                                else if (job.isA(MapleJob.ARAN))
+                                	maxHP -= 40;
+                                
                                 c.getPlayer().setHpApUsed(c.getPlayer().getHpApUsed() - 1);
                                 c.getPlayer().setMaxHp(maxHP);
                                 c.getPlayer().setHp(maxHP);
@@ -288,7 +292,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                         improvingMaxMP = SkillFactory.getSkill(12000000);
                                 
                                     final int improvingMaxMPLevel = c.getPlayer().getSkillLevel(improvingMaxMP);
-                                    maxMP -= 21;
+                                    maxMP -= 90;
                                     
                                     if (improvingMaxMPLevel >= 1) 
                                         maxMP -= improvingMaxMP.getEffect(improvingMaxMPLevel).getY();
@@ -297,6 +301,8 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                     maxMP -= 12;
                                 else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1))
                                     maxMP -= 16;
+                                else if (job.isA(MapleJob.ARAN))
+                                	maxHP -= 5;
                         
                                 c.getPlayer().setMpApUsed(c.getPlayer().getMpApUsed() - 1);
                                 c.getPlayer().setMaxMp(maxMP);
@@ -348,17 +354,22 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                 }
                                 
                                 if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) 
-                                    maxHP += 8;
+                                    maxHP += Randomizer.nextInt(8, 12);
                                 else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) 
-                                    maxHP += 20;
+                                    maxHP += Randomizer.nextInt(50, 55);
                                 else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1))
-                                    maxHP += 6;
+                                    maxHP += Randomizer.nextInt(10, 20);
                                 else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1))
-                                    maxHP += 16;
-                                else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1))
-                                    maxHP += 18;
+                                	maxHP += Randomizer.nextInt(16, 20);
+		                        else if ((job.getId() >= 500 && job.getId() <= 532) || job.getId() == 1500) // Pirate
+		                        	maxHP += 20;                        		
+		                        else if ((job.getId() >= 510 && job.getId() <= 512) || (job.getId() >= 1510 && job.getId() <= 1512)) //Brawler
+		                        	maxHP += 40;
+		                        else if (job.isA(MapleJob.ARAN))
+		                        	maxHP += Randomizer.nextInt(34, 38);
+                                
 
-                                maxHP = Math.min(30000, maxHP);
+                                maxHP = Math.min(30000, Math.abs(maxHP));
                                 c.getPlayer().setHpApUsed(c.getPlayer().getHpApUsed() + 1);
                                 c.getPlayer().setMaxHp(maxHP);
                                 statupdate.add(new Pair<>(MapleStat.MAXHP, c.getPlayer().getMaxHp()));
@@ -372,17 +383,15 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                 }
                                 
                                 if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) 
-                                    maxMP += 6;
-                                else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) 
-                                    maxMP += 2;
+                                    maxMP += Randomizer.nextInt(6, 8);
+                                else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1) || job.isA(MapleJob.ARAN)) 
+                                    maxMP += Randomizer.nextInt(4, 9);
                                 else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1)) 
-                                    maxMP += 18;
-                                else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1))
-                                    maxMP += 10;
-                                else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1)) 
-                                    maxMP += 14;
+                                    maxMP += Randomizer.nextInt(32, 36);
+                                else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1) || job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1 || job.isA()))
+                                    maxMP += Randomizer.nextInt(8, 10);
 
-                                maxMP = Math.min(30000, maxMP);
+                                maxMP = Math.min(30000, Math.abs(maxMP));
                                 c.getPlayer().setMpApUsed(c.getPlayer().getMpApUsed() + 1);
                                 c.getPlayer().setMaxMp(maxMP);
                                 statupdate.add(new Pair<>(MapleStat.MAXMP, c.getPlayer().getMaxMp()));
