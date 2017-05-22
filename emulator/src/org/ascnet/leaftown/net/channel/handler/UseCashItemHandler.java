@@ -65,7 +65,6 @@ import org.ascnet.leaftown.server.playerinteractions.MapleShopFactory;
 import org.ascnet.leaftown.tools.FileTimeUtil;
 import org.ascnet.leaftown.tools.MaplePacketCreator;
 import org.ascnet.leaftown.tools.Pair;
-import org.ascnet.leaftown.tools.Randomizer;
 import org.ascnet.leaftown.tools.data.input.SeekableLittleEndianAccessor;
 
 public class UseCashItemHandler extends AbstractMaplePacketHandler 
@@ -102,7 +101,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                         else 
                         {
                             MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Not found)");
-                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Ou o player não pôde ser encontrado ou você estava tentando se teletransportar para um local ilegal.");
+                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Ou o player nÃ£o pÃ´de ser encontrado ou vocÃª estava tentando se teletransportar para um local ilegal.");
                             c.sendPacket(MaplePacketCreator.enableActions());
                         }
                     } 
@@ -122,27 +121,27 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                             c.getPlayer().changeMap(target, target.findClosestSpawnPoint(victim.getPosition()));
                                         } else {
                                             MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Not found)");
-                                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Ou o player não pôde ser encontrado ou você estava tentando se teletransportar para um local ilegal.");
+                                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Ou o player nÃ£o pÃ´de ser encontrado ou vocÃª estava tentando se teletransportar para um local ilegal.");
                                             c.sendPacket(MaplePacketCreator.enableActions());
                                         }
                                     } else {
                                         MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Not found)");
-                                        new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Ou o player não pôde ser encontrado ou você estava tentando se teletransportar para um local ilegal.");
+                                        new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Ou o player nÃ£o pÃ´de ser encontrado ou vocÃª estava tentando se teletransportar para um local ilegal.");
                                         c.sendPacket(MaplePacketCreator.enableActions());
                                     }
                                 } else {
                                     MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Can't Teleport)");
-                                    new ServernoticeMapleClientMessageCallback(1, c).dropMessage("Você não pode teleportar para esse mapa.");
+                                    new ServernoticeMapleClientMessageCallback(1, c).dropMessage("VocÃª nÃ£o pode teleportar para esse mapa.");
                                     c.sendPacket(MaplePacketCreator.enableActions());
                                 }
                             } else {
                                 MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Can't Teleport)");
-                                c.getPlayer().dropMessage("O jogador que você está tentando teleportar está em um mapa não permitido.");
+                                c.getPlayer().dropMessage("O jogador que vocÃª estÃ¡ tentando teleportar estÃ¡ em um mapa nÃ£o permitido.");
                                 c.sendPacket(MaplePacketCreator.enableActions());
                             }
                         } else {
                             MapleInventoryManipulator.addById(c, itemId, (short) 1, "Teleport Rock Error (Not found)");
-                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("O jogador não foi encontrado nesse canal.");
+                            new ServernoticeMapleClientMessageCallback(1, c).dropMessage("O jogador nÃ£o foi encontrado nesse canal.");
                             c.sendPacket(MaplePacketCreator.enableActions());
                         }
                     }
@@ -183,7 +182,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                     {
                         if (!c.getPlayer().canUseApReset()) 
                         {
-                        	c.sendPacket(MaplePacketCreator.boxMessage("Seus pontos de habilidade não conferem com o seu nível. Por favor, contate os Administradores."));
+                        	c.sendPacket(MaplePacketCreator.boxMessage("Seus pontos de habilidade nÃ£o conferem com o seu nÃ­vel. Por favor, contate os Administradores."));
                             c.sendPacket(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true));
                             return;
                         }
@@ -264,9 +263,6 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                     if (improvingMaxHPLevel >= 1)
                                         maxHP -= improvingMaxHP.getEffect(improvingMaxHPLevel).getY();
                                 }
-                                else if (job.isA(MapleJob.ARAN))
-                                	maxHP -= 40;
-                                
                                 c.getPlayer().setHpApUsed(c.getPlayer().getHpApUsed() - 1);
                                 c.getPlayer().setMaxHp(maxHP);
                                 c.getPlayer().setHp(maxHP);
@@ -279,7 +275,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                     c.sendPacket(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true));
                                     return;
                                 }
-                                int maxMP = c.getPlayer().getMaxMp();                                
+                                int maxMP = c.getPlayer().getMaxMp();
                                 if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE)
                                     maxMP -= 8;
                                 else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1))
@@ -292,7 +288,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                         improvingMaxMP = SkillFactory.getSkill(12000000);
                                 
                                     final int improvingMaxMPLevel = c.getPlayer().getSkillLevel(improvingMaxMP);
-                                    maxMP -= 90;
+                                    maxMP -= 21;
                                     
                                     if (improvingMaxMPLevel >= 1) 
                                         maxMP -= improvingMaxMP.getEffect(improvingMaxMPLevel).getY();
@@ -301,8 +297,6 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                     maxMP -= 12;
                                 else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1))
                                     maxMP -= 16;
-                                else if (job.isA(MapleJob.ARAN))
-                                	maxMP -= 5;
                         
                                 c.getPlayer().setMpApUsed(c.getPlayer().getMpApUsed() - 1);
                                 c.getPlayer().setMaxMp(maxMP);
@@ -354,22 +348,17 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                 }
                                 
                                 if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) 
-                                    maxHP += Randomizer.nextInt(8, 12);
+                                    maxHP += 8;
                                 else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) 
-                                    maxHP += Randomizer.nextInt(50, 55);
+                                    maxHP += 20;
                                 else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1))
-                                    maxHP += Randomizer.nextInt(10, 20);
+                                    maxHP += 6;
                                 else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1))
-                                	maxHP += Randomizer.nextInt(16, 20);
-		                        else if ((job.getId() >= 500 && job.getId() <= 532) || job.getId() == 1500) // Pirate
-		                        	maxHP += 20;                        		
-		                        else if ((job.getId() >= 510 && job.getId() <= 512) || (job.getId() >= 1510 && job.getId() <= 1512)) //Brawler
-		                        	maxHP += 40;
-		                        else if (job.isA(MapleJob.ARAN))
-		                        	maxHP += Randomizer.nextInt(34, 38);
-                                
+                                    maxHP += 16;
+                                else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1))
+                                    maxHP += 18;
 
-                                maxHP = Math.min(30000, Math.abs(maxHP));
+                                maxHP = Math.min(30000, maxHP);
                                 c.getPlayer().setHpApUsed(c.getPlayer().getHpApUsed() + 1);
                                 c.getPlayer().setMaxHp(maxHP);
                                 statupdate.add(new Pair<>(MapleStat.MAXHP, c.getPlayer().getMaxHp()));
@@ -383,15 +372,17 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                                 }
                                 
                                 if (job == MapleJob.BEGINNER || job == MapleJob.NOBLESSE) 
-                                    maxMP += Randomizer.nextInt(6, 8);
-                                else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1) || job.isA(MapleJob.ARAN)) 
-                                    maxMP += Randomizer.nextInt(4, 9);
+                                    maxMP += 6;
+                                else if (job.isA(MapleJob.WARRIOR) || job.isA(MapleJob.DAWNWARRIOR1)) 
+                                    maxMP += 2;
                                 else if (job.isA(MapleJob.MAGICIAN) || job.isA(MapleJob.BLAZEWIZARD1)) 
-                                    maxMP += Randomizer.nextInt(32, 36);
-                                else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1) || job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1))
-                                    maxMP += Randomizer.nextInt(8, 10);
+                                    maxMP += 18;
+                                else if (job.isA(MapleJob.BOWMAN) || job.isA(MapleJob.WINDARCHER1) || job.isA(MapleJob.THIEF) || job.isA(MapleJob.NIGHTWALKER1))
+                                    maxMP += 10;
+                                else if (job.isA(MapleJob.PIRATE) || job.isA(MapleJob.THUNDERBREAKER1)) 
+                                    maxMP += 14;
 
-                                maxMP = Math.min(30000, Math.abs(maxMP));
+                                maxMP = Math.min(30000, maxMP);
                                 c.getPlayer().setMpApUsed(c.getPlayer().getMpApUsed() + 1);
                                 c.getPlayer().setMaxMp(maxMP);
                                 statupdate.add(new Pair<>(MapleStat.MAXMP, c.getPlayer().getMaxMp()));
@@ -449,7 +440,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                             }
                             else if (itemChangeType == 2) 
                             {
-                            	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
+                            	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item nÃ£o estÃ¡ pronto para ser utilizado!"));
                             	log.info("Incubator func has been requested!!!");
                                 return;
                             }
@@ -506,7 +497,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                             text = slea.readMapleAsciiString();
                             if (text.length() > 60)
                             {
-                            	c.sendPacket(MaplePacketCreator.boxMessage("O texto pode conter no máximo 60 caracteres!"));
+                            	c.sendPacket(MaplePacketCreator.boxMessage("O texto pode conter no mÃ¡ximo 60 caracteres!"));
                                 return;
                             }
    
@@ -516,7 +507,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                             } 
                             else 
                             {
-                            	c.sendPacket(MaplePacketCreator.boxMessage("Você só pode utilizar essa função após o level 10!"));
+                            	c.sendPacket(MaplePacketCreator.boxMessage("VocÃª sÃ³ pode utilizar essa funÃ§Ã£o apÃ³s o level 10!"));
                             }
                             break;
                         case 2: // Super megaphone
@@ -524,7 +515,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                             
                             if (text.length() > 60) 
                             {
-                            	c.sendPacket(MaplePacketCreator.boxMessage("O texto pode conter no máximo 60 caracteres!"));
+                            	c.sendPacket(MaplePacketCreator.boxMessage("O texto pode conter no mÃ¡ximo 60 caracteres!"));
                                 return;
                             }
                             whisper = slea.readByte() == 1;
@@ -539,12 +530,12 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                             c.getChannelServer().getWorldInterface().broadcastMessage(null, MaplePacketCreator.serverNotice(3, c.getChannel(), medalName + c.getPlayer().getName() + " : " + text, whisper).getBytes(), true);
                             break;
                         case 3: // Heart megaphone
-                        	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
+                        	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item nÃ£o estÃ¡ pronto para ser utilizado!"));
                             log.info("Unhandled Megaphone Packet : " + slea.toString());
                             log.info("Megaphone ID: " + itemId);
                             break;
                         case 4: // Skull megaphone
-                        	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
+                        	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item nÃ£o estÃ¡ pronto para ser utilizado!"));
                             log.info("Unhandled Megaphone Packet : " + slea.toString());
                             log.info("Megaphone ID: " + itemId);
                             break;
@@ -592,7 +583,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                             if (!MapleTVEffect.isActive())
                                 new MapleTVEffect(player, victim, messages, tvType);
                             else
-                            	c.sendPacket(MaplePacketCreator.boxMessage("MapleTV já está em uso."));
+                            	c.sendPacket(MaplePacketCreator.boxMessage("MapleTV jÃ¡ estÃ¡ em uso."));
                             break;
                         case 6: // Item Megaphone
                             int itemSmegaItemType = 0;
@@ -639,7 +630,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                 }
                 case 509: //some note sending shit TODO
                     // 49 00 04 00 D0 AA 4D 00 | 05 00 46 65 65 74 79 04 00 74 65 73 74 DA C6 C9 1D
-                	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
+                	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item nÃ£o estÃ¡ pronto para ser utilizado!"));
                 	Logger.getRootLogger().warn("Player " + c.getPlayer().getName() + " trying to use cash item 509 that is not coded");
                     final String sendTo = slea.readMapleAsciiString();
                     final String msg = slea.readMapleAsciiString();
@@ -670,7 +661,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                     MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
                     break;
                 case 519:
-                	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
+                	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item nÃ£o estÃ¡ pronto para ser utilizado!"));
                 	log.info("update pets right now!");
                 case 520:
                     c.getPlayer().gainMeso(ii.getMeso(itemId), true, false, true);
@@ -721,7 +712,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                         final Rectangle bounds = new Rectangle((int) c.getPlayer().getPosition().getX(), (int) c.getPlayer().getPosition().getY(), 1, 1);
                         final MapleMist mist = new MapleMist(bounds, c.getPlayer(), null);
                         c.getPlayer().getMap().spawnMist(mist, 10000, true);
-                        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getChatText(c.getPlayer().getId(), "Oh não, soltei um pum!", false, 1));
+                        c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getChatText(c.getPlayer().getId(), "Oh nÃ£o, soltei um pum!", false, 1));
                         MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
                         c.sendPacket(MaplePacketCreator.enableActions());
                     }
@@ -736,7 +727,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                 case 537:
                     if (c.getPlayer().isMuted() || c.getPlayer().getMap().getMuted()) 
                     {
-                    	c.sendPacket(MaplePacketCreator.boxMessage(c.getPlayer().isMuted() ? "Você está " : "O mapa está " + "silênciado, conseqüentemente você é incapaz de falar."));
+                    	c.sendPacket(MaplePacketCreator.boxMessage(c.getPlayer().isMuted() ? "VocÃª estÃ¡ " : "O mapa estÃ¡ " + "silÃªnciado, conseqÃ¼entemente vocÃª Ã© incapaz de falar."));
                         return;
                     }
                     final String text = slea.readMapleAsciiString();
@@ -747,7 +738,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                 case 539:
                     if (c.getPlayer().isMuted() || c.getPlayer().getMap().getMuted()) 
                     {
-                    	c.sendPacket(MaplePacketCreator.boxMessage(c.getPlayer().isMuted() ? "Você está " : "O mapa está " + "silênciado, conseqüentemente você é incapaz de falar."));
+                    	c.sendPacket(MaplePacketCreator.boxMessage(c.getPlayer().isMuted() ? "VocÃª estÃ¡ " : "O mapa estÃ¡ " + "silÃªnciado, conseqÃ¼entemente vocÃª Ã© incapaz de falar."));
                         return;
                     }
                     final List<String> lines = new LinkedList<>();
@@ -788,7 +779,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                     final IItem equip = c.getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(slotApplied);
                     if (equip.isSSOneOfAKind()) 
                     {
-                    	c.sendPacket(MaplePacketCreator.boxMessage("Você não pode usar as Tesouras de Karma neste item."));
+                    	c.sendPacket(MaplePacketCreator.boxMessage("VocÃª nÃ£o pode usar as Tesouras de Karma neste item."));
                         c.sendPacket(MaplePacketCreator.enableActions());
                         return;
                     }
@@ -823,7 +814,7 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler
                     MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, itemId, 1, true, false);
                     break;
                 default:
-                	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item não está pronto para ser utilizado!"));
+                	c.sendPacket(MaplePacketCreator.boxMessage("Desculpe, mas esse item nÃ£o estÃ¡ pronto para ser utilizado!"));
                     log.info("Unhandeled cash item; type = " + itemType);
                     break;
             }
