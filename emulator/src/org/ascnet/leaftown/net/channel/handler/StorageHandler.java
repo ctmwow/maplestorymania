@@ -116,7 +116,11 @@ public class StorageHandler extends AbstractMaplePacketHandler
                 else 
                     c.disconnect();
             }
-        } /* else if (mode == 6) { // TODO Storage Arrange Items }*/
+        }
+        else if (mode == 0x06) {
+        	storage.arrange();
+        	storage.update(c);
+        }
         else if (mode == 0x07) // meso
         { 
             int meso = slea.readInt();

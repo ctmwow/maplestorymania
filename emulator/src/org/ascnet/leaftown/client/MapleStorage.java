@@ -208,6 +208,28 @@ public class MapleStorage
         MapleInventoryType type = ii.getInventoryType(item.getItemId());
         typeItems.put(type, new ArrayList<>(filterItems(type)));
     }
+    
+    public void arrange() { // sorteando por ID
+        Collections.sort(items, new Comparator<IItem>() {
+
+            public int compare(IItem o1, IItem o2) {
+                if (o1.getItemId() < o2.getItemId()) {
+                    return -1;
+                } else if (o1.getItemId() == o2.getItemId()) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+        });
+        for (MapleInventoryType type : MapleInventoryType.values()) {
+            typeItems.put(type, items);
+        }
+    }
+    
+    public void update(MapleClient c) {
+        c.sendPacket(MaplePacketCreator.arrangeStorage(slots, items, true));
+    }
 
     public List<IItem> getItems()
     {

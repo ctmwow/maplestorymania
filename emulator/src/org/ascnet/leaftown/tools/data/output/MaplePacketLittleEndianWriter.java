@@ -80,4 +80,10 @@ public class MaplePacketLittleEndianWriter extends GenericLittleEndianWriter {
     public String toString() {
         return HexTool.toString(baos.toByteArray());
     }
+    
+    public final void writeZeroBytes(final int i) {
+        for (int x = 0; x < i; x++) {
+            baos.write((byte) 0);
+        }
+    }
 }

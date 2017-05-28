@@ -596,7 +596,7 @@ public class MapleItemStorePersistence
         preparedStatement.setByte(firstIndex + 0x16, (byte) item.getFlag());
         
         if(equip.getRingId() == null || equip.getRingId() <= 0)
-        	preparedStatement.setNull(firstIndex + 0x17, Types.INTEGER);
+        	preparedStatement.setNull(firstIndex + 0x17, Types.BIGINT);
         else
         	preparedStatement.setInt(firstIndex + 0x17, equip.getRingId());
         

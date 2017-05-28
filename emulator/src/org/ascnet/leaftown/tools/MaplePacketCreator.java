@@ -4327,6 +4327,22 @@ public class MaplePacketCreator {
 
 		return mplew.getPacket();
 	}
+	
+    public static MaplePacket arrangeStorage(byte slots, Collection<IItem> items, boolean changed) {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.writeShort(SendPacketOpcode.OPEN_STORAGE.getValue());
+        mplew.write(15);
+        mplew.write(slots);
+        mplew.write(124);
+        mplew.writeZeroBytes(10);
+        mplew.write(items.size());
+        for (IItem item : items) {
+            addItemInfo(mplew, item, true);
+        }
+        mplew.write(0);
+        return mplew.getPacket();
+    }
 
 	public static MaplePacket storeStorage(byte slots, MapleInventoryType type, Collection<IItem> items) {
 		MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
