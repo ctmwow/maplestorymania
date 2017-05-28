@@ -27,6 +27,7 @@
 
 package org.ascnet.leaftown.client.status;
 
+import org.ascnet.leaftown.client.MapleDisease;
 import org.ascnet.leaftown.tools.ValueHolder;
 
 import java.io.Serializable;
@@ -53,14 +54,45 @@ public enum MonsterStatus implements ValueHolder<Integer>, Serializable {
     SHADOW_WEB(0x20000),
     WEAPON_IMMUNITY(0x40000),
     MAGIC_IMMUNITY(0x80000),
+    DAMAGE_IMMUNITY(0x200000),
     NINJA_AMBUSH(0x400000),
-    HYPNOTIZED(0x10000000);
+    BURN(0x1000000),
+    DARKNESS(0x2000000),
+    HYPNOTIZED(0x10000000),
+	NEUTRALISE(0x2), // First int on v.87 or else it won't work.
+    IMPRINT(0x4),
+    MONSTER_BOMB(0x8),
+    MAGIC_CRASH(0x10),
+    // Speshul comes after
+    EMPTY(0x8000000),
+    SUMMON(0x80000000); // All summon bag mobs have.
 
     static final long serialVersionUID = 0L;
     private final int i;
 
     private MonsterStatus(int i) {
         this.i = i;
+    }
+    
+    public static final MapleDisease getLinkedDisease(final MonsterStatus skill) {
+        switch (skill) {
+            case STUN:
+            case SHADOW_WEB:
+                return MapleDisease.STUN;
+            case POISON:
+            case BURN:
+                return MapleDisease.POISON;
+            case SEAL:
+            case MAGIC_CRASH:
+                return MapleDisease.SEAL;
+            case FREEZE:
+                return MapleDisease.FREEZE;
+            case DARKNESS:
+                return MapleDisease.DARKNESS;
+            case SPEED:
+                return MapleDisease.SLOW;
+        }
+        return null;
     }
 
     @Override

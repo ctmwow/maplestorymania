@@ -44,7 +44,9 @@ public enum MapleDisease implements ValueHolder<Long> {
     WEAKEN(0x4000000000000000L),
     ZOMBIFY(0x4000L),
     CRAZY_SKULL(0x80000L),
-    CURSE(0x8000000000000000L);
+    CURSE(0x8000000000000000L),
+    BLIND(0x2000L),
+    FREEZE(0x80000L);
 
     private final long i;
 

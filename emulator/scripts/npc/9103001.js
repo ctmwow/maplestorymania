@@ -6,8 +6,8 @@ importPackage(Packages.org.ascnet.leaftown.server.maps);
 
 var status = 0;
 var minlvl = 51;
-var maxlvl = 200;
-var minPlayers = 1;
+var maxlvl = 71;
+var minPlayers = 3;
 var maxPlayers = 6;
 var time = 15;
 var open = true;
@@ -92,7 +92,7 @@ function checkPartyLevels(){
 		pass = false;
     } else {
 		for (var i = 0; i < party.size() && pass; i++) {
-			if ((party.get(i).getLevel() < minlvl) || (party.get(i).getLevel() > maxlvl) || (party.get(i).getMapid() != cm.getMapId())) {
+			if ((party.get(i).getLevel() < minlvl) || (party.get(i).getLevel() > maxlvl) || (party.get(i).getMapId() != cm.getMapId())) {
 				pass = false;
 			}
 		}

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	This file is part of the OdinMS Maple Story Server
     Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc> 
                        Matthias Butz <matze@odinms.de>
@@ -42,7 +42,7 @@ function start() {
 
 function action(mode, type, selection) {
 	if (status == 1 && mode == 0) {
-		cm.sendNext("Eu acho que você quer coletar mais cupons. Me avise quando você desejar sair do Labirinto.");
+		cm.sendNext("Eu acho que vocÃª quer coletar mais cupons. Me avise quando vocÃª desejar sair do Labirinto.");
 		cm.dispose();
 		return;
 	}
@@ -53,42 +53,35 @@ function action(mode, type, selection) {
 		return;
 	}
 	if (status == 0) {
-		cm.sendNext("Bom trabalho, você escapou do labirinto! Você coletou os cupons dos monstros escondidos no seu caminho no labirinto?");
+		cm.sendNext("Bom trabalho, vocÃª escapou do labirinto! VocÃª coletou os cupons dos monstros escondidos no seu caminho no labirinto?");
 	} else if (status == 1) {
 		if (cm.getParty() != null && cm.isPartyLeader()) {
 			if (quant >= 30) {
-				cm.sendYesNo("Até agora você coletou #b" + quant + " cupons#k com seu esforço coletivo. São estes todos os cupons que seu grupo coletou?");
+				cm.sendYesNo("AtÃ© agora vocÃª coletou #b" + quant + " cupons#k com seu esforÃ§o coletivo. SÃ£o estes todos os cupons que seu grupo coletou?");
 			} else {
-				cm.sendYesNo("Bom trabalho! Se você coletar mais que 30 cupons, você irá receber um prêmio bem legal! Gostaria de ir para a saída?");
+				cm.sendYesNo("Bom trabalho! Se vocÃª coletar mais que 30 cupons, vocÃª irÃ¡ receber um prÃªmio bem legal! Gostaria de ir para a saÃ­da?");
 			}
 		} else {
-			cm.sendNext("Dependendo do número de cupons que seu grupo coletou, poderá haver uma surpresa bônus!");
+			cm.sendNext("Dependendo do nÃºmero de cupons que seu grupo coletou, poderÃ¡ haver uma surpresa bÃ´nus!");
 		}
 	} else if (status == 2) {
 		if (cm.getParty() != null && cm.isPartyLeader()) {
 			if (quant >= 30) {
-				var party = cm.getChar().getEventInstance().getPlayers();
+				var party = cm.getPlayer().getEventInstance().getPlayers();
 				var myParty = cm.getParty().getMembers();
-				eim = cm.getChar().getEventInstance();
+				eim = cm.getPlayer().getEventInstance();
 				cm.givePartyExp(50 * quant, party);
 				cm.givePartyNX(3 * quant, party);
 				cm.removeAll(4001106);
 				//Finish PQ
-				eim.finishPQ();
+				eim.clearPQ();
 				cm.dispose();
 			} else {
-				var party = cm.getChar().getEventInstance().getPlayers();
-				var myParty = cm.getParty().getMembers();
-				eim = cm.getChar().getEventInstance();
-				cm.givePartyExp(50 * quant, party);
-				cm.givePartyNX(3 * quant, party);
-				cm.removeAll(4001106);
-				//Finish PQ
-				eim.disbandParty();
+				eim.leftParty();
 				cm.dispose();
 			}
 		} else {
-			cm.sendPrev("Por favor fale com #bseu líder do grupo#k para falar comigo após recolher todos os cupons dos membros do grupo.");
+			cm.sendPrev("Por favor fale com #bseu lÃ­der do grupo#k para falar comigo apÃ³s recolher todos os cupons dos membros do grupo.");
 			cm.dispose();
         }
 	}

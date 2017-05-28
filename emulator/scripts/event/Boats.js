@@ -143,3 +143,7 @@ function invasion() {
 
 function cancelSchedule() {
 }
+
+function allMonstersDead(eim) {
+    //do nothing; LMPQ has nothing to do with monster killing
+}

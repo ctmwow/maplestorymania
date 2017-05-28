@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Rolly - Ludibirum Maze PQ
 */
 var status = 0;
@@ -9,22 +9,26 @@ function start() {
 }
 
 function action(mode, type, selection) {
-    if (mode == 0) {
-	cm.dispose();
-
-    } else {
-	if (mode == 1)
-	    status++;
+    if (mode == 0)
+	{
+		cm.dispose();
+    }
 	else
-	    status--;
-		
-	if (status == 0) {
-	    cm.sendNext("Má sorte, né? Espero que você tente novamente!");
-
-	} else if (status == 1) {
-	    cm.warp(220000000);
-	    cm.removeAll(4001106);
-	    cm.dispose();
-	}
+	{
+		if (mode == 1)
+			status++;
+		else
+			status--;
+			
+		if (status == 0)
+			cm.sendOk("MÃ¡ sorte, nÃ©? Espero que vocÃª tente novamente!");
+		else if (status == 1)
+		{
+			cm.warp(220000000);
+			cm.removeAll(4001106);
+			cm.dispose();
+		}
+		else
+			cm.dispose();
     }
 }

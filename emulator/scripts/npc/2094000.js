@@ -23,7 +23,7 @@ importPackage(Packages.org.ascnet.leaftown.server.maps);
 var status = 0;
 var minLevel = 55;
 var maxLevel = 100;
-var minPlayers = 0;
+var minPlayers = 1;
 var maxPlayers = 6;
 
 function start() {
@@ -32,66 +32,37 @@ function start() {
 }
 
 function action(mode, type, selection) {
-    if (mode == -1) {
-        cm.dispose();
-    } else {
-        if (mode == 0 && status == 0) {
-            cm.dispose();
-            return;
-        }
-        if (mode == 1)
-            status++;
-        else
-            status--;
-        if (status == 0) {
-            if (cm.getParty() == null) {
-                cm.sendOk("Por favor, volte quando formar um grupo.");
-                cm.dispose();
-                return;
-            }
-            if (!cm.isPartyLeader()) {
-                cm.sendSimple("Você não é o líder do grupo.");
-                cm.dispose();
-            } else {
-                var party = cm.getParty().getMembers();
-                var mapId = cm.getPlayer().getMapId();
-                var next = true;
-                var levelValid = 0;
-                var inMap = 0;
-                if (party.size() < minPlayers || party.size() > maxPlayers)
-                    next = false;
-                else {
-                    for (var i = 0; i < party.size() && next; i++) {
-                        if ((party.get(i).getLevel() >= minLevel) && (party.get(i).getLevel() <= maxLevel))
-                            levelValid += 1;
-                        if (party.get(i).getMapId() == mapId)
-                            inMap += 1;
-                    }
-                    if (levelValid < minPlayers || inMap < minPlayers)
-                        next = false;
-                }
-                if (next) {
-                    var em = cm.getEventManager("PiratePQ");
-                    if (em == null) {
-                        cm.sendOk("A missão de grupo do Lorde Pirata não está disponível.");
-                        cm.dispose();
-                    }
-                    else {
-                        em.startInstance(cm.getParty(),cm.getPlayer().getMap());
-						party = cm.getPlayer().getEventInstance().getPlayers();
-						cm.dispose();
-                    }
-                    cm.dispose();
-                }
-                else {
-                    cm.sendOk("Seu grupo não é possui seis pessoas. Verifique se todos seus membros estão presentes para participar na missão. Vejo que #b" + levelValid.toString() + " #kmembros estão no level correto, e #b" + inMap.toString() + "#k estão em meu mapa. Se estiver errado, #brelogue#k ou crie o grupo novamente.");
-                    cm.dispose();
-                }
-            }
-        }
-        else {
-            cm.sendOk("A missão de grupo do Lorde Pirata não existe.");
-            cm.dispose();
-        }
-    }
+	cm.removeAll(4001117);
+	cm.removeAll(4001120);
+	cm.removeAll(4001121);
+	cm.removeAll(4001122);
+	    if (cm.getPlayer().getParty() == null || !cm.isPartyLeader()) {
+		cm.sendOk("The leader of the party must be here.");
+	    } else {
+		var party = cm.getPlayer().getParty().getMembers();
+		var mapId = cm.getPlayer().getMapId();
+		var next = true;
+		var size = 0;
+		var it = party.iterator();
+		while (it.hasNext()) {
+			var cPlayer = it.next();
+			var ccPlayer = cm.getPlayer().getMap().getCharacterById(cPlayer.getId());
+			if (ccPlayer == null || ccPlayer.getLevel() < 55 || ccPlayer.getLevel() > 200) {
+				next = false;
+				break;
+			}
+			size += (ccPlayer.isGM() ? 4 : 1);
+		}	
+		if (next && size >= 4) {
+			var em = cm.getEventManager("Pirate");
+			if (em == null) {
+				cm.sendOk("Please try again later.");
+			} else {
+				em.startInstance(cm.getPlayer().getParty(), cm.getPlayer().getMap());
+			}
+		} else {
+			cm.sendOk("All 4+ members of your party must be here and above level 55.");
+		}
+	    }
+	cm.dispose();
 }

@@ -7078,7 +7078,7 @@ public class MaplePacketCreator {
 			mplew.writeMapleAsciiString(alliance.getRankTitle(i));
 		}
 		mplew.write(alliance.getGuilds().size());
-		mplew.writeInt(2); // probably capacity
+		mplew.writeInt(alliance.getCapacity());
 		for (Integer guild : alliance.getGuilds()) {
 			mplew.writeInt(guild);
 		}
@@ -7101,7 +7101,7 @@ public class MaplePacketCreator {
 		for (Integer guild : alliance.getGuilds()) {
 			mplew.writeInt(guild);
 		}
-		mplew.writeInt(2); // probably capacity
+		mplew.writeInt(alliance.getCapacity());
 		mplew.writeShort(0);
 		for (Integer guildd : alliance.getGuilds()) {
 			try {
@@ -7145,7 +7145,7 @@ public class MaplePacketCreator {
 		for (Integer guild : alliance.getGuilds()) {
 			mplew.writeInt(guild);
 		}
-		mplew.writeInt(2);
+		mplew.writeInt(alliance.getCapacity());
 		mplew.writeMapleAsciiString(alliance.getNotice());
 		mplew.writeInt(newGuild);
 		try {

@@ -763,10 +763,10 @@ public class MapleMonster extends AbstractLoadedMapleLife {
             if (poison || status.getSkill().getId() == 2221003 || status.getSkill().getId() == 2121003) {
                 int poisonLevel = from.getSkillLevel(status.getSkill());
                 int poisonDamage = Math.min(Short.MAX_VALUE, (int) (getMaxHp() / (70.0 - poisonLevel) + 0.999));
-                status.setValue(MonsterStatus.POISON, poisonDamage);
+                status.setValue(MonsterStatus.POISON, Integer.valueOf(poisonDamage));
                 status.setPoisonSchedule(timerManager.register(new PoisonTask(poisonDamage, from, status, cancelTask, false, false), 1000, 1000));
             } else if (venom) {
-                if (from.getJob() == MapleJob.NIGHTLORD || from.getJob() == MapleJob.SHADOWER) {
+                if (from.getJob() == MapleJob.NIGHTLORD || from.getJob() == MapleJob.SHADOWER || from.getJob().isA(MapleJob.NIGHTWALKER3)) {
                     int poisonLevel = 0;
                     int matk = 0;
                     if (from.getJob() == MapleJob.NIGHTLORD) {
@@ -802,7 +802,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
                         poisonDamage = poisonDamage + Randomizer.nextInt(gap) + minDmg;
                     }
                     poisonDamage = Math.min(Short.MAX_VALUE, poisonDamage);
-                    status.setValue(MonsterStatus.POISON, poisonDamage);
+                    status.setValue(MonsterStatus.POISON, Integer.valueOf(poisonDamage));
                     status.setPoisonSchedule(timerManager.register(new PoisonTask(poisonDamage, from, status, cancelTask, false, false), 1000, 1000));
                 } else {
                     return false;

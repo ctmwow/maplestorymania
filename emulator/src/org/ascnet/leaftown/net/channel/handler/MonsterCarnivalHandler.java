@@ -76,7 +76,11 @@ public class MonsterCarnivalHandler extends AbstractMaplePacketHandler
             c.getPlayer().getMap().spawnMonsterOnGroundBelow(monster, randomizePosition(c.getPlayer().getMapId(), 0x00000001));
             c.sendPacket(MaplePacketCreator.enableActions());
         }
-        else if (tab == 0x00000001) // SKILL TAB
+        else if (tab == 0x00000001) // DEBUFF TAB
+        {
+        	
+        }
+        else if (tab == 0x00000002) // SKILL TAB
         {
         	
         }
