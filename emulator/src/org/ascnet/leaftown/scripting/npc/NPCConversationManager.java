@@ -745,7 +745,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public void setHiredMerchantMesos(long set) 
     {
-        getPlayer().setMerchantMeso((int) set);
+        getPlayer().setMerchantMesos((int) set);
     }
 
     public List<Pair<Integer, IItem>> getStoredMerchantItems() {

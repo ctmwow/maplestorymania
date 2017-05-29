@@ -5161,7 +5161,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 		merchantMesos += add;
 	}
 
-	public void setMerchantMeso(final int meso) 
+	public void setMerchantMesos(final int meso) 
 	{
 		try 
 		{

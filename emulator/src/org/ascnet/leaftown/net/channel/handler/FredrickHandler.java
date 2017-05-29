@@ -64,12 +64,12 @@ public class FredrickHandler extends AbstractMaplePacketHandler
 					}
 
 					chr.gainMeso(chr.getMerchantMesos(), false);
-					chr.setMerchantMeso(0);
+					chr.setMerchantMesos(0);
 					
 					if (deleteItems(chr)) 
 					{
 						for (int i = 0; i < items.size(); i++) 
-							MapleInventoryManipulator.addByItem(c, items.get(i), "Added from Fredrick", true);
+							MapleInventoryManipulator.addByItem(c, items.get(i), "Adicionado pelo Fredrick", true);
 						
 						c.sendPacket(MaplePacketCreator.fredrickMessage((byte) 0x1E));
 					}
