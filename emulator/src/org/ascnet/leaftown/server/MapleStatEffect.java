@@ -1193,7 +1193,7 @@ public class MapleStatEffect implements Serializable {
             case 4111003: // shadow web
             case 14111001:
             case 4121004: // Ninja ambush
-            case 4421004: // Ninja ambush
+            case 4221004: // Ninja ambush
                 return true;
         }
         return false;

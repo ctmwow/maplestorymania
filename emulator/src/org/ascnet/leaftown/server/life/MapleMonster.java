@@ -811,8 +811,9 @@ public class MapleMonster extends AbstractLoadedMapleLife {
                 int webDamage = (int) (getMaxHp() / 50.0 + 0.999);
                 // actually shadow web works different but similar...
                 status.setPoisonSchedule(timerManager.schedule(new PoisonTask(webDamage, from, status, cancelTask, true, false), 3500));
-            } else if (status.getSkill().getId() == 4121004 || status.getSkill().getId() == 4221004) {
+            } else if (status.getSkill().getId() == 4121004 || status.getSkill().getId() == 4221004) { //ninja ambush
                 int ambushDamage = from.getNinjaAmbushDamage(status.getSkill().getEffect(from.getSkillLevel(status.getSkill())));
+                status.setValue(MonsterStatus.NINJA_AMBUSH, Integer.valueOf(ambushDamage));
                 status.setPoisonSchedule(timerManager.schedule(new PoisonTask(ambushDamage, from, status, cancelTask, false, true), 1000));
             }
             for (MonsterStatus stat : status.getStati().keySet()) {
