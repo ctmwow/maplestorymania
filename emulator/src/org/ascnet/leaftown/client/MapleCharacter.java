@@ -1285,7 +1285,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             }
             
             deleteWhereCharacterId(con, "DELETE FROM areaInfo WHERE charid = ?");
-            ps = con.prepareStatement("INSERT INTO areaInfo (id, charid, area, info) VALUES (DEFAULT, ?, ?, ?)");
+            ps = con.prepareStatement("INSERT INTO areaInfo (charid, area, info) VALUES (?, ?, ?)");
             ps.setInt(1, id);
             for (Entry<Short, String> area : area_info.entrySet()) 
             {
@@ -4903,10 +4903,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void disposePlayerShop() {
-        IMaplePlayerShop playershop = playerShop;
-        if (playershop.isOwner(this)) {
-            if (playershop.getShopType() == 1) {
-                HiredMerchant hm = (HiredMerchant) playershop;
+    	final IMaplePlayerShop shop = getPlayerShop();
+        if (shop.isOwner(this)) {
+            if (shop.getShopType() == 1) {
+                HiredMerchant hm = (HiredMerchant) shop;
                 if (hm.isSpawned()) {
                     hm.setOpen(true);
                 } else if (hasHiredMerchantTicket()) {
@@ -4920,8 +4920,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 } else {
                     client.disconnect();
                 }
-            } else if (playershop.getShopType() == 2) {
-                for (MaplePlayerShopItem items : playershop.getItems()) {
+            } else if (shop.getShopType() == 2) {
+                for (MaplePlayerShopItem items : shop.getItems()) {
                     if (items.getBundles() > 0) {
                         IItem item = items.getItem();
                         short x = item.getQuantity();
@@ -4934,17 +4934,17 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                                 items.setBundles((short) 0);
 
                             try {
-                                playershop.updateItem(items);
+                            	shop.updateItem(items);
                             } catch (Exception e) {
                             }
                         }
                     }
                 }
-                playershop.removeAllVisitors(3, 1);
-                playershop.closeShop(); // wont happen unless some idiot hacks, hopefully ?
+                shop.removeAllVisitors(3, 1);
+                shop.closeShop(); // wont happen unless some idiot hacks, hopefully ?
             }
         } else {
-            playershop.removeVisitor(this);
+        	shop.removeVisitor(this);
         }
     }
 
